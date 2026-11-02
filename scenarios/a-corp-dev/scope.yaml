@@ -1,0 +1,21 @@
+# A사 진단 범위 사실 (Scope facts). 사람이 확인해 입력하는 값이며, 근거(basis)를 함께 적는다.
+# 여기 없는 사실은 Scope Engine이 UNKNOWN 으로 본다.
+organization: A사 (가상 이커머스, 임직원 약 40명)
+as_of: "2026-11-02"
+facts:
+  scope.has_information_systems: {value: true, basis: "정보보호 정책서 제2조"}
+  scope.has_aws_accounts: {value: true, basis: "자산목록 — AWS 계정 3개"}
+  scope.aws_iam_users_with_console_password: {value: true, basis: "IAM 콘솔 사용자 존재"}
+  scope.service_has_customer_login: {value: true, basis: "쇼핑몰 회원 로그인"}
+  scope.uses_cognito: {value: true, basis: "회원 인증에 Cognito 사용 (prod)"}
+aws_accounts:
+  - {account_id: "111111111111", alias: a-prod, label: 운영, in_scope: true}
+  - {account_id: "222222222222", alias: a-stg, label: 테스트(스테이징), in_scope: true}
+  - {account_id: "333333333333", alias: a-shared, label: 공용, in_scope: true}
+policy_documents:
+  # 비밀번호 규칙이 들어 있을 수 있는 문서 목록. 이 목록이 문서 Coverage의 분모다.
+  - {file: docs/A사_정보보호정책서_v1.0.docx, doc_id: A-ISP-001}
+  - {file: docs/A사_접근통제지침_v2.1.docx, doc_id: A-ISG-004}
+  - {file: docs/A사_계정관리절차서_v1.3.docx, doc_id: A-ISP-004-01}
+evidence:
+  - {file: evidence/회원가입_비밀번호_화면.png, kind: screen_capture, relates_to: AR-2.5.4-05, captured_at: "2026-10-30"}

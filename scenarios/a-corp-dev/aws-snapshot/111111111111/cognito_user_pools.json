@@ -1,0 +1,16 @@
+[
+  {
+    "Id": "ap-northeast-2_AShop001",
+    "Name": "a-shop-members",
+    "Policies": {
+      "PasswordPolicy": {
+        "MinimumLength": 6,
+        "RequireUppercase": false,
+        "RequireLowercase": true,
+        "RequireNumbers": true,
+        "RequireSymbols": true,
+        "TemporaryPasswordValidityDays": 7
+      }
+    }
+  }
+]

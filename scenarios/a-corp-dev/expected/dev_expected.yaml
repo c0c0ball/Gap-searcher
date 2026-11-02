@@ -1,0 +1,31 @@
+# 개발용 정답지 (공개). 규칙 개발·디버깅에 쓰며, 최종 평가에는 쓰지 않는다.
+# 최종 평가용 숨김 정답지는 별도 세션이 다른 가상 시나리오로 만들고 해시만 저장소에 남긴다.
+scenario: a-corp-dev
+as_of: "2026-11-02"
+seeded_defects:
+  - id: D1
+    ar: AR-2.5.4-02
+    what: a-prod IAM 최소 길이 8 (지침 제5조①1 은 10자)
+    trap: 부칙 2(종전 비밀번호 유효)는 '이미 설정된 비밀번호'에 대한 경과규정이지 시스템 설정 기준을 낮추는 근거가 아니다.
+  - id: D2
+    ar: AR-2.5.4-02
+    what: a-stg 계정에 IAM 비밀번호 정책 자체가 없음 (NoSuchEntity)
+  - id: D3
+    ar: AR-2.5.4-03
+    what: ops-kim 이 발급받은 임시 비밀번호를 바꾸지 않고 로그인 (지침 제6조②)
+  - id: D4
+    ar: AR-2.5.4-04
+    what: dev-lee 비밀번호 185일 미변경 (지침 제6조① 90일)
+  - id: D5
+    ar: AR-2.5.4-05
+    what: Cognito 회원 비밀번호 최소 길이 6 (지침 제7조① 8자). 화면 안내 문구는 8자라서 화면만 보면 놓친다.
+non_defects:
+  - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
+  - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
+  - <root_account> 행은 IAM 사용자 모집단이 아님
+expected:
+  AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
+  AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
+  AR-2.5.4-03: {state: CANDIDATE_NONCONFORMITY, defects: [D3], subjects: ["111111111111/ops-kim"]}
+  AR-2.5.4-04: {state: CANDIDATE_NONCONFORMITY, defects: [D4], subjects: ["111111111111/dev-lee"]}
+  AR-2.5.4-05: {state: CANDIDATE_NONCONFORMITY, defects: [D5], subjects: ["111111111111/ap-northeast-2_AShop001"]}

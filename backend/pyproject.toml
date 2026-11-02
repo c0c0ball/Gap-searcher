@@ -1,0 +1,38 @@
+[project]
+name = "gapcheck"
+version = "0.1.0"
+description = "ISMS-P 갭분석 자동화 — 백엔드(api·worker·요구사항 컴파일러)"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "celery[redis]>=5.4",
+  "redis>=5",
+  "psycopg[binary]>=3.2",
+  "minio>=7.2",
+  "httpx>=0.27",
+  "pydantic>=2.8",
+  "pydantic-settings>=2.4",
+  "pyyaml>=6",
+  "python-docx>=1.1",
+  "openpyxl>=3.1",
+  "boto3>=1.34",
+  "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "hypothesis>=6"]
+
+[project.scripts]
+gapcheck-lint = "gapcheck.compiler.lint:main"
+gapcheck = "gapcheck.cli:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["gapcheck*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

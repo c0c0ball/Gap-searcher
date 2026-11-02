@@ -1,0 +1,105 @@
+# 로컬 개발용 구성. LLM(Ollama)은 Mac 호스트에 네이티브로 설치한다 (Metal GPU 사용).
+name: isms-gap
+
+x-backend: &backend
+  build: ./backend
+  env_file: .env
+  environment:
+    GAPCHECK_ROOT: /app
+    GAPCHECK_RUNS: /app/runs
+    GAPCHECK_WORKSPACES: /app/workspaces
+  extra_hosts:
+    - "host.docker.internal:host-gateway"   # Linux에서도 호스트의 Ollama에 접근
+  depends_on:
+    postgres: { condition: service_healthy }
+    redis: { condition: service_healthy }
+    minio: { condition: service_started }
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+
+  # MinIO 공식 이미지(minio/minio)는 2026-09 Docker Hub에서 삭제됨.
+  # Chainguard가 관리하는 이미지로 대체한다. 무료 플랜은 latest 태그만 제공하므로,
+  # 재현성이 필요해지면 `docker image ls --digests`로 digest를 확인해 고정한다.
+  # 이 이미지는 uid 65532로 실행되므로 볼륨 소유자를 먼저 맞춰 준다 (minio-init).
+  minio-init:
+    image: busybox:1.37
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    volumes:
+      - miniodata:/data
+
+  minio:
+    image: cgr.dev/chainguard/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - miniodata:/data
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
+    depends_on:
+      minio-init: { condition: service_completed_successfully }
+
+  clamav:
+    # 공식 Debian 기반 멀티아키텍처 이미지 (Apple Silicon arm64 지원)
+    image: clamav/clamav-debian:1.5
+    volumes:
+      - clamdb:/var/lib/clamav
+    # 첫 기동 시 freshclam이 시그니처를 받느라 수 분 걸린다
+
+  api:
+    <<: *backend
+    command: uvicorn gapcheck.api:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend/gapcheck:/app/gapcheck
+      - ./requirements:/app/requirements:ro
+      - ./sources:/app/sources:ro
+      - ./scenarios:/app/scenarios:ro
+      - ./runs:/app/runs
+      - ./workspaces:/app/workspaces
+    ports: ["8000:8000"]
+
+  worker:
+    <<: *backend
+    command: celery -A gapcheck.worker worker --loglevel=info --concurrency=2
+    volumes:
+      - ./backend/gapcheck:/app/gapcheck
+      - ./requirements:/app/requirements:ro
+      - ./sources:/app/sources:ro
+      - ./scenarios:/app/scenarios:ro
+      - ./runs:/app/runs
+      - ./workspaces:/app/workspaces
+
+  web:
+    build: ./web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    volumes:
+      - ./web/app:/app/app   # 화면 파일을 고치면 다시 빌드하지 않아도 바로 반영
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  miniodata:
+  clamdb:
