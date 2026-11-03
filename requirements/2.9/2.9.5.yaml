@@ -1,0 +1,112 @@
+# 2.9.5 로그 및 접속기록 점검 — 로그·백업 단계 (2단계 자동화)
+# 법령 변경: 고시 제2026-9호 제8조②는 점검 주기·방법을 '내부 관리계획으로 정하고 이행'하도록 하며 고정 주기를 두지 않는다.
+# 안내서(2023.11) 결함사례 3(분기 1회는 결함)은 종전 '월 1회' 규정 기준이므로, 주기는 조직이 정한 값으로만 판단한다 (D08).
+criterion: "2.9.5"
+name: 로그 및 접속기록 점검
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 143~144쪽(PDF 148~149) — 주요 확인사항 1~3, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 이상징후 인지를 위한 로그 검토·모니터링 절차
+    covered_by: [AR-2.9.5-01]
+  - index: 2   # 결과 보고와 이상징후 대응
+    covered_by: []
+    note: 점검 결과 보고·대응 기록은 사람이 확인
+  - index: 3   # 접속기록 정기 점검
+    covered_by: [AR-2.9.5-02]
+    note: 주기는 고시 제8조②에 따라 내부 관리계획(지침)에서 정한 값
+
+requirements:
+  - id: AR-2.9.5-01
+    title: 모든 계정에서 이상 행위 탐지가 켜져 있다
+    summary: >-
+      지침이 클라우드 이상 행위 탐지 서비스 사용을 정했다면, 범위 내 모든 AWS 계정에 사용 중(ENABLED)인 GuardDuty 탐지기가 있어야 한다.
+    plain:
+      question: 비인가 접속 등 이상징후를 인지할 수 있도록 모니터링 체계를 수립·이행하고 있는가?
+      why: >-
+        이상 행위 탐지가 없으면 도용된 계정으로 이상한 곳에서 접속하거나 대량으로 내려받아도 알아채기 어려워요.
+      fix:
+        - GuardDuty 콘솔에서 해당 계정(리전)에 GuardDuty를 켜요. 조직 단위로 켜면 새 계정에도 자동으로 적용돼요.
+        - 탐지 결과가 정보보호팀에 알림으로 오도록 연결해요.
+      owner: 정보보호팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "143쪽 주요 확인사항 1, 144쪽 결함사례 1"}
+    checkpoints: [1]
+    case_refs: ["KISA:2.9.5-1"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 AWS 계정
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 이상 행위 탐지 사용 조항
+        params: [monitor.threat_detection_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 계정별 GuardDuty 탐지기 상태
+        collect:
+          apis: ["guardduty:ListDetectors", "guardduty:GetDetector"]
+          per: account
+          kind: aws_guardduty
+          fields: [key, enabled, detectors]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 사용 중인 탐지기가 있어야 함
+        check:
+          population: T2
+          gate: T1.monitor.threat_detection_required
+          field: enabled
+          op: truthy
+          message: "{account_id}: 사용 중인 GuardDuty 탐지기 없음 (탐지기 {detectors}개)"
+          plain: "{account}에는 이상 행위 탐지(GuardDuty)가 켜져 있지 않아요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 이상 행위 탐지가 꺼진 계정이 1개 이상
+
+  - id: AR-2.9.5-02
+    title: 접속기록을 정한 주기마다 점검한다
+    summary: >-
+      지침(내부 관리계획)이 접속기록 점검 주기를 정했다면, 접속기록 점검 기록의 가장 최근 점검일이 기준일로부터 그 주기 안에 있어야 한다. 월은 31일로 센다.
+    plain:
+      question: 개인정보처리시스템의 접속기록을 내부 관리계획에서 정한 주기에 따라 정기적으로 점검하고 있는가?
+      why: >-
+        접속기록은 쌓아 두기만 하면 의미가 없어요. 정해진 주기로 들여다봐야 권한 남용이나 대량 조회를 늦지 않게 알아챌 수 있어요.
+      fix:
+        - 밀린 기간의 접속기록을 바로 점검하고 결과를 기록해요.
+        - 대량 조회·새벽 접속처럼 볼 기준을 정해 두고, 매달 같은 양식으로 점검해요.
+      owner: 정보보호팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "143쪽 주요 확인사항 3, 144쪽 결함사례 2"}
+    checkpoints: [3]
+    case_refs: ["KISA:2.9.5-2"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 접속기록 점검 기록
+      source: T2.checked_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 접속기록 점검 주기
+        params: [log.review_cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 접속기록 점검 기록 (점검일·점검자·결과)
+        evidence_kind: access_log_review
+        params: [checked_on]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 점검일이 주기 안인지
+        cadence:
+          last_event: T2.checked_on
+          max_interval_days: T1.log.review_cycle_days
+          aggregate: latest
+          plain: "마지막 접속기록 점검이 {last}이에요. 회사 규칙대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 점검이 정한 주기를 넘김

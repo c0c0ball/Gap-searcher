@@ -76,7 +76,8 @@ def _auto(target: str) -> tuple[str | None, dict[str, dict]]:
         else:
             tone, reviewed = VERDICT_TONE.get(d["verdict"], "unknown"), bool(rv)
         out[d["ar_id"]] = {"ar_id": d["ar_id"], "tone": tone, "reviewed": reviewed, "verdict": d["verdict"],
-                           "reason": d["reason"], "found": plain.get(d["ar_id"], {}).get("found", [])}
+                           "reason": d["reason"], "found": plain.get(d["ar_id"], {}).get("found", []),
+                           "note": plain.get(d["ar_id"], {}).get("note", "")}
     return rid, out
 
 

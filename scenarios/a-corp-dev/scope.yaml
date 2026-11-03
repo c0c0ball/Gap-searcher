@@ -18,6 +18,7 @@ policy_documents:
   - {file: docs/A사_접근통제지침_v2.1.docx, doc_id: A-ISG-004}
   - {file: docs/A사_계정관리절차서_v1.3.docx, doc_id: A-ISP-004-01}
   - {file: docs/A사_암호통제지침_v1.0.docx, doc_id: A-ISG-006}
+  - {file: docs/A사_운영보안지침_v1.0.docx, doc_id: A-ISG-008}
 evidence:
   - {file: evidence/회원가입_비밀번호_화면.png, kind: screen_capture, relates_to: AR-2.5.4-05, captured_at: "2026-10-30"}
   # 표 증적은 파일 이름이 아니라 첫 줄(머리글)로 종류를 알아낸다
@@ -27,3 +28,6 @@ evidence:
   - {file: evidence/접근권한검토기록_2026.xlsx, kind: access_review_log}
   - {file: evidence/정보자산목록_2026-10.xlsx, kind: asset_list}
   - {file: evidence/암호키관리대장_2026.xlsx, kind: key_ledger}
+  - {file: evidence/접속기록점검기록_2026.xlsx, kind: access_log_review}
+  - {file: evidence/백업복구테스트기록_2025-2026.xlsx, kind: restore_test_log}
+  # 재해 복구 훈련 기록은 제출되지 않음 (2.12.2 는 '판단 못함'이 정상)

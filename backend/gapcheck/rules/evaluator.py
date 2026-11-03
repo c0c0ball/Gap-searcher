@@ -38,6 +38,10 @@ API_FILE = {
     "kms:ListKeys": "kms_keys.json",
     "elasticloadbalancing:DescribeListeners": "elbv2_listeners.json",
     "elasticloadbalancing:DescribeSSLPolicies": "elbv2_ssl_policies.json",
+    "cloudtrail:DescribeTrails": "cloudtrail_trails.json",
+    "guardduty:ListDetectors": "guardduty.json",
+    "backup:ListBackupPlans": "backup_plans.json",
+    "s3:GetBucketLifecycleConfiguration": "s3_buckets.json",
 }
 
 
@@ -302,8 +306,12 @@ class _Run:
                 if key is None:
                     unknown += 1
                     continue
-                match = [x for x in others if x.values.get(c.join.match[1]) == key]
+                match = [x for x in others if x.values.get(c.join.match[1]) == key
+                         and all(x.values.get(k) == v for k, v in c.join.where.items())]
                 if not match:
+                    if c.join.missing == "unknown":
+                        unknown += 1
+                        continue
                     checked += 1
                     ids.append(o.obs_id)
                     if c.join.missing == "violation":
@@ -311,10 +319,6 @@ class _Run:
                     continue
                 m = match[0]
                 target_ids.append(m.obs_id)
-                if not all(m.values.get(k) == v for k, v in c.join.where.items()):
-                    checked += 1
-                    ids += target_ids
-                    continue
                 vals = {**m.values, **vals}
             if c.field is None:
                 checked += 1

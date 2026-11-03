@@ -18,6 +18,7 @@
           "SubnetIdentifier": "subnet-0b2db0000000a"
         }
       ]
-    }
+    },
+    "BackupRetentionPeriod": 1
   }
 ]

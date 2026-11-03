@@ -9,7 +9,7 @@ from pathlib import Path
 
 import boto3
 from botocore.stub import Stubber
-from conftest import REPO, edit_csv, edit_json, edit_xlsx, edit_yaml, fix_iam
+from conftest import REPO, edit_csv, edit_json, edit_xlsx, edit_yaml, fix_iam, fix_logging
 
 from gapcheck.observe.aws import authorization_index
 from gapcheck.observe.aws_collect import collect_authorization
@@ -26,10 +26,11 @@ def subjects(r, ar):
 
 def test_all_iam_rules_conforming_after_fix(scenario):
     fix_iam(scenario)
+    fix_logging(scenario)   # 2.5.6-03(권한 변경 이력)은 감사 로그 설정에 달려 있음
     r = run_scenario(scenario, REPO)
     iam = [d for d in r["decisions"] if d["ar_id"].startswith(("AR-2.2.5", "AR-2.5.")) and
            not d["ar_id"].startswith("AR-2.5.4")]
-    assert len(iam) == 11
+    assert len(iam) == 12
     assert {d["ar_id"]: d["verdict"] for d in iam if d["verdict"] != "CANDIDATE_CONFORMING"} == {}
 
 

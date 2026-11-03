@@ -69,6 +69,20 @@ CRYPTO_RULES: list[tuple[str, re.Pattern]] = [
     ("key.rotation_required", re.compile(r"암호\s*키는.*교체.*자동\s*교체")),
     ("key.env_separation", re.compile(r"운영\s*환경의\s*암호\s*키를.*(?:개발|테스트).*사용하지\s*않")),
 ]
+# 로그·백업 규칙 (2.9, 2.12)
+LOG_RULES: list[tuple[str, re.Pattern]] = [
+    ("log.audit_trail_required", re.compile(r"감사\s*로그.*모든\s*리전에서\s*기록")),
+    ("log.integrity_required", re.compile(r"감사\s*로그.*무결성\s*검증")),
+    ("monitor.threat_detection_required", re.compile(r"이상\s*행위\s*탐지.*모든\s*계정에서\s*사용")),
+    ("backup.cross_region_required", re.compile(r"백업.*다른\s*리전에\s*복사")),
+]
+LOG_RETENTION = re.compile(r"(?:접속\s*기록|로그).*?(\d+)\s*년\s*이상\s*보관")
+BACKUP_RETENTION = re.compile(r"백업.*?(\d+)\s*일\s*이상\s*보관")
+# 주기: (param, 같은 문장에 있어야 하는 말)
+CYCLE_RULES = [("log.review_cycle_days", re.compile(r"접속\s*기록.*점검")),
+               ("backup.restore_test_cycle_days", re.compile(r"복구\s*테스트")),
+               ("dr.drill_cycle_days", re.compile(r"재해\s*복구\s*훈련"))]
+ANY_CYCLE = re.compile(r"(월|분기|반기|연)\s*1\s*회\s*이상")
 TLS_MIN = re.compile(r"TLS\s*(1\.[0-3])\s*이상")
 ADMIN_CIDR_CLAUSE = re.compile(r"(?:SSH|원격\s*데스크톱|원격\s*관리).*에서만\s*허용")
 CIDR = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}/\d{1,2}\b")
@@ -89,6 +103,17 @@ def _account_rules(c: Clause, name: str) -> list[Found]:
     for param, rx in CRYPTO_RULES:
         if rx.search(t):
             out.append(Found(param, True, c, t, name))
+    for param, rx in LOG_RULES:
+        if rx.search(t):
+            out.append(Found(param, True, c, t, name))
+    if m := LOG_RETENTION.search(t):
+        out.append(Found("log.retention_days", int(m.group(1)) * 365, c, t, name))
+    if m := BACKUP_RETENTION.search(t):
+        out.append(Found("backup.retention_days", int(m.group(1)), c, t, name))
+    if m := ANY_CYCLE.search(t):
+        for param, rx in CYCLE_RULES:
+            if rx.search(t):
+                out.append(Found(param, CYCLE_DAYS[m.group(1)], c, t, name))
     if m := TLS_MIN.search(t):
         out.append(Found("transport.tls_min_version", float(m.group(1)), c, t, name))
     if ADMIN_CIDR_CLAUSE.search(t) and (cidrs := CIDR.findall(t)):

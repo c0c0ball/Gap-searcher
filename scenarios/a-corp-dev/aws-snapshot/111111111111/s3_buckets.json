@@ -35,5 +35,29 @@
         "BucketKeyEnabled": false
       }
     ]
+  },
+  {
+    "Name": "a-prod-cloudtrail-logs",
+    "Region": "ap-northeast-2",
+    "Lifecycle": [
+      {
+        "ID": "expire",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 365
+        }
+      }
+    ],
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
   }
 ]

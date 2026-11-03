@@ -1,0 +1,16 @@
+[
+  {
+    "BackupPlanName": "stg-weekly",
+    "Rules": [
+      {
+        "RuleName": "daily",
+        "TargetBackupVaultName": "Default",
+        "ScheduleExpression": "cron(0 18 * * ? *)",
+        "Lifecycle": {
+          "DeleteAfterDays": 14
+        },
+        "CopyActions": []
+      }
+    ]
+  }
+]

@@ -9,6 +9,9 @@ privileged_list    AWS 계정, IAM 사용자, 권한, 승인자               pr
 access_review_log  검토일, 검토자, 결과                            access_review  (접근권한 검토 기록)
 asset_list         자산ID, 자산명, 유형, 개인정보                    asset_entry    (정보자산 목록)
 key_ledger         키 별칭, AWS 계정, 키 ID, 용도                    key_entry      (암호키 관리대장)
+access_log_review  점검일, 점검자, 결과                            access_log_check (접속기록 점검 기록)
+restore_test_log   시험일, 대상, 결과, 확인자                       restore_test   (백업 복구 테스트 기록)
+dr_drill_log       훈련일, 시나리오, 결과                          dr_drill       (재해 복구 훈련 기록)
 
 - 개인 이름은 마스킹된 채로 두고 판정에는 사번·IAM 사용자 이름만 쓴다.
 - 인사 명부는 계정 관리대장과 사번으로 이어서 'IAM 사용자 ↔ 재직 상태'를 만든다.
@@ -29,10 +32,17 @@ SIGNATURES: dict[str, set[str]] = {
     "access_review_log": {"검토일", "검토자", "결과"},
     "asset_list": {"자산ID", "자산명", "유형", "개인정보"},
     "key_ledger": {"키 별칭", "AWS 계정", "키 ID", "용도"},
+    "access_log_review": {"점검일", "점검자", "결과"},
+    "restore_test_log": {"시험일", "대상", "결과", "확인자"},
+    "dr_drill_log": {"훈련일", "시나리오", "결과"},
 }
 KIND_OBS = {"account_list": "account_entry", "hr_roster": "hr_account",
             "privileged_list": "privileged_entry", "access_review_log": "access_review",
-            "asset_list": "asset_entry", "key_ledger": "key_entry"}
+            "asset_list": "asset_entry", "key_ledger": "key_entry",
+            "access_log_review": "access_log_check", "restore_test_log": "restore_test", "dr_drill_log": "dr_drill"}
+# 날짜 한 칸이 핵심인 기록류: 종류 → (날짜 칸, 관측 필드)
+DATED = {"access_log_review": ("점검일", "checked_on"), "restore_test_log": ("시험일", "tested_on"),
+         "dr_drill_log": ("훈련일", "drilled_on")}
 
 
 def _cell(v: Any) -> Any:
@@ -152,7 +162,7 @@ def evidence_observations(files: list[tuple[str, bytes, str]], accounts: dict[st
                 obs.append(Observation(
                     obs_id=f"ev:asset:{r.get('자산ID')}", axis="evidence", kind="asset_entry",
                     subject=f"{r.get('자산ID')} {r.get('자산명')}",
-                    values={"key": key, "asset_id": r.get("자산ID"), "name": r.get("자산명"), "type": r.get("유형"),
+                    values={"key": key, "account_id": aid, "asset_id": r.get("자산ID"), "name": r.get("자산명"), "type": r.get("유형"),
                             "personal": str(r.get("개인정보") or "").upper() in ("Y", "O", "예", "포함"),
                             "importance": r.get("중요도"), "owner": r.get("관리자")},
                     extractor="evidence", source=src(path, sha, sheet, i)))
@@ -163,6 +173,13 @@ def evidence_observations(files: list[tuple[str, bytes, str]], accounts: dict[st
                     obs_id=f"ev:key:{key}", axis="evidence", kind="key_entry", subject=key,
                     values={"key": key, "alias": r.get("키 별칭"), "purpose": r.get("용도"),
                             "approver": r.get("생성 승인자") or "", "manager": r.get("담당자")},
+                    extractor="evidence", source=src(path, sha, sheet, i)))
+            elif kind in DATED:
+                col, fld = DATED[kind]
+                obs.append(Observation(
+                    obs_id=f"ev:{kind}:{r.get(col)}:{i}", axis="evidence", kind=KIND_OBS[kind],
+                    subject=f"{col} {r.get(col)}",
+                    values={fld: r.get(col), **{k: v for k, v in r.items() if k != col}},
                     extractor="evidence", source=src(path, sha, sheet, i)))
             elif kind == "access_review_log":
                 obs.append(Observation(

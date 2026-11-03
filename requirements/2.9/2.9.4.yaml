@@ -1,0 +1,176 @@
+# 2.9.4 로그 및 접속기록 관리 — 로그·백업 단계 (2단계 자동화)
+# 법령: 고시 제2026-9호 제8조① 접속기록 1년 이상(5만명 이상·고유식별/민감정보 처리 등은 2년 이상), ③ 위·변조 방지.
+# 기준값은 조직 지침(D08). 개인정보처리시스템 애플리케이션 접속기록 항목(계정·일시·IP·처리 정보주체·수행업무)은 사람이 확인.
+criterion: "2.9.4"
+name: 로그 및 접속기록 관리
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 140~142쪽(PDF 145~147) — 주요 확인사항 1~3, 결함사례 1~6"
+
+checkpoints:
+  - index: 1   # 로그관리 절차 수립, 필요한 로그 생성·보관
+    covered_by: [AR-2.9.4-01]
+  - index: 2   # 위·변조·도난·분실 방지, 접근권한 최소화
+    covered_by: [AR-2.9.4-02]
+  - index: 3   # 접속기록 필요 항목·일정기간 보관
+    covered_by: [AR-2.9.4-03]
+    note: 애플리케이션 접속기록의 필수 항목(처리한 정보주체, 수행업무)은 사람이 확인
+
+requirements:
+  - id: AR-2.9.4-01
+    title: 모든 계정에서 감사 로그가 기록되고 있다
+    summary: >-
+      지침이 감사 로그 기록을 정했다면, 범위 내 모든 AWS 계정에 기록 중(IsLogging)인 CloudTrail trail이 하나 이상 있어야 한다.
+    plain:
+      question: 정보시스템(클라우드 계정)에 대한 로그를 절차에 따라 생성하여 보관하고 있는가?
+      why: >-
+        감사 로그가 멈춰 있으면 그 기간에 누가 무엇을 했는지 전혀 알 수 없어요. 사고가 나도 원인을 찾을 수 없어요.
+      fix:
+        - CloudTrail 콘솔 → 해당 trail → '로깅 시작'을 눌러 다시 켜요.
+        - 로깅이 멈추면 알림이 오도록 CloudWatch 알람이나 Config 규칙을 걸어 둬요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "140쪽 주요 확인사항 1"}
+    checkpoints: [1]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 AWS 계정의 감사 로그 상태
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 감사 로그 기록 조항
+        params: [log.audit_trail_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 계정별 trail 기록 여부
+        collect:
+          apis: ["cloudtrail:DescribeTrails", "cloudtrail:GetTrailStatus"]
+          per: account
+          kind: aws_trail_status
+          fields: [key, trails, has_active_trail, stopped]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 기록 중인 trail이 있어야 함
+        check:
+          population: T2
+          gate: T1.log.audit_trail_required
+          field: has_active_trail
+          op: truthy
+          message: "{account_id}: 기록 중인 trail 없음 (trail: {trails}, 중지: {stopped})"
+          plain: "{account}의 감사 로그 기록이 멈춰 있어요. 이 계정에서 일어난 일이 남지 않고 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 기록 중인 trail이 없는 계정이 1개 이상
+
+  - id: AR-2.9.4-02
+    title: 감사 로그 무결성 검증이 켜져 있다
+    summary: >-
+      지침이 감사 로그 무결성 검증을 정했다면, 기록 중인 모든 trail의 로그 파일 검증(LogFileValidationEnabled)이 켜져 있어야 한다.
+    plain:
+      question: 로그기록이 위·변조되지 않도록 안전하게 보관하고 있는가?
+      why: >-
+        무결성 검증이 꺼져 있으면 누군가 로그 파일을 고치거나 지워도 알아챌 방법이 없어요. 사고 조사 때 로그를 믿을 수 없게 돼요.
+      fix:
+        - CloudTrail 콘솔 → 해당 trail → 편집 → '로그 파일 검증'을 켜요.
+        - 로그 버킷은 별도 계정에 두고, 삭제를 막는 설정(객체 잠금)을 검토해요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "140쪽 주요 확인사항 2, 142쪽 결함사례 3"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.9.4-3"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 기록 중인 trail
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 무결성 검증 조항
+        params: [log.integrity_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: trail별 기록 여부·무결성 검증
+        collect:
+          apis: ["cloudtrail:DescribeTrails", "cloudtrail:GetTrailStatus"]
+          per: resource
+          kind: aws_trail
+          fields: [key, trail, is_logging, validation]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 무결성 검증이 켜져 있어야 함
+        check:
+          population: T2
+          where: {is_logging: true}
+          gate: T1.log.integrity_required
+          field: validation
+          op: truthy
+          message: "{key}: 로그 파일 무결성 검증(LogFileValidationEnabled) 꺼짐"
+          plain: "{account}의 감사 로그 '{trail}'는 위·변조를 확인하는 기능이 꺼져 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 무결성 검증이 꺼진 trail이 1개 이상
+
+  - id: AR-2.9.4-03
+    title: 감사 로그를 정한 기간 이상 보관한다
+    summary: >-
+      지침이 로그 보관 기간을 정했다면, 기록 중인 trail이 저장하는 S3 버킷의 수명주기 만료가 그 기간 이상이어야 한다(만료 규칙이 없으면 계속 보관).
+      버킷을 수집하지 못하면 판단 불가로 둔다.
+    plain:
+      question: 접속기록과 로그를 법령·지침에서 정한 기간 이상 안전하게 보관하고 있는가?
+      why: >-
+        보관 기간이 지나 지워진 로그는 되살릴 수 없어요. 늦게 발견된 사고는 조사할 근거가 없어져요.
+      fix:
+        - 로그 버킷의 수명주기 규칙에서 만료 일수를 지침 기간 이상으로 늘려요.
+        - 비용이 걱정되면 지우는 대신 저렴한 보관 등급(Glacier)으로 옮기는 규칙을 써요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "140쪽 주요 확인사항 3, 142쪽 결함사례 5·6"}
+    checkpoints: [3]
+    case_refs: ["KISA:2.9.4-5", "KISA:2.9.4-6"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 기록 중인 trail의 저장 버킷
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 로그 보관 기간(일)
+        params: [log.retention_days]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: trail과 저장 버킷
+        collect:
+          apis: ["cloudtrail:DescribeTrails", "cloudtrail:GetTrailStatus"]
+          per: resource
+          kind: aws_trail
+          fields: [key, trail, is_logging, bucket, bucket_key]
+      - id: T3
+        type: CONFIG_COLLECT
+        description: 버킷 수명주기 만료
+        collect:
+          apis: ["s3:GetBucketLifecycleConfiguration"]
+          per: resource
+          kind: aws_bucket
+          fields: [key, bucket, retention_days, retention_text]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 보관 기간이 기준 이상
+        check:
+          population: T2
+          where: {is_logging: true}
+          join: {test: T3, match: [bucket_key, key], missing: unknown}
+          field: retention_days
+          op: ">="
+          value: T1.log.retention_days
+          message: "{key}: 저장 버킷 {bucket} 이 {retention_text} (기준 {limit}일 이상)"
+          plain: "{account}의 감사 로그가 '{bucket}' 버킷에서 {retention_days}일 뒤 지워져요. 회사 기준은 {limit}일 이상 보관이에요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 보관 기간이 기준보다 짧은 trail 버킷이 1개 이상

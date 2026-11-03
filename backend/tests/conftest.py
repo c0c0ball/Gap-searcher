@@ -154,3 +154,31 @@ def fix_crypto(sc: Path):
         SslPolicy="ELBSecurityPolicy-TLS13-1-2-2021-06"))
     edit_json(stg / "elbv2_ssl_policies.json", lambda ps: ps.append(
         {"Name": "ELBSecurityPolicy-TLS13-1-2-2021-06", "SslProtocols": ["TLSv1.2", "TLSv1.3"]}))
+
+
+def fix_logging(sc: Path):
+    """로그·백업 결함 D30~D38을 고치고 재해 복구 훈련 기록(G1)을 제출한 상태로 만든다."""
+    prod, stg, shared = (sc / f"aws-snapshot/{a}" for a in ("111111111111", "222222222222", "333333333333"))
+    edit_json(stg / "cloudtrail_trails.json", lambda ts: ts[0]["Status"].update(IsLogging=True))          # D30
+    edit_json(shared / "cloudtrail_trails.json", lambda ts: ts[0].update(                                 # D31, D32
+        IsMultiRegionTrail=True, IncludeGlobalServiceEvents=True, LogFileValidationEnabled=True))
+    edit_json(prod / "s3_buckets.json", lambda bs: [b.update(Lifecycle=[{"ID": "expire", "Status": "Enabled",  # D33
+        "Expiration": {"Days": 1825}}]) for b in bs if b["Name"] == "a-prod-cloudtrail-logs"])
+    (shared / "guardduty.json").write_text('[{"DetectorId": "d0c3", "Status": "ENABLED"}]')               # D34
+    edit_json(prod / "backup_plans.json", lambda ps: ps[0]["Rules"][0].update(CopyActions=[{             # D35
+        "DestinationBackupVaultArn": "arn:aws:backup:ap-northeast-1:111111111111:backup-vault:dr"}]))
+    edit_json(prod / "rds_db_instances.json", lambda d: d[0].update(BackupRetentionPeriod=14))            # D36
+    ev = sc / "evidence"
+    edit_xlsx(ev / "접속기록점검기록_2026.xlsx", lambda rs: rs.append(                                       # D37
+        {"점검일": "2026-10-30", "점검자": "정보보호팀 박○○", "대상 시스템": "쇼핑몰 관리자 페이지", "결과": "이상 없음"}))
+    edit_xlsx(ev / "백업복구테스트기록_2025-2026.xlsx", lambda rs: rs.append(                                 # D38
+        {"시험일": "2026-06-15", "대상": "운영 주문 DB 스냅샷 복원", "결과": "성공", "확인자": "운영팀장"}))
+    from openpyxl import Workbook                                                                        # G1
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "재해 복구 훈련"
+    ws.append(["훈련일", "시나리오", "결과", "보고"])
+    ws.append(["2026-04-22", "서울 리전 장애 — 도쿄 리전 복구", "목표 시간 내 복구", "정보보호최고책임자 보고"])
+    wb.save(ev / "재해복구훈련기록_2026.xlsx")
+    edit_yaml(sc / "scope.yaml", lambda s: s["evidence"].append(
+        {"file": "evidence/재해복구훈련기록_2026.xlsx", "kind": "dr_drill_log"}))

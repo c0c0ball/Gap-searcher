@@ -1,0 +1,21 @@
+[
+  {
+    "Name": "a-shared-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:333333333333:trail/a-shared-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": false,
+    "IncludeGlobalServiceEvents": false,
+    "LogFileValidationEnabled": false,
+    "S3BucketName": "a-shared-cloudtrail-logs",
+    "Status": {
+      "IsLogging": true
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

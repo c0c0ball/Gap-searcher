@@ -130,12 +130,13 @@ export default function Dashboard() {
           {groups.map((g) => {
             const items = d.strip.filter((s) => g.ars.includes(s.ar_id));
             const nfix = items.filter((s) => s.tone === "fix").length;
+            const nunk = items.filter((s) => s.tone === "unknown").length;
             return (
               <div key={g.id} className="strip-row">
                 <a className="strip-label" href={`/checklist#${g.id}`}>
                   <b>{g.id}</b> <span>{g.name}</span>
-                  <span className="small" style={{ color: nfix ? "var(--fix)" : "var(--ok)", fontWeight: 600 }}>
-                    {nfix ? `고칠 것 ${nfix}` : "고칠 것 없음"}
+                  <span className="small" style={{ color: nfix ? "var(--fix)" : nunk ? "var(--unk)" : "var(--ok)", fontWeight: 600 }}>
+                    {nfix ? `고칠 것 ${nfix}` : nunk ? `판단 못함 ${nunk}` : "고칠 것 없음"}
                   </span>
                 </a>
                 <div className="strip">

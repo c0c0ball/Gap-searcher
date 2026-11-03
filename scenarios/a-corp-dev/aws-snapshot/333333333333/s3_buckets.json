@@ -10,5 +10,18 @@
         "BucketKeyEnabled": false
       }
     ]
+  },
+  {
+    "Name": "a-shared-cloudtrail-logs",
+    "Region": "ap-northeast-2",
+    "Lifecycle": [],
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
   }
 ]

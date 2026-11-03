@@ -7,7 +7,7 @@ import { API, api, fmtTime, post } from "../lib/api";
 import { targetLabel, usePref } from "../lib/prefs";
 
 type State = "fix" | "ok" | "na" | "unknown";
-type AutoAr = { ar_id: string; tone: State; reviewed: boolean; reason: string; found: string[] };
+type AutoAr = { ar_id: string; tone: State; reviewed: boolean; reason: string; found: string[]; note?: string };
 type Judgement = { state: State; by: string; comment: string; at: string };
 type EvFile = { file: string; sha256: string; size: number; scan_status: string; by: string; at: string };
 type CP = { index: number; state: State; source: "manual" | "auto" | "none"; auto: { tone: State; ars: AutoAr[]; run_id: string } | null;
@@ -79,6 +79,7 @@ function CheckpointCard({ cp, text, target, cid, name, onSaved }: { cp: CP; text
             <div key={a.ar_id} className="small" style={{ margin: "4px 0" }}>
               <StatusBadge tone={a.tone as Tone}>{WORD[a.tone]}{a.reviewed ? " · 검토됨" : ""}</StatusBadge> <code>{a.ar_id}</code>
               {a.found.length > 0 && <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>{a.found.map((f, i) => <li key={i}>{f}</li>)}</ul>}
+              {a.found.length === 0 && a.note && <p className="muted" style={{ margin: "4px 0 0 18px" }}>{a.note}</p>}
             </div>
           ))}
         </div>

@@ -21,6 +21,7 @@ from typing import Any
 
 from ..model import Observation
 from .crypto import db_crypto_fields
+from .logging import db_backup_fields
 
 REMOTE_ADMIN = {22: "SSH", 3389: "원격 데스크톱(RDP)"}
 INSECURE = {20: "FTP 데이터", 21: "FTP", 23: "Telnet", 69: "TFTP", 512: "rexec", 513: "rlogin", 514: "rsh"}
@@ -71,6 +72,7 @@ def network_observations(aid: str, f: dict[str, bytes], sha: dict[str, str], src
             "publicly_accessible": bool(d.get("PubliclyAccessible")),
             "security_groups": sorted(g["VpcSecurityGroupId"] for g in d.get("VpcSecurityGroups", [])),
             **db_crypto_fields(d, aid),
+            **db_backup_fields(d),
         }, [FILES["rds"]], "rds:DescribeDBInstances"))
 
     names = {g["GroupId"]: g.get("GroupName", g["GroupId"]) for g in sgs or []}

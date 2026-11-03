@@ -1,0 +1,172 @@
+# 2.9.3 백업 및 복구관리 — 로그·백업 단계 (2단계 자동화)
+# 법령: 고시 제2026-9호 제11조(재해·재난 대비) 2호 백업·복구 계획 — 일정 규모 이상 처리자. 기준값은 조직 지침(D08).
+criterion: "2.9.3"
+name: 백업 및 복구관리
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 138~139쪽(PDF 143~144) — 주요 확인사항 1~3, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 백업 대상·주기·방법·절차 수립·이행
+    covered_by: [AR-2.9.3-01]
+  - index: 2   # 정기 복구 테스트
+    covered_by: [AR-2.9.3-03]
+  - index: 3   # 백업매체 소산
+    covered_by: [AR-2.9.3-02]
+
+requirements:
+  - id: AR-2.9.3-01
+    title: 중요 데이터베이스의 자동 백업을 정한 기간 이상 보관한다
+    summary: >-
+      지침이 중요도 '상' 데이터베이스의 백업 보관 기간을 정했다면, 정보자산 목록에서 중요도 '상'인 RDS의
+      자동 백업 보관 기간(BackupRetentionPeriod)이 그 기간 이상이어야 한다. 0은 자동 백업 꺼짐이다.
+    plain:
+      question: 백업 대상·주기·보관기간 등 백업 절차를 수립하고 중요 데이터베이스에 그대로 이행하고 있는가?
+      why: >-
+        보관 기간이 짧으면 며칠 지나서 발견한 데이터 손상이나 삭제는 되돌릴 수 없어요.
+      fix:
+        - RDS 콘솔 → 해당 DB → 수정 → 백업 보존 기간을 지침의 일수 이상으로 바꿔요.
+        - AWS Backup 계획으로 관리한다면 그 계획의 보존 기간도 같이 맞춰요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "138쪽 주요 확인사항 1, 139쪽 결함사례 2"}
+    checkpoints: [1]
+    case_refs: ["KISA:2.9.3-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 정보자산 목록의 중요도 '상' RDS
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 중요 DB 백업 보관 기간(일)
+        params: [backup.retention_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 정보자산 목록 (유형·중요도)
+        evidence_kind: asset_list
+        params: [key, asset_id, name, type, importance]
+      - id: T3
+        type: CONFIG_COLLECT
+        description: RDS 자동 백업 보관 기간
+        collect:
+          apis: ["rds:DescribeDBInstances"]
+          per: resource
+          kind: aws_db
+          fields: [key, db, backup_retention_days]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 보관 기간이 기준 이상
+        check:
+          population: T2
+          where: {type: RDS, importance: 상}
+          join: {test: T3, match: [key, key], missing: unknown}
+          field: backup_retention_days
+          op: ">="
+          value: T1.backup.retention_days
+          message: "{key}({asset_id} {name}): 자동 백업 보관 {backup_retention_days}일 (기준 {limit}일 이상)"
+          plain: "{account}의 '{name}' 데이터베이스는 백업을 {backup_retention_days}일만 보관해요. 회사 기준은 {limit}일 이상이에요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 보관 기간이 기준보다 짧은 중요 DB가 1개 이상
+
+  - id: AR-2.9.3-02
+    title: 중요 자원이 있는 계정의 백업은 다른 리전에 복사된다
+    summary: >-
+      지침이 중요 자원 백업의 다른 리전 복사(소산)를 정했다면, 정보자산 목록에 중요도 '상' 자원이 있는 AWS 계정은
+      AWS Backup 계획 중 하나 이상에 다른 리전 보관소로의 복사(CopyAction)가 있어야 한다.
+    plain:
+      question: 중요정보 백업을 재해에 대비하여 물리적으로 떨어진 장소에 보관(소산)하고 있는가?
+      why: >-
+        백업이 원본과 같은 지역에만 있으면, 그 지역 전체에 장애가 났을 때 백업도 함께 쓸 수 없어요.
+      fix:
+        - AWS Backup → 백업 계획 → 규칙 편집 → '다른 리전에 복사'를 추가하고 대상 리전의 보관소를 정해요.
+        - 복사본 보관 기간도 원본과 같게 맞춰요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "138쪽 주요 확인사항 3"}
+    checkpoints: [3]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 중요도 '상' 자원이 있는 AWS 계정
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 다른 리전 복사 조항
+        params: [backup.cross_region_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 계정별 백업 계획과 다른 리전 복사 여부
+        collect:
+          apis: ["backup:ListBackupPlans", "backup:GetBackupPlan"]
+          per: account
+          kind: aws_backup_account
+          fields: [key, plans, has_cross_region_copy, copies]
+      - id: T3
+        type: EVIDENCE_REVIEW
+        description: 정보자산 목록 (계정·중요도)
+        evidence_kind: asset_list
+        params: [account_id, asset_id, name, importance]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 중요 자원이 있는 계정은 다른 리전 복사가 있어야 함
+        check:
+          population: T2
+          gate: T1.backup.cross_region_required
+          join: {test: T3, match: [account_id, account_id], missing: ok, where: {importance: 상}}
+          field: has_cross_region_copy
+          op: truthy
+          message: "{account_id}: 중요도 상 자원({name} 등)이 있는데 백업 계획({plans})에 다른 리전 복사 없음"
+          plain: "{account}에는 중요한 자원이 있는데, 백업이 다른 지역에 복사되지 않고 한 곳에만 있어요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 다른 리전 복사가 없는 중요 자원 계정이 1개 이상
+
+  - id: AR-2.9.3-03
+    title: 백업 복구 테스트를 정한 주기마다 한다
+    summary: >-
+      지침이 복구 테스트 주기를 정했다면, 백업 복구 테스트 기록의 가장 최근 시험일이 기준일로부터 그 주기 안에 있어야 한다. 반기는 184일로 센다.
+    plain:
+      question: 백업된 정보가 실제로 복구되는지 확인하기 위해 정기적으로 복구 테스트를 실시하고 있는가?
+      why: >-
+        백업이 있어도 복구해 본 적이 없으면, 정작 필요할 때 파일이 깨져 있거나 복구 방법을 몰라 시간이 걸릴 수 있어요.
+      fix:
+        - 운영 DB 스냅샷을 별도 인스턴스로 복원해 데이터가 맞는지 확인하고, 걸린 시간과 결과를 기록해요.
+        - 다음 시험 날짜를 일정에 넣어 둬요.
+      owner: 운영팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "138쪽 주요 확인사항 2, 139쪽 결함사례 4"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.9.3-4"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 백업 복구 테스트 기록
+      source: T2.tested_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 복구 테스트 주기
+        params: [backup.restore_test_cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 백업 복구 테스트 기록 (시험일·대상·결과)
+        evidence_kind: restore_test_log
+        params: [tested_on]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 시험일이 주기 안인지
+        cadence:
+          last_event: T2.tested_on
+          max_interval_days: T1.backup.restore_test_cycle_days
+          aggregate: latest
+          plain: "마지막 백업 복구 테스트가 {last}이에요. 회사 규칙대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 복구 테스트가 정한 주기를 넘김

@@ -1,0 +1,21 @@
+[
+  {
+    "Name": "a-stg-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:222222222222:trail/a-stg-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "a-stg-cloudtrail-logs",
+    "Status": {
+      "IsLogging": false
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

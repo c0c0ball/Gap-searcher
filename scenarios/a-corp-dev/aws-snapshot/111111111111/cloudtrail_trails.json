@@ -1,0 +1,21 @@
+[
+  {
+    "Name": "a-prod-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:111111111111:trail/a-prod-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "a-prod-cloudtrail-logs",
+    "Status": {
+      "IsLogging": true
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

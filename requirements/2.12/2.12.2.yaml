@@ -1,0 +1,59 @@
+# 2.12.2 재해 복구 시험 및 개선 — 로그·백업 단계 (2단계 자동화)
+criterion: "2.12.2"
+name: 재해 복구 시험 및 개선
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 184~185쪽(PDF 189~190) — 주요 확인사항 1~2, 결함사례 1~3"
+
+checkpoints:
+  - index: 1   # 재해 복구 시험계획 수립·이행
+    covered_by: [AR-2.12.2-01]
+  - index: 2   # 시험결과·환경변화 반영한 정기 검토·보완
+    covered_by: []
+    note: 복구 전략 개정 이력은 사람이 확인
+
+requirements:
+  - id: AR-2.12.2-01
+    title: 재해 복구 훈련을 정한 주기마다 한다
+    summary: >-
+      지침이 재해 복구 훈련 주기를 정했다면, 재해 복구 훈련 기록의 가장 최근 훈련일이 기준일로부터 그 주기 안에 있어야 한다. 연은 366일로 센다.
+      훈련 기록이 제출되지 않으면 판단 불가로 둔다(훈련을 안 했다고 단정하지 않는다).
+    plain:
+      question: 재해 복구체계의 실효성을 확인하기 위해 재해 복구 훈련 계획을 수립하여 정기적으로 이행하고 있는가?
+      why: >-
+        복구 절차가 문서로만 있으면 실제 재해 때 순서가 맞지 않거나 연락이 안 되는 문제가 그때서야 드러나요.
+      fix:
+        - 올해 재해 복구 훈련 계획과 결과 보고서를 제출해 주세요. 훈련을 하지 않았다면 일정을 잡아요.
+        - 훈련 뒤에는 걸린 시간을 복구 목표 시간과 비교하고, 부족한 점을 절차에 반영해요.
+      owner: 정보보호팀 · 운영팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "184쪽 주요 확인사항 1, 185쪽 결함사례 1"}
+    checkpoints: [1]
+    case_refs: ["KISA:2.12.2-1"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 재해 복구 훈련 기록
+      source: T2.drilled_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 재해 복구 훈련 주기
+        params: [dr.drill_cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 재해 복구 훈련 기록 (훈련일·시나리오·결과)
+        evidence_kind: dr_drill_log
+        params: [drilled_on]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 훈련일이 주기 안인지
+        cadence:
+          last_event: T2.drilled_on
+          max_interval_days: T1.dr.drill_cycle_days
+          aggregate: latest
+          plain: "마지막 재해 복구 훈련이 {last}이에요. 회사 규칙대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 훈련이 정한 주기를 넘김

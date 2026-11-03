@@ -95,8 +95,11 @@ def crypto_observations(aid: str, f: dict[str, bytes], sha: dict[str, str], src:
         if isinstance(enc, list) and enc:
             d = enc[0].get("ApplyServerSideEncryptionByDefault", {})
             algo, kms = d.get("SSEAlgorithm"), d.get("KMSMasterKeyID")
+        from .logging import bucket_retention
+        ret, ret_text = bucket_retention(b.get("Lifecycle"))
         obs.append(o("aws_bucket", f"s3:{name}", f"{aid}/{name}", {
             "key": f"{aid}/{name}", "bucket": name, "sse_algorithm": algo or "없음",
+            "retention_days": ret, "retention_text": ret_text,
             "kms_encrypted": algo in ("aws:kms", "aws:kms:dsse"), "kms_key": kms,
         }, [FILES["bucket"]], "s3:ListBuckets+s3:GetBucketEncryption"))
         if algo in ("aws:kms", "aws:kms:dsse"):

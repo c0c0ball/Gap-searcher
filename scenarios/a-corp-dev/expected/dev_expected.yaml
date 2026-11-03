@@ -99,6 +99,38 @@ seeded_defects:
   - id: D29
     ar: AR-2.7.1-05
     what: a-stg 공개 ALB stg-web 의 443 보안 정책 ELBSecurityPolicy-2016-08 이 TLS 1.0 부터 허용 (제4조 TLS 1.2 이상)
+  # ── 2단계: 로그·백업 (2.5.6 확인사항 1, 2.9.3~2.9.5, 2.12.2) ──
+  - id: D30
+    ar: [AR-2.9.4-01, AR-2.5.6-03]
+    what: a-stg 감사 로그(a-stg-audit) 기록 중지 (운영보안 지침 제3조①) — 로그 생성과 권한 변경 이력 두 기준에 걸린다
+  - id: D31
+    ar: AR-2.5.6-03
+    what: a-shared trail 이 단일 리전이고 전역 서비스 이벤트 제외 — IAM 변경이 남지 않음
+    trap: trail 이 '기록 중'이라 로그 켜짐 여부만 보면 놓친다.
+  - id: D32
+    ar: AR-2.9.4-02
+    what: a-shared trail 로그 파일 무결성 검증 꺼짐 (제3조②)
+  - id: D33
+    ar: AR-2.9.4-03
+    what: a-prod 감사 로그 버킷 수명주기 365일 삭제 — 지침 2년(730일) 이상 (제3조③)
+  - id: D34
+    ar: AR-2.9.5-01
+    what: a-shared 계정에 GuardDuty 없음 (제4조②)
+  - id: D35
+    ar: AR-2.9.3-02
+    what: a-prod 백업 계획(prod-daily)에 다른 리전 복사 없음 — 중요도 상 자원 보유 (제5조②)
+  - id: D36
+    ar: AR-2.9.3-01
+    what: a-prod 운영 주문 DB(중요도 상) 자동 백업 보관 3일 — 지침 7일 이상 (제5조①)
+  - id: D37
+    ar: AR-2.9.5-02
+    what: 접속기록 점검이 2026-08-31 뒤로 없음 — 지침 월 1회(31일) (제4조①)
+  - id: D38
+    ar: AR-2.9.3-03
+    what: 백업 복구 테스트가 2025-12-10 뒤로 없음 — 지침 반기 1회(184일) (제5조③)
+  - id: G1
+    ar: AR-2.12.2-01
+    what: 재해 복구 훈련 기록이 제출되지 않음 — 결함이 아니라 '판단 못함'이 정답
 non_defects:
   - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
   - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
@@ -118,6 +150,10 @@ non_defects:
   - a-prod 정적 파일·a-shared 도구 로그 버킷은 SSE-S3 — 정보자산 목록상 개인정보 없음이라 결함 아님
   - a-prod 내부 전용 ALB 의 HTTP:8080 — 인터넷 구간이 아님
   - a-stg stg-web 의 HTTP:80 은 HTTPS 로 전환만 함 — 평문 서비스 아님
+  - a-shared 감사 로그 버킷은 수명주기 규칙이 없어 계속 보관 — 보관기간 충족
+  - a-stg 감사 로그 버킷은 800일 보관이지만 기록이 멈춘 trail 이라 보관기간 규칙의 대상이 아님 (기록 중지는 2.9.4-01)
+  - a-stg DB 백업 보관 1일 — 중요도 '중' 이라 지침(중요도 '상') 대상 아님
+  - a-stg·a-shared 에는 다른 리전 복사가 없지만 중요도 '상' 자원이 없어 대상 아님
 expected:
   AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
   AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
@@ -149,3 +185,13 @@ expected:
   AR-2.7.2-01: {state: CANDIDATE_NONCONFORMITY, defects: [D25], subjects: ["111111111111/1a1a1a1a-0000-4000-8000-000000000001"]}
   AR-2.7.2-02: {state: CANDIDATE_NONCONFORMITY, defects: [D27], subjects: ["222222222222/vol-0b2app000000001"]}
   AR-2.7.2-03: {state: CANDIDATE_NONCONFORMITY, defects: [D26], subjects: ["222222222222/2b2b2b2b-0000-4000-8000-000000000002"]}
+  AR-2.5.6-03: {state: CANDIDATE_NONCONFORMITY, defects: [D30, D31], subjects: ["222222222222/cloudtrail", "333333333333/cloudtrail"]}
+  AR-2.9.3-01: {state: CANDIDATE_NONCONFORMITY, defects: [D36], subjects: ["111111111111/prod-orders"]}
+  AR-2.9.3-02: {state: CANDIDATE_NONCONFORMITY, defects: [D35], subjects: ["111111111111/backup"]}
+  AR-2.9.3-03: {state: CANDIDATE_NONCONFORMITY, defects: [D38], subjects: ["백업 복구 테스트 기록"]}
+  AR-2.9.4-01: {state: CANDIDATE_NONCONFORMITY, defects: [D30], subjects: ["222222222222/cloudtrail"]}
+  AR-2.9.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D32], subjects: ["333333333333/a-shared-audit"]}
+  AR-2.9.4-03: {state: CANDIDATE_NONCONFORMITY, defects: [D33], subjects: ["111111111111/a-prod-audit"]}
+  AR-2.9.5-01: {state: CANDIDATE_NONCONFORMITY, defects: [D34], subjects: ["333333333333/guardduty"]}
+  AR-2.9.5-02: {state: CANDIDATE_NONCONFORMITY, defects: [D37], subjects: ["접속기록 점검 기록"]}
+  AR-2.12.2-01: {state: INSUFFICIENT_EVIDENCE}

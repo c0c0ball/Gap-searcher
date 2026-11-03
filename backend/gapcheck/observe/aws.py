@@ -237,4 +237,7 @@ def snapshot_observations(manifest: dict, files: dict[str, dict[str, bytes]], sh
         from .crypto import FILES as CRYPTO_FILES, crypto_observations
         if any(n in f for n in CRYPTO_FILES.values()) or "rds_db_instances.json" in f:
             obs += crypto_observations(aid, f, sha, src)
+        from .logging import FILES as LOG_FILES, logging_observations
+        if any(n in f for n in LOG_FILES.values()):
+            obs += logging_observations(aid, f, sha, src, manifest.get("region", "ap-northeast-2"))
     return obs

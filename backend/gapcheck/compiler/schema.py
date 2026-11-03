@@ -68,8 +68,8 @@ class Cadence(_Strict):
 class Join(_Strict):
     test: str                     # 대조할 다른 모집단 (테스트 id)
     match: list[str] = Field(min_length=2, max_length=2)   # [이 모집단 필드, 대조 모집단 필드] (YAML에서 on은 불리언으로 읽혀서 쓰지 않음)
-    missing: Literal["ok", "violation"] = "ok"          # 대조 대상이 없을 때
-    where: dict[str, str | int | bool] = Field(default_factory=dict)  # 대조 대상이 이 조건을 만족할 때만 검사
+    missing: Literal["ok", "violation", "unknown"] = "ok"   # 대조 대상이 없을 때 (unknown: 판단 불가로 셈)
+    where: dict[str, str | int | bool] = Field(default_factory=dict)  # 이 조건을 만족하는 대조 대상만 후보로 봄
 
 
 class Grace(_Strict):

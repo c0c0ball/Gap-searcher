@@ -180,6 +180,64 @@ def collect_crypto(ec2, s3, kms, elb) -> dict[str, list | dict]:
     }
 
 
+def collect_trails(ct) -> list | dict:
+    """trail마다 상태와 이벤트 선택기를 붙인다. 고급 이벤트 선택기만 쓰면 AdvancedEventSelectors 로 남긴다."""
+    try:
+        trails = ct.describe_trails(includeShadowTrails=False)["trailList"]
+    except ClientError as e:
+        return _err(e)
+    for t in trails:
+        arn = t["TrailARN"]
+        try:
+            t["Status"] = {"IsLogging": ct.get_trail_status(Name=arn)["IsLogging"]}
+        except ClientError as e:
+            t["Status"] = _err(e)
+        try:
+            sel = ct.get_event_selectors(TrailName=arn)
+            if "EventSelectors" in sel:
+                t["EventSelectors"] = sel["EventSelectors"]
+            if "AdvancedEventSelectors" in sel:
+                t["AdvancedEventSelectors"] = sel["AdvancedEventSelectors"]
+        except ClientError as e:
+            t["EventSelectorsError"] = e.response["Error"]["Code"]
+    return trails
+
+
+def collect_guardduty(gd) -> list | dict:
+    ids = _pages(gd, "list_detectors", "DetectorIds")
+    if isinstance(ids, dict):
+        return ids
+    out = []
+    for i in ids:
+        try:
+            out.append({"DetectorId": i, "Status": gd.get_detector(DetectorId=i)["Status"]})
+        except ClientError as e:
+            out.append({"DetectorId": i, **_err(e)})
+    return out
+
+
+def collect_backup(bk) -> list | dict:
+    plans = _pages(bk, "list_backup_plans", "BackupPlansList")
+    if isinstance(plans, dict):
+        return plans
+    out = []
+    for p in plans:
+        try:
+            out.append(bk.get_backup_plan(BackupPlanId=p["BackupPlanId"])["BackupPlan"])
+        except ClientError as e:
+            out.append({"BackupPlanName": p.get("BackupPlanName"), **_err(e)})
+    return out
+
+
+def add_bucket_lifecycle(s3, buckets: list) -> None:
+    """s3_buckets.json 항목에 수명주기 규칙을 붙인다 (로그 보관기간용)"""
+    for b in buckets:
+        try:
+            b["Lifecycle"] = s3.get_bucket_lifecycle_configuration(Bucket=b["Name"])["Rules"]
+        except ClientError as e:
+            b["Lifecycle"] = [] if e.response["Error"]["Code"] == "NoSuchLifecycleConfiguration" else None
+
+
 def collect_cognito(cog) -> list | dict:
     try:
         pools = []
@@ -227,8 +285,14 @@ def collect_account(session: boto3.Session, expected_account: str, out_dir: Path
         else:
             (d / name).write_text(json.dumps(body, indent=2, default=str))
 
-    cr = collect_crypto(session.client("ec2", region_name=region), session.client("s3", region_name=region),
+    s3c = session.client("s3", region_name=region)
+    cr = collect_crypto(session.client("ec2", region_name=region), s3c,
                         session.client("kms", region_name=region), session.client("elbv2", region_name=region))
+    if isinstance(cr["s3_buckets.json"], list):
+        add_bucket_lifecycle(s3c, cr["s3_buckets.json"])
+    cr["cloudtrail_trails.json"] = collect_trails(session.client("cloudtrail", region_name=region))
+    cr["guardduty.json"] = collect_guardduty(session.client("guardduty", region_name=region))
+    cr["backup_plans.json"] = collect_backup(session.client("backup", region_name=region))
     for name, body in cr.items():
         if isinstance(body, dict):
             errors.append(f"{name.split('.')[0]}: {body['Error']['Code']}")

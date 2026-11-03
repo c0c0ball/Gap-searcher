@@ -70,6 +70,21 @@ resource "aws_iam_role_policy" "gapcheck_collector_read" {
         ]
         Resource = "*"
       },
+      {
+        Sid    = "LoggingBackupReads"
+        Effect = "Allow"
+        Action = [
+          "cloudtrail:DescribeTrails",
+          "cloudtrail:GetTrailStatus",
+          "cloudtrail:GetEventSelectors",
+          "s3:GetLifecycleConfiguration",
+          "guardduty:ListDetectors",
+          "guardduty:GetDetector",
+          "backup:ListBackupPlans",
+          "backup:GetBackupPlan",
+        ]
+        Resource = "*"
+      },
     ]
   })
 }

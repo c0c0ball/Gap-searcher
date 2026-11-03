@@ -182,6 +182,10 @@ def build(result_body: dict, requirements: list, accounts: dict[str, dict]) -> d
                 found.append("확인한 계정과 사용자 모두 회사 규칙과 같았어요.")
         note = REASON.get(d["reason_code"], "") if d["verdict"] not in (
             "CANDIDATE_NONCONFORMITY", "CANDIDATE_CONFORMING") else ""
+        missing_ev = [t.description.split(" (")[0] for t in ar.tests if t.type == "EVIDENCE_REVIEW" and t.evidence_kind
+                      and ev_by[d["ar_id"]]["tests"].get(t.id, {}).get("detail", "").endswith("없음")]
+        if note and missing_ev:
+            note = f"판단에 필요한 자료({', '.join(missing_ev)})가 아직 제출되지 않았어요."
         items.append({
             "ar_id": ar.id,
             "question": p.question if p else ar.title,
