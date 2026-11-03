@@ -21,8 +21,9 @@ TestType = Literal[
     "CADENCE_CHECK",        # 주기 이행 여부 (파생)
     "POPULATION_COVERAGE",  # 모집단 대비 범위 (파생)
     "HUMAN_CONFIRMATION",   # 질의·인터뷰 (axis=inquiry)
+    "SUBJECT_CHECK",        # 모집단의 대상마다 조건 확인, 다른 모집단과 대조 가능 (파생)
 ]
-DERIVED: set[str] = {"PARAMETER_COMPARE", "CADENCE_CHECK", "POPULATION_COVERAGE"}
+DERIVED: set[str] = {"PARAMETER_COMPARE", "CADENCE_CHECK", "POPULATION_COVERAGE", "SUBJECT_CHECK"}
 NATIVE_AXIS: dict[str, Axis] = {
     "DOCUMENT_EXTRACT": "document",
     "CONFIG_COLLECT": "technical",
@@ -44,7 +45,7 @@ class SourceRef(_Strict):
 class Collect(_Strict):
     apis: list[str]               # 예: iam:GetAccountPasswordPolicy
     fields: list[str]
-    per: Literal["account", "user", "resource"] = "account"
+    per: Literal["account", "user", "resource", "root"] = "account"   # root: 계정별 루트 사용자
     derive: dict[str, str] = Field(default_factory=dict)   # 파생 필드 이름 → 설명식
 
 
@@ -59,6 +60,35 @@ class Comparison(_Strict):
 class Cadence(_Strict):
     last_event: str               # 마지막 수행 시각 참조 (예: T2.password_last_changed)
     max_interval_days: str        # 허용 주기 참조 (예: T1.password.max_age_days)
+    aggregate: Literal["each", "latest"] = "each"   # latest: 모집단 중 가장 최근 기록 하나로 판단 (예: 검토 기록)
+    plain: str | None = None      # 직원용 문장 틀 ({last}, {days}, {max_days})
+
+
+class Join(_Strict):
+    test: str                     # 대조할 다른 모집단 (테스트 id)
+    match: list[str] = Field(min_length=2, max_length=2)   # [이 모집단 필드, 대조 모집단 필드] (YAML에서 on은 불리언으로 읽혀서 쓰지 않음)
+    missing: Literal["ok", "violation"] = "ok"          # 대조 대상이 없을 때
+    where: dict[str, str | int | bool] = Field(default_factory=dict)  # 대조 대상이 이 조건을 만족할 때만 검사
+
+
+class Grace(_Strict):
+    date_field: str               # 기산일 필드 (예: retired_on)
+    days: str                     # 허용 기간 참조 (예: T1.account.offboarding_business_days)
+    business_days: bool = False   # 영업일(주말 제외)로 셈
+
+
+class Check(_Strict):
+    """모집단의 대상마다 조건을 확인한다. 파이썬 코드 없이 YAML만으로 규칙을 쓰기 위한 범용 검사."""
+    population: str               # 모집단 테스트 id (CONFIG_COLLECT 또는 EVIDENCE_REVIEW)
+    where: dict[str, str | int | bool] = Field(default_factory=dict)  # 모집단 거르기 (값이 같은 것만)
+    gate: str | None = None       # 이 정책 값이 참일 때만 검사 (예: T1.mfa.console_required)
+    field: str | None = None      # 확인할 필드 (대상 → 대조 대상 순으로 찾음)
+    op: Literal["==", "!=", "truthy", "falsy", "empty", "age_days_le", "date_after_asof"] | None = None
+    value: str | None = None      # "const:…" 또는 "T1.param"
+    join: Join | None = None
+    grace: Grace | None = None
+    message: str                  # 위반 메시지 틀. {subject}와 대상 필드 이름을 쓸 수 있음
+    plain: str | None = None      # 직원용 문장 틀. 해요체, 전문용어 없이. {account}는 '운영 계정(a-prod)'처럼 바뀜
 
 
 class Test(_Strict):
@@ -69,6 +99,8 @@ class Test(_Strict):
     collect: Collect | None = None                        # CONFIG_COLLECT
     compare: list[Comparison] = Field(default_factory=list)
     cadence: Cadence | None = None
+    check: Check | None = None                            # SUBJECT_CHECK
+    evidence_kind: str | None = None                      # EVIDENCE_REVIEW 자동 판독 종류 (없으면 사람 검토)
     when: str | None = None                               # 이 테스트를 실행할 Scope 조건
 
 

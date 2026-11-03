@@ -19,3 +19,8 @@ policy_documents:
   - {file: docs/A사_계정관리절차서_v1.3.docx, doc_id: A-ISP-004-01}
 evidence:
   - {file: evidence/회원가입_비밀번호_화면.png, kind: screen_capture, relates_to: AR-2.5.4-05, captured_at: "2026-10-30"}
+  # 표 증적은 파일 이름이 아니라 첫 줄(머리글)로 종류를 알아낸다
+  - {file: evidence/계정목록_AWS_2026-11-01.xlsx, kind: account_list}
+  - {file: evidence/인사목록_2026-11-01.xlsx, kind: hr_roster}
+  - {file: evidence/특수권한자목록_2026-10.xlsx, kind: privileged_list}
+  - {file: evidence/접근권한검토기록_2026.xlsx, kind: access_review_log}

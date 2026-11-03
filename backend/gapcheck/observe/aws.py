@@ -6,6 +6,7 @@
   <account>/credential_report.csv     GetCredentialReport 원문 CSV
   <account>/login_profiles.json       {user: {CreateDate, PasswordResetRequired}}
   <account>/cognito_user_pools.json   [DescribeUserPool.UserPool …]
+  <account>/iam_authorization.json    GetAccountAuthorizationDetails 응답 (UserDetailList, GroupDetailList, Policies)
 """
 from __future__ import annotations
 
@@ -19,6 +20,68 @@ from typing import Any
 from ..model import Observation
 
 ISSUE_TOLERANCE = timedelta(minutes=1)
+
+# 관리자(특수) 권한으로 보는 AWS 관리형 정책. IAMFullAccess는 스스로 권한을 올릴 수 있어 관리자와 같다.
+ADMIN_MANAGED = {"arn:aws:iam::aws:policy/AdministratorAccess", "arn:aws:iam::aws:policy/IAMFullAccess"}
+# 추측하기 쉬운 계정 이름 (사람을 특정할 수 없는 이름)
+GENERIC_NAMES = {"admin", "administrator", "root", "test", "tester", "guest", "user", "dev", "developer",
+                 "manager", "operator", "master", "shared", "temp", "sysadmin"}
+
+
+def _statements(doc: Any) -> list[dict]:
+    if isinstance(doc, str):
+        from urllib.parse import unquote
+        doc = json.loads(unquote(doc))
+    st = (doc or {}).get("Statement", [])
+    return st if isinstance(st, list) else [st]
+
+
+def _grants_all(doc: Any) -> bool:
+    """Allow, Action '*', Resource '*' 문장이 있으면 전체 권한"""
+    for st in _statements(doc):
+        if st.get("Effect") != "Allow":
+            continue
+        acts = st.get("Action", [])
+        res = st.get("Resource", [])
+        acts = [acts] if isinstance(acts, str) else acts
+        res = [res] if isinstance(res, str) else res
+        if any(a in ("*", "iam:*") for a in acts) and "*" in res:
+            return True
+    return False
+
+
+def authorization_index(raw: bytes) -> dict[str, dict]:
+    """사용자 이름 → {groups, direct_policies, admin, admin_via}"""
+    body = json.loads(raw)
+    if "Error" in body:
+        return {}
+    custom_admin = set()
+    for p in body.get("Policies", []):
+        ver = next((v for v in p.get("PolicyVersionList", []) if v.get("IsDefaultVersion")), None)
+        if ver and _grants_all(ver.get("Document")):
+            custom_admin.add(p["Arn"])
+
+    def admin_reason(attached: list[dict], inline: list[dict], label: str) -> list[str]:
+        out = [f"{label}: {a['PolicyName']}" for a in attached
+               if a["PolicyArn"] in ADMIN_MANAGED or a["PolicyArn"] in custom_admin]
+        out += [f"{label}: {i['PolicyName']}(인라인)" for i in inline if _grants_all(i.get("PolicyDocument"))]
+        return out
+
+    groups = {}
+    for g in body.get("GroupDetailList", []):
+        groups[g["GroupName"]] = admin_reason(g.get("AttachedManagedPolicies", []),
+                                              g.get("GroupPolicyList", []), f"그룹 {g['GroupName']}")
+    idx = {}
+    for u in body.get("UserDetailList", []):
+        direct = [a["PolicyName"] for a in u.get("AttachedManagedPolicies", [])] + \
+                 [f"{i['PolicyName']}(인라인)" for i in u.get("UserPolicyList", [])]
+        via = admin_reason(u.get("AttachedManagedPolicies", []), u.get("UserPolicyList", []), "직접")
+        for g in u.get("GroupList", []):
+            via += groups.get(g, [])
+        idx[u["UserName"]] = {"groups": sorted(u.get("GroupList", [])), "direct_policies": sorted(direct),
+                              "admin": bool(via), "admin_via": via,
+                              "tags": {t["Key"]: t["Value"] for t in u.get("Tags", [])}}
+    return idx
 
 
 def parse_ts(v: str | None) -> datetime | None:
@@ -70,12 +133,25 @@ def password_policy_obs(aid: str, raw: bytes, sha: str, src: dict) -> Observatio
                                                                      "api": "iam:GetAccountPasswordPolicy"})
 
 
-def user_obs(aid: str, report: bytes, logins: dict, sha_r: str, sha_l: str, src: dict) -> list[Observation]:
+def _latest(*vals: str | None) -> str | None:
+    ts = [t for t in (parse_ts(v) for v in vals) if t is not None]
+    return max(ts).isoformat() if ts else None
+
+
+def user_obs(aid: str, report: bytes, logins: dict, sha_r: str, sha_l: str, src: dict,
+             authz: dict[str, dict] | None = None, sha_a: str = "") -> list[Observation]:
     out = []
     for row in csv.DictReader(io.StringIO(report.decode("utf-8"))):
         user = row["user"]
         if user == "<root_account>":
-            continue  # 루트는 IAM 사용자 모집단이 아니다 (별도 항목에서 다룸)
+            # 루트는 IAM 사용자 모집단이 아니다. 별도 관측(aws_root)으로 남긴다
+            keys = [row.get(f"access_key_{i}_active") == "true" for i in (1, 2)]
+            out.append(Observation(
+                obs_id=f"aws:{aid}:root", axis="technical", kind="aws_root", subject=f"{aid}/root",
+                values={"account_id": aid, "mfa_active": row.get("mfa_active") == "true",
+                        "access_key_active": any(keys), "password_last_used": row.get("password_last_used")},
+                extractor=src["source"], source={**src, "sha256": sha_r, "api": "iam:GetCredentialReport"}))
+            continue
         enabled = row["password_enabled"] == "true"
         lp = logins.get(user) or {}
         changed, used = parse_ts(row["password_last_changed"]), parse_ts(row["password_last_used"])
@@ -84,10 +160,27 @@ def user_obs(aid: str, report: bytes, logins: dict, sha_r: str, sha_l: str, src:
         if enabled and issued and changed:
             used_issued = (abs(changed - issued) <= ISSUE_TOLERANCE and used is not None and used > changed
                            and lp.get("PasswordResetRequired") is False)
+        keys_on = [row.get(f"access_key_{i}_active") == "true" for i in (1, 2)]
+        last_activity = _latest(row["password_last_used"] if enabled else None,
+                                *(row.get(f"access_key_{i}_last_used_date") for i in (1, 2) if keys_on[i - 1]))
+        az = (authz or {}).get(user) if authz else None
+        values_authz: dict[str, Any] = {k: None for k in ("groups", "direct_policies", "admin", "admin_via", "tags")}
+        if authz:   # 권한 상세를 수집한 계정만. 수집하지 않았으면 None(판단 불가)
+            az = az or {"groups": [], "direct_policies": [], "admin": False, "admin_via": [], "tags": {}}
+            values_authz = dict(az)
         out.append(Observation(
             obs_id=f"aws:{aid}:user:{user}", axis="technical", kind="aws_user", subject=f"{aid}/{user}",
             values={
-                "account_id": aid, "user": user, "password_enabled": enabled,
+                "account_id": aid, "user": user, "key": f"{aid}/{user}", "password_enabled": enabled,
+                "mfa_active": row.get("mfa_active") == "true",
+                "access_key_active": any(keys_on),
+                "active": enabled or any(keys_on),
+                "user_creation_time": row.get("user_creation_time"),
+                # 마지막 사용: 비밀번호·키 중 가장 최근. 한 번도 안 썼으면 만든 시각부터 센다
+                "last_activity": last_activity or row.get("user_creation_time"),
+                "never_used": last_activity is None,
+                "generic_identifier": user.lower() in GENERIC_NAMES,
+                **values_authz,
                 "password_last_changed": row["password_last_changed"],
                 "password_last_used": row["password_last_used"],
                 "LoginProfileCreateDate": lp.get("CreateDate"),
@@ -95,7 +188,9 @@ def user_obs(aid: str, report: bytes, logins: dict, sha_r: str, sha_l: str, src:
                 "used_issued_password": used_issued,
             },
             extractor=src["source"],
-            source={**src, "sha256": [sha_r, sha_l], "api": "iam:GetCredentialReport+iam:GetLoginProfile"},
+            source={**src, "sha256": [x for x in (sha_r, sha_l, sha_a) if x],
+                    "api": "iam:GetCredentialReport+iam:GetLoginProfile"
+                           + ("+iam:GetAccountAuthorizationDetails" if authz else "")},
         ))
     return out
 
@@ -130,8 +225,10 @@ def snapshot_observations(manifest: dict, files: dict[str, dict[str, bytes]], sh
                                            sha[f"{aid}/iam_password_policy.json"], src))
         if "credential_report.csv" in f:
             logins = json.loads(f.get("login_profiles.json", b"{}"))
+            authz = authorization_index(f["iam_authorization.json"]) if "iam_authorization.json" in f else None
             obs += user_obs(aid, f["credential_report.csv"], logins, sha[f"{aid}/credential_report.csv"],
-                            sha.get(f"{aid}/login_profiles.json", ""), src)
+                            sha.get(f"{aid}/login_profiles.json", ""), src,
+                            authz, sha.get(f"{aid}/iam_authorization.json", ""))
         if "cognito_user_pools.json" in f:
             obs += cognito_obs(aid, f["cognito_user_pools.json"], sha[f"{aid}/cognito_user_pools.json"], src)
     return obs

@@ -110,12 +110,28 @@ class _Ctx:
             refs += [c.expected, c.observed]
         if t.cadence:
             refs += [t.cadence.last_event, t.cadence.max_interval_days]
+        refs += _check_refs(t)
         axes: set[str] = set()
         for r in refs:
             if r.startswith(("const:", "overlay:")):
                 continue
             axes |= self.axes_of(r.split(".")[0], seen | {tid})
         return axes
+
+
+def _check_refs(t: Test) -> list[str]:
+    c = t.check
+    if c is None:
+        return []
+    refs = [c.population]
+    for r in (c.gate, c.value):
+        if r:
+            refs.append(r)
+    if c.join:
+        refs.append(c.join.test)
+    if c.grace:
+        refs.append(c.grace.days)
+    return refs
 
 
 def lint_ar(ar: AR, criterion: str, reg_ids: dict, overlay: Overlay, rep: Report) -> None:
@@ -159,6 +175,20 @@ def lint_ar(ar: AR, criterion: str, reg_ids: dict, overlay: Overlay, rep: Report
                 rep.add("RC-004", "error", f"{w}/{t.id}", "observed는 실제 관측 테스트를 참조해야 함")
         if t.cadence:
             refs += [("last_event", t.cadence.last_event), ("max_interval_days", t.cadence.max_interval_days)]
+        if t.check:
+            c = t.check
+            refs += [("population", c.population)]
+            refs += [(k, r) for k, r in (("gate", c.gate), ("value", c.value)) if r]
+            if c.join:
+                refs += [("join.test", c.join.test)]
+            if c.grace:
+                refs += [("grace.days", c.grace.days)]
+            if (c.op is None) != (c.field is None) and not c.join:
+                rep.add("RC-005", "error", f"{w}/{t.id}", "check의 field와 op는 함께 써야 함")
+            if c.op in ("==", "!=", "age_days_le") and not c.value:
+                rep.add("RC-005", "error", f"{w}/{t.id}", f"op '{c.op}'에는 value가 필요")
+            if c.op is None and not (c.join and c.join.missing == "violation"):
+                rep.add("RC-005", "error", f"{w}/{t.id}", "check는 op 또는 join.missing=violation 중 하나가 필요")
         for role, r in refs:
             ok, why = ctx.resolve(r)
             if not ok:
@@ -173,6 +203,11 @@ def lint_ar(ar: AR, criterion: str, reg_ids: dict, overlay: Overlay, rep: Report
             rep.add("RC-005", "error", f"{w}/{t.id}", "PARAMETER_COMPARE에는 compare가 필요")
         if t.type == "CADENCE_CHECK" and not t.cadence:
             rep.add("RC-005", "error", f"{w}/{t.id}", "CADENCE_CHECK에는 cadence가 필요")
+        if t.type == "SUBJECT_CHECK" and not t.check:
+            rep.add("RC-005", "error", f"{w}/{t.id}", "SUBJECT_CHECK에는 check가 필요")
+        if t.check and t.check.population in ctx.tests and \
+                ctx.tests[t.check.population].type not in ("CONFIG_COLLECT", "EVIDENCE_REVIEW"):
+            rep.add("RC-005", "error", f"{w}/{t.id}", "check.population은 수집(CONFIG_COLLECT)이나 증적(EVIDENCE_REVIEW) 테스트여야 함")
 
     # RC-003 적합 경로는 독립 관측 축 2개 이상
     for path in ar.conforming_paths:
@@ -187,8 +222,8 @@ def lint_ar(ar: AR, criterion: str, reg_ids: dict, overlay: Overlay, rep: Report
             rep.add("RC-007", "error", w, f"적합 경로 {path}가 질의 답변만으로 구성됨")
 
     # RC-006 주기·범위 테스트는 모집단 필요
-    if any(t.type in ("CADENCE_CHECK", "POPULATION_COVERAGE") for t in ar.tests) and not ar.population:
-        rep.add("RC-006", "error", w, "CADENCE_CHECK/POPULATION_COVERAGE가 있으면 population을 정의해야 함")
+    if any(t.type in ("CADENCE_CHECK", "POPULATION_COVERAGE", "SUBJECT_CHECK") for t in ar.tests) and not ar.population:
+        rep.add("RC-006", "error", w, "CADENCE_CHECK/POPULATION_COVERAGE/SUBJECT_CHECK가 있으면 population을 정의해야 함")
 
     # RC-008 결함 근거는 질의 답변이 아니어야 함
     for v in ar.violation_when:

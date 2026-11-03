@@ -23,6 +23,13 @@ def apply_quality(obs: list[Observation], artifacts: dict[str, Artifact], as_of:
                 elif a.scan_status != "clean" and o.quality == "pass":
                     o.quality = "warn"
                     o.quality_reasons.append(f"원본 검역 상태: {a.scan_status}")
+        if o.axis == "evidence":
+            a = artifacts.get(o.source.get("sha256", ""))
+            if a is None:
+                o.quality, o.quality_reasons = "fail", o.quality_reasons + ["증적 원본이 등록되지 않음"]
+            elif a.scan_status not in ("clean",) and o.quality == "pass":
+                o.quality = "warn"
+                o.quality_reasons.append(f"원본 검역 상태: {a.scan_status}")
         if o.axis == "technical":
             ts = o.source.get("collected_at")
             if not ts:

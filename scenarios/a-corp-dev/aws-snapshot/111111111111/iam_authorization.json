@@ -1,0 +1,202 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "admin-park",
+      "UserId": "AIDA1111ADMINPARK",
+      "Arn": "arn:aws:iam::111111111111:user/admin-park",
+      "Path": "/",
+      "CreateDate": "2025-06-12T01:00:00+00:00",
+      "GroupList": [
+        "Admins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-choi",
+      "UserId": "AIDA1111DEVCHOI",
+      "Arn": "arn:aws:iam::111111111111:user/dev-choi",
+      "Path": "/",
+      "CreateDate": "2026-02-03T05:00:00+00:00",
+      "GroupList": [
+        "Admins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-lee",
+      "UserId": "AIDA1111DEVLEE",
+      "Arn": "arn:aws:iam::111111111111:user/dev-lee",
+      "Path": "/",
+      "CreateDate": "2025-11-20T05:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-park",
+      "UserId": "AIDA1111DEVPARK",
+      "Arn": "arn:aws:iam::111111111111:user/dev-park",
+      "Path": "/",
+      "CreateDate": "2026-09-01T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "intern-jung",
+      "UserId": "AIDA1111INTERNJUNG",
+      "Arn": "arn:aws:iam::111111111111:user/intern-jung",
+      "Path": "/",
+      "CreateDate": "2026-07-01T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "ops-kim",
+      "UserId": "AIDA1111OPSKIM",
+      "Arn": "arn:aws:iam::111111111111:user/ops-kim",
+      "Path": "/",
+      "CreateDate": "2026-10-01T02:00:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-batch",
+      "UserId": "AIDA1111SVCBATCH",
+      "Arn": "arn:aws:iam::111111111111:user/svc-batch",
+      "Path": "/",
+      "CreateDate": "2025-07-01T00:00:00+00:00",
+      "GroupList": [
+        "BatchJobs"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-maint",
+      "UserId": "AIDA1111VENDORMAINT",
+      "Arn": "arn:aws:iam::111111111111:user/vendor-maint",
+      "Path": "/",
+      "CreateDate": "2026-03-02T01:00:00+00:00",
+      "GroupList": [
+        "Maintenance"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Admins",
+      "Arn": "arn:aws:iam::111111111111:group/Admins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "BatchJobs",
+      "Arn": "arn:aws:iam::111111111111:group/BatchJobs",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "BatchJobRunner",
+          "PolicyArn": "arn:aws:iam::111111111111:policy/BatchJobRunner"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Developers",
+      "Arn": "arn:aws:iam::111111111111:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Maintenance",
+      "Arn": "arn:aws:iam::111111111111:group/Maintenance",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Operators",
+      "Arn": "arn:aws:iam::111111111111:group/Operators",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "BatchJobRunner",
+      "Arn": "arn:aws:iam::111111111111:policy/BatchJobRunner",
+      "DefaultVersionId": "v1",
+      "PolicyVersionList": [
+        {
+          "VersionId": "v1",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "Resource": "arn:aws:s3:::a-batch-*/*"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+# 2.5.6 접근권한 검토 — IAM 단계 (2단계 자동화)
+criterion: "2.5.6"
+name: 접근권한 검토
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 98~99쪽(PDF 103~104) — 주요 확인사항 1~3, 결함사례 1~3"
+
+checkpoints:
+  - index: 1   # 계정·권한 변경 이력
+    covered_by: []
+    note: CloudTrail 수집기(로그 단계)에서 자동화 예정
+  - index: 2   # 검토 기준·주기 수립과 정기 검토 이행
+    covered_by: [AR-2.5.6-01, AR-2.5.6-02]
+  - index: 3   # 검토 결과 문제점 조치
+    covered_by: []
+    note: 검토 기록의 조치 칸과 후속 결재는 사람이 확인
+
+requirements:
+  - id: AR-2.5.6-01
+    title: 접근권한 검토를 정한 주기마다 한다
+    summary: >-
+      지침이 접근권한 검토 주기를 정했다면, 접근권한 검토 기록의 가장 최근 검토일이 기준일로부터 그 주기 안에 있어야 한다.
+      분기는 92일, 반기는 184일로 센다.
+    plain:
+      question: 접근권한의 적정성 검토 주기를 정하고, 그 주기에 따라 정기적으로 검토하고 있는가?
+      why: >-
+        권한은 시간이 지나면 쌓여요. 업무가 바뀐 사람, 쓰지 않는 계정이 그대로 남지 않도록 정해진 주기로 살펴봐야 해요.
+      fix:
+        - 밀린 접근권한 검토를 바로 하고 결과와 조치를 기록해요.
+        - 다음 검토 날짜를 일정에 넣고, 담당자가 바뀌어도 이어지도록 검토 양식을 정해요.
+      owner: 정보보호팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "98쪽 주요 확인사항 2, 99쪽 결함사례 1"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.5.6-1"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 접근권한 검토 기록
+      source: T2.reviewed_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 접근권한 검토 주기
+        params: [access_review.cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 접근권한 검토 기록 (검토일·검토자·결과)
+        evidence_kind: access_review_log
+        params: [reviewed_on, reviewer, result, action]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 검토일이 주기 안인지
+        cadence:
+          last_event: T2.reviewed_on
+          max_interval_days: T1.access_review.cycle_days
+          aggregate: latest
+          plain: "마지막 접근권한 검토가 {last}이에요. 회사 규칙대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 검토가 정한 주기를 넘김
+
+  - id: AR-2.5.6-02
+    title: 오래 쓰지 않은 계정은 비활성화되어 있다
+    summary: >-
+      지침이 장기 미사용 계정의 비활성화 기간을 정했다면, 활성인 IAM 사용자(콘솔 비밀번호 또는 액세스 키)는
+      마지막 사용(한 번도 쓰지 않았으면 생성 시각)이 기준일로부터 그 기간 안이어야 한다.
+    plain:
+      question: 장기간 사용하지 않은 계정을 식별하여 잠금(비활성화)하고 있는가?
+      why: >-
+        아무도 쓰지 않는 계정은 누가 몰래 써도 알아채기 어려워요. 그래서 공격자가 노리기 좋아요.
+      fix:
+        - 해당 계정의 콘솔 비밀번호와 액세스 키를 비활성화해요. 쓰는 곳이 없는지 확인한 뒤 삭제해요.
+        - 접근권한 검토 때 마지막 사용일을 함께 보고, 기준을 넘긴 계정을 자동으로 찾아 알리도록 해요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "98쪽 주요 확인사항 2, 99쪽 결함사례 2"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.5.6-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 활성인 IAM 사용자
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 장기 미사용 기준 기간
+        params: [account.inactive_days]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 사용자별 마지막 사용 시각 (비밀번호·액세스 키 중 최근)
+        collect:
+          apis: ["iam:GetCredentialReport"]
+          per: user
+          fields: [key, user, active, last_activity, never_used]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 활성 사용자의 마지막 사용이 기준 기간 안인지
+        check:
+          population: T2
+          where: {active: true}
+          field: last_activity
+          op: age_days_le
+          value: T1.account.inactive_days
+          message: "{key}: 마지막 사용 {last_activity} → {days}일 미사용인데 활성"
+          plain: "{account}의 '{user}' 계정은 {days}일 동안 쓰이지 않았는데 아직 켜져 있어요. 회사 규칙은 {limit}일 넘게 안 쓰면 막는 거예요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 기준 기간을 넘겨 쓰지 않은 활성 사용자가 1명 이상

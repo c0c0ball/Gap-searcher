@@ -1,0 +1,78 @@
+# 2.2.5 퇴직 및 직무변경 관리 — IAM 단계 (2단계 자동화)
+# 원칙: 기준값(회수 기한)은 조직 자체 절차서에서 뽑는다 (D08). KISA 원문은 이 파일에 복제하지 않는다.
+criterion: "2.2.5"
+name: 퇴직 및 직무변경 관리
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 64~65쪽(PDF 69~70) — 주요 확인사항 1~2, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 인사변경 내용의 부서 간 공유
+    covered_by: []
+    note: 인사·IT 부서 간 통보 기록은 사람이 확인 (통보 메일·결재 기록)
+  - index: 2   # 퇴직·직무변경 시 자산 반납, 권한 회수·조정
+    covered_by: [AR-2.2.5-01]
+
+requirements:
+  - id: AR-2.2.5-01
+    title: 퇴직자의 클라우드 계정이 정한 기한 안에 회수된다
+    summary: >-
+      인사 명부에서 퇴직으로 확인된 사람의 IAM 사용자(계정 관리대장의 사번으로 연결)는
+      절차서가 정한 기한(영업일)이 지나면 콘솔 비밀번호와 액세스 키가 모두 비활성이어야 한다.
+    plain:
+      question: 퇴직자의 정보시스템(AWS) 계정과 접근권한을 절차에 정한 기한 안에 회수하고 있는가?
+      why: >-
+        회사를 떠난 사람의 계정이 살아 있으면 본인이든 다른 사람이든 그 계정으로 회사 시스템에 들어올 수 있어요.
+        퇴직 처리 중 가장 자주 빠지는 부분이에요.
+      fix:
+        - 해당 계정의 콘솔 비밀번호를 지우고 액세스 키를 비활성화해요. 더 쓸 일이 없으면 계정을 삭제해요.
+        - 인사팀이 퇴직자를 알리면 정보보호팀이 바로 회수하도록 체크리스트를 만들고, 회수한 날짜를 기록해요.
+        - 계정 관리대장에서도 그 계정을 정리해요.
+      owner: 정보보호팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "64쪽 주요 확인사항 2, 65쪽 결함사례 1·2"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.2.5-1", "KISA:2.2.5-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 인사 명부의 퇴직자 중 클라우드 계정이 있는 사람
+      source: T3.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 절차서의 퇴직자 계정 회수 기한(영업일)
+        params: [account.offboarding_business_days]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 계정별 IAM 사용자 상태 (콘솔 비밀번호·액세스 키 활성 여부)
+        collect:
+          apis: ["iam:GenerateCredentialReport", "iam:GetCredentialReport"]
+          per: user
+          fields: [key, user, password_enabled, access_key_active, active]
+      - id: T3
+        type: EVIDENCE_REVIEW
+        description: 인사 명부(재직 상태·퇴직일)를 계정 관리대장의 사번으로 IAM 사용자와 연결
+        evidence_kind: hr_roster
+        params: [emp_no, status, retired_on, key, linked]
+      - id: T4
+        type: EVIDENCE_REVIEW
+        description: 계정 관리대장 (사번 ↔ IAM 사용자). 없으면 퇴직자와 계정을 이을 수 없음
+        evidence_kind: account_list
+        params: [key, emp_no, purpose]
+      - id: T5
+        type: SUBJECT_CHECK
+        description: 퇴직일부터 회수 기한이 지난 퇴직자의 계정이 아직 활성인지
+        check:
+          population: T3
+          where: {status: 퇴직, linked: true}
+          grace: {date_field: retired_on, days: T1.account.offboarding_business_days, business_days: true}
+          join: {test: T2, match: [key, key], missing: ok}
+          field: active
+          op: falsy
+          message: "{key}: {retired_on} 퇴직, 회수 기한이 지나 {elapsed}영업일째인데 계정이 활성 (콘솔 {password_enabled}, 액세스 키 {access_key_active})"
+          plain: "{account}의 {user}님은 {retired_on}에 퇴직했는데 계정이 아직 살아 있어요. 회사 절차는 퇴직 후 {limit}영업일 안에 회수하는 거예요."
+    conforming_paths: [[T1, T2, T3, T4, T5]]
+    violation_when:
+      - test: T5
+        condition: 회수 기한이 지난 퇴직자의 계정이 콘솔 비밀번호 또는 액세스 키로 활성

@@ -20,8 +20,8 @@ def _all_text(p):
 
 
 def test_headline_counts(plain):
-    assert plain["headline"] == ("비밀번호 관리에 대해 5가지를 확인했어요. "
-                                 "4가지는 고칠 부분이 있어 보이고, 1가지는 규칙대로 되어 있어 보여요.")
+    assert plain["headline"] == ("계정·비밀번호 관리에 대해 16가지를 확인했어요. "
+                                 "14가지는 고칠 부분이 있어 보이고, 2가지는 규칙대로 되어 있어 보여요.")
 
 
 def test_no_forbidden_or_jargon(plain):
@@ -46,7 +46,10 @@ def test_fix_steps_only_when_something_to_fix(plain):
 
 
 def test_conforming_item_says_what_was_confirmed(plain):
-    assert "접근통제 지침" in plain["items"][0]["found"][0]
+    it = next(i for i in plain["items"] if i["ar_id"] == "AR-2.5.4-01")
+    assert "접근통제 지침" in it["found"][0]
+    it = next(i for i in plain["items"] if i["ar_id"] == "AR-2.5.1-01")
+    assert "계정관리 절차서" in it["found"][0]
 
 
 def test_unknown_is_not_reassuring(scenario):

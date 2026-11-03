@@ -86,6 +86,7 @@ class Violation:
     op: str
     message: str
     obs_ids: list[str] = field(default_factory=list)
+    plain: str | None = None   # 직원용 문장 ({account}는 쉬운 설명 단계에서 계정 이름으로 바뀜)
 
 
 @dataclass

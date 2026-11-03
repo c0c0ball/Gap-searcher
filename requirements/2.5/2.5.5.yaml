@@ -1,0 +1,125 @@
+# 2.5.5 특수 계정 및 권한 관리 — IAM 단계 (2단계 자동화)
+criterion: "2.5.5"
+name: 특수 계정 및 권한 관리
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 96~97쪽(PDF 101~102) — 주요 확인사항 1~2, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 특수권한 최소 인원, 신청·승인 절차
+    covered_by: [AR-2.5.5-01]
+  - index: 2   # 특수 계정·권한 식별, 별도 목록 관리
+    covered_by: [AR-2.5.5-01, AR-2.5.5-02]
+
+requirements:
+  - id: AR-2.5.5-01
+    title: 관리자 권한 보유자가 특수권한자 목록과 일치한다
+    summary: >-
+      지침이 특수권한자 목록 관리를 정했다면, 범위 내 AWS 계정에서 관리자 권한(AdministratorAccess,
+      IAMFullAccess, 또는 모든 작업·모든 자원을 허용하는 정책)을 가진 IAM 사용자는 모두 승인된 특수권한자 목록에 있어야 한다.
+    plain:
+      question: 관리자 권한 등 특수권한을 승인 절차에 따라 부여하고, 특수권한자를 별도 목록으로 관리하고 있는가?
+      why: >-
+        관리자 권한은 무엇이든 할 수 있는 권한이에요. 승인 없이 늘어나면 실수나 계정 도용 때 피해가 커져요.
+        목록과 실제 권한이 같아야 누가 위험한 권한을 가졌는지 알 수 있어요.
+      fix:
+        - 목록에 없는 사람의 관리자 권한을 회수하고, 업무에 필요한 만큼의 권한 그룹으로 옮겨요.
+        - 정말 필요하면 정보보호팀장 승인을 받아 특수권한자 목록에 올려요.
+        - 목록과 실제 권한을 분기마다 맞춰 봐요.
+      owner: 정보보호팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "96쪽 주요 확인사항 1·2, 97쪽 결함사례 1·2"}
+    checkpoints: [1, 2]
+    case_refs: ["KISA:2.5.5-1", "KISA:2.5.5-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 관리자 권한이 있는 IAM 사용자
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 특수권한 승인·목록 관리 조항
+        params: [privileged.list_required, privileged.approval_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 사용자별 관리자 권한 여부와 경로 (그룹·직접·인라인)
+        collect:
+          apis: ["iam:GetCredentialReport", "iam:GetAccountAuthorizationDetails"]
+          per: user
+          fields: [key, user, admin, admin_via]
+      - id: T3
+        type: EVIDENCE_REVIEW
+        description: 특수권한자 목록 (승인자·승인일)
+        evidence_kind: privileged_list
+        params: [key, permission, approver, approved_on]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 관리자 권한 보유자가 목록에 있어야 함
+        check:
+          population: T2
+          where: {admin: true}
+          gate: T1.privileged.list_required
+          join: {test: T3, match: [key, key], missing: violation}
+          message: "{key}: 관리자 권한({admin_via})이 있지만 특수권한자 목록에 없음"
+          plain: "{account}의 {user}님은 관리자 권한을 가지고 있는데, 승인된 특수권한자 목록에는 없어요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 목록에 없는 관리자 권한 보유자가 1명 이상
+
+  - id: AR-2.5.5-02
+    title: 외부 유지보수 계정은 사용 기한이 정해져 있다
+    summary: >-
+      지침이 유지보수 계정의 사용 기간 제한을 정했다면, 계정 관리대장에서 용도가 외부 유지보수인 계정 중
+      실제로 활성인 계정은 사용기한이 기록되어 있고 그 기한이 기준일 이후여야 한다.
+    plain:
+      question: 외부 유지보수 등 특수 목적 계정을 사용 기간을 정하여 부여하고, 기간이 끝나면 회수하고 있는가?
+      why: >-
+        가끔 오는 외부 업체 계정이 늘 켜져 있으면, 업체 쪽에서 비밀번호가 새거나 퇴사자가 생겨도 회사는 알기 어려워요.
+      fix:
+        - 다음 방문 일정이 없으면 계정을 비활성화하고, 방문할 때만 기간을 정해 다시 켜요.
+        - 계정 관리대장에 사용기한을 적고, 기한이 지나면 자동으로 막히도록 설정해요.
+      owner: 운영팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "96쪽 주요 확인사항 2, 97쪽 결함사례 3"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.5.5-3"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 계정 관리대장의 외부 유지보수 계정
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 유지보수 계정 사용 기간 조항
+        params: [account.vendor_expiry_required]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 계정 관리대장의 용도·사용기한
+        evidence_kind: account_list
+        params: [key, purpose, expires, approver]
+      - id: T3
+        type: CONFIG_COLLECT
+        description: 해당 계정이 실제로 활성인지
+        collect:
+          apis: ["iam:GetCredentialReport"]
+          per: user
+          fields: [key, user, active, last_activity]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 활성인 유지보수 계정은 사용기한이 기준일 이후여야 함
+        check:
+          population: T2
+          where: {purpose: 외부 유지보수}
+          gate: T1.account.vendor_expiry_required
+          join: {test: T3, match: [key, key], missing: ok, where: {active: true}}
+          field: expires
+          op: date_after_asof
+          message: "{key}: 외부 유지보수 계정이 활성인데 사용기한이 {expires} (마지막 사용 {last_activity})"
+          plain: "{account}의 외부 유지보수 계정 '{user}'에 사용 기한이 정해져 있지 않아 늘 켜져 있어요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 사용기한이 없거나 지난 활성 유지보수 계정이 1개 이상

@@ -1,9 +1,9 @@
-"""2.5.4 관통 테스트. 개발용 정답지 일치 + 판정 순서·범위·품질 규칙을 변형 시나리오로 확인한다."""
+"""관통 테스트 (2.5.4 파일럿 + 2단계 IAM). 개발용 정답지 일치 + 판정 순서·범위·품질 규칙을 변형 시나리오로 확인한다."""
 import csv
 import io
 import json
 
-from conftest import REPO, SCENARIO, edit_json, edit_yaml
+from conftest import REPO, SCENARIO, edit_json, edit_yaml, fix_iam
 
 from gapcheck.cli import compare_expected
 from gapcheck.pipeline import run_scenario
@@ -80,6 +80,7 @@ def _fix_all(sc):
     p.write_text(buf.getvalue())
     edit_json(sc / "aws-snapshot/111111111111/cognito_user_pools.json",
               lambda d: d[0]["Policies"]["PasswordPolicy"].update(MinimumLength=8))
+    fix_iam(sc)
 
 
 def test_fixed_scenario_is_conforming(scenario):

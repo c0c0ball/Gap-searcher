@@ -1,0 +1,112 @@
+# 2.5.3 사용자 인증 — IAM 단계 (2단계 자동화)
+criterion: "2.5.3"
+name: 사용자 인증
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 91~93쪽(PDF 96~98) — 주요 확인사항 1~2, 결함사례 1~2"
+
+checkpoints:
+  - index: 1   # 안전한 사용자 인증 절차 (로그인 횟수 제한 등)
+    covered_by: [AR-2.5.3-01, AR-2.5.3-02]
+  - index: 2   # 외부에서 접속 시 안전한 인증수단
+    covered_by: [AR-2.5.3-01]
+
+requirements:
+  - id: AR-2.5.3-01
+    title: 클라우드 콘솔 사용자는 모두 MFA를 쓴다
+    summary: >-
+      지침이 콘솔 접속에 다중 인증을 요구했다면, 범위 내 모든 AWS 계정에서 콘솔 비밀번호가 있는
+      IAM 사용자는 MFA 장치가 등록되어 있어야 한다. 콘솔은 인터넷으로 접속하므로 외부 접속 인증도 함께 본다.
+    plain:
+      question: 정보시스템(클라우드 콘솔)에 접속하는 사용자에게 비밀번호 외 추가 인증수단(MFA)을 적용하고 있는가?
+      why: >-
+        클라우드 콘솔은 인터넷 어디서나 접속돼요. 비밀번호만 쓰면 비밀번호가 새어 나갔을 때 바로 뚫려요.
+        휴대폰 인증 같은 추가 인증이 있으면 비밀번호만으로는 들어올 수 없어요.
+      fix:
+        - 해당 직원은 AWS 콘솔 → 오른쪽 위 이름 → 보안 자격 증명 → MFA 할당에서 인증 앱을 등록해요.
+        - 관리자는 MFA를 등록하지 않으면 다른 작업을 못 하게 막는 정책을 걸어 두면 빠뜨리지 않아요.
+      owner: 해당 직원 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "91쪽 주요 확인사항 1·2, 93쪽 결함사례 1"}
+    checkpoints: [1, 2]
+    case_refs: ["KISA:2.5.3-1"]
+    applicability:
+      when: [scope.has_aws_accounts, scope.aws_iam_users_with_console_password]
+    population:
+      name: 콘솔 비밀번호가 있는 IAM 사용자
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 콘솔 다중 인증 조항
+        params: [mfa.console_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 사용자별 MFA 등록 여부 (credential report)
+        collect:
+          apis: ["iam:GetCredentialReport"]
+          per: user
+          fields: [key, user, password_enabled, mfa_active]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 콘솔 사용자는 MFA가 있어야 함 (콘솔 비밀번호가 없는 서비스 계정은 제외)
+        check:
+          population: T2
+          where: {password_enabled: true}
+          gate: T1.mfa.console_required
+          field: mfa_active
+          op: truthy
+          message: "{key}: 콘솔 비밀번호를 쓰지만 MFA 미등록"
+          plain: "{account}의 {user}님은 비밀번호만으로 콘솔에 로그인하고 있어요. 추가 인증(MFA)이 없어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: MFA 없는 콘솔 사용자가 1명 이상
+
+  - id: AR-2.5.3-02
+    title: 모든 AWS 계정의 루트 사용자에 MFA가 있다
+    summary: >-
+      지침이 콘솔 접속에 다중 인증을 요구했다면, 범위 내 모든 AWS 계정의 루트 사용자에 MFA가 등록되어 있어야 한다.
+      루트 사용자는 권한을 제한할 수 없는 최고 권한 계정이다.
+    plain:
+      question: 모든 권한을 가진 최고 관리자 계정(루트)에 추가 인증수단(MFA)을 적용하고 있는가?
+      why: >-
+        루트 계정은 회사 클라우드의 모든 것을 지우거나 바꿀 수 있어요. 비밀번호 하나로만 지키면 위험이 너무 커요.
+      fix:
+        - 루트 계정으로 로그인해 보안 자격 증명에서 MFA를 등록해요. 하드웨어 보안 키를 쓰면 더 안전해요.
+        - 등록한 MFA 장치는 금고 등 정해진 곳에 보관하고 보관 위치를 기록해요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "91쪽 주요 확인사항 1"}
+    checkpoints: [1]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 AWS 계정의 루트 사용자
+      source: T2.account_id
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 콘솔 다중 인증 조항
+        params: [mfa.console_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 루트 사용자 MFA (credential report의 <root_account> 행)
+        collect:
+          apis: ["iam:GetCredentialReport"]
+          per: root
+          fields: [account_id, mfa_active, access_key_active]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 루트 사용자 MFA 등록
+        check:
+          population: T2
+          gate: T1.mfa.console_required
+          field: mfa_active
+          op: truthy
+          message: "{subject}: 루트 사용자 MFA 미등록"
+          plain: "{account}의 최고 관리자(루트) 계정에 추가 인증(MFA)이 없어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: MFA 없는 루트 사용자가 1개 이상

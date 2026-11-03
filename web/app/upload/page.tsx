@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "../components/Toast";
-import { API, PARAM_LABEL, api, post } from "../lib/api";
+import { API, PARAM_LABEL, TABLE_LABEL, api, post } from "../lib/api";
 import { usePref } from "../lib/prefs";
 
 type WS = { name: string; target: string; organization: string; documents: number; evidence: number; base?: string };
@@ -10,7 +10,8 @@ type FileRow = { kind: string; file: string; exists: boolean; size: number; uplo
 type Detail = { name: string; target: string; organization: string; as_of: string; base?: string; files: FileRow[] };
 type Extracted = { param: string; value: unknown; locator: string; quote: string };
 type UploadResult = { file: string; minio: string; artifact: { sha256: string; scan_status: string; scan_detail: string };
-  preview: { meta?: Record<string, string>; clauses?: number; articles?: string[]; extracted?: Extracted[]; conflicts?: string[] } };
+  preview: { meta?: Record<string, string>; clauses?: number; articles?: string[]; extracted?: Extracted[]; conflicts?: string[];
+    tables?: { kind: string; sheet: string; rows: number }[]; error?: string } };
 
 const SCAN: Record<string, [string, string]> = {
   clean: ["t-ok", "악성코드 없음"], not_scanned: ["t-unknown", "검사하지 못함"], error: ["t-unknown", "검사 오류"],
@@ -154,7 +155,7 @@ export default function Upload() {
               <p className="small muted" style={{ wordBreak: "break-all" }}>지문(SHA-256) {r.artifact.sha256}</p>
               {p.meta && <p className="small">{p.meta["제목"]} {p.meta["버전"]} — 시행일 {p.meta["시행일"] ?? "없음"}, 문서번호 {p.meta["문서번호"] ?? "없음"}, 조항 {p.clauses}개를 읽었어요.</p>}
               {p.extracted && (p.extracted.length === 0
-                ? <p className="small muted">이 문서에서는 비밀번호 규칙을 찾지 못했어요.</p>
+                ? <p className="small muted">이 문서에서는 비밀번호·계정 규칙을 찾지 못했어요.</p>
                 : <table className="table">
                     <thead><tr><th>찾은 규칙</th><th>값</th><th>문서 속 위치와 문장</th></tr></thead>
                     <tbody>{p.extracted.map((x) => (
@@ -162,6 +163,9 @@ export default function Upload() {
                         <td className="small"><div className="muted">{x.locator}</div>“{x.quote}”</td></tr>))}
                     </tbody>
                   </table>)}
+              {p.tables && (p.tables.length === 0
+                ? <p className="small muted">{p.error ?? "이 표는 진단에 쓰는 서류(계정 관리대장, 인사 명부, 특수권한자 목록, 접근권한 검토 기록)로 알아보지 못했어요. 첫 줄 제목 칸을 확인해 주세요."}</p>
+                : <p className="small">{p.tables.map((t) => `'${t.sheet}' 시트를 ${TABLE_LABEL[t.kind] ?? t.kind}(${t.rows}행)`).join(", ")}로 읽었어요. 진단할 때 자동으로 대조해요.</p>)}
               {p.conflicts && p.conflicts.length > 0 && <p className="error small">문서 안에서 값이 서로 달라요: {p.conflicts.join(", ")}</p>}
             </section>
           );

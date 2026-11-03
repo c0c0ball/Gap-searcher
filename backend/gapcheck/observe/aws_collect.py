@@ -63,6 +63,20 @@ def collect_login_profiles(iam) -> dict:
     return out
 
 
+def collect_authorization(iam) -> dict:
+    """GetAccountAuthorizationDetails: 사용자·그룹의 정책 연결과 고객 관리형 정책 문서 (권한 판정용)"""
+    try:
+        out: dict[str, list] = {"UserDetailList": [], "GroupDetailList": [], "RoleDetailList": [], "Policies": []}
+        pages = iam.get_paginator("get_account_authorization_details").paginate(
+            Filter=["User", "Group", "LocalManagedPolicy"])
+        for page in pages:
+            for k in out:
+                out[k] += page.get(k, [])
+        return out
+    except ClientError as e:
+        return _err(e)
+
+
 def collect_cognito(cog) -> list | dict:
     try:
         pools = []
@@ -96,6 +110,12 @@ def collect_account(session: boto3.Session, expected_account: str, out_dir: Path
 
     lps = collect_login_profiles(iam)
     (d / "login_profiles.json").write_text(json.dumps(lps, indent=2, default=str))
+
+    az = collect_authorization(iam)
+    if "Error" in az:
+        errors.append(f"authorization: {az['Error']['Code']}")
+    else:
+        (d / "iam_authorization.json").write_text(json.dumps(az, indent=2, default=str))
 
     cog = collect_cognito(session.client("cognito-idp", region_name=region))
     (d / "cognito_user_pools.json").write_text(json.dumps(cog, indent=2, default=str))

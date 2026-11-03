@@ -141,6 +141,13 @@ def upload(name: str, filename: str, data: bytes, kind: str) -> dict:
             "conflicts": conflicts,
         }
 
+    if kind == "evidence" and filename.lower().endswith(".xlsx"):
+        from .observe.evidence import read_tables
+        try:
+            preview = {"tables": [{"kind": k, "sheet": sh, "rows": len(rs)} for k, sh, rs in read_tables(data)]}
+        except Exception as e:
+            preview = {"tables": [], "error": f"표를 읽을 수 없음: {type(e).__name__}"}
+
     rel = f"{KINDS[kind]}/{filename}"
     (d / KINDS[kind]).mkdir(exist_ok=True)
     (d / rel).write_bytes(data)

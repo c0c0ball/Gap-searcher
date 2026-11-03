@@ -1,0 +1,58 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "admin-park",
+      "UserId": "AIDA3333ADMINPARK",
+      "Arn": "arn:aws:iam::333333333333:user/admin-park",
+      "Path": "/",
+      "CreateDate": "2025-06-15T01:00:00+00:00",
+      "GroupList": [
+        "Admins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-net",
+      "UserId": "AIDA3333VENDORNET",
+      "Arn": "arn:aws:iam::333333333333:user/vendor-net",
+      "Path": "/",
+      "CreateDate": "2026-10-01T01:00:00+00:00",
+      "GroupList": [
+        "Maintenance"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Admins",
+      "Arn": "arn:aws:iam::333333333333:group/Admins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Maintenance",
+      "Arn": "arn:aws:iam::333333333333:group/Maintenance",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": []
+}

@@ -36,12 +36,44 @@ def _scope_prefix(c: Clause) -> str | None:
     return "customer_password" if CUSTOMER.search(f"{c.article} {c.text}") else "password"
 
 
+# 계정·권한 규칙 — 문장에 이 표현이 있으면 해당 규칙을 '정했다'로 본다.
+# (param, 정규식, 값). 값이 None이면 정규식 첫 그룹의 숫자.
+ACCOUNT_RULES: list[tuple[str, re.Pattern, Any]] = [
+    ("account.request_approval", re.compile(r"승인을\s*받아\s*계정\s*신청"), True),
+    ("access.group_based", re.compile(r"권한\s*그룹.*개별\s*사용자에게\s*직접\s*부여하지\s*않"), True),
+    ("account.no_shared", re.compile(r"공용\s*계정을\s*사용하지\s*않"), True),
+    ("account.no_guessable_id", re.compile(r"추측하기\s*쉬운\s*(?:이름|단어).*계정\s*이름"), True),
+    ("account.shared_requires_approval", re.compile(r"공용\s*계정.*승인"), True),
+    ("mfa.console_required", re.compile(r"다중\s*인증|MFA"), True),
+    ("privileged.approval_required", re.compile(r"특수\s*권한.*승인"), True),
+    ("privileged.list_required", re.compile(r"특수\s*권한자\s*목록"), True),
+    ("account.vendor_expiry_required", re.compile(r"유지보수\s*계정.*사용\s*기간"), True),
+    ("account.inactive_days", re.compile(r"(\d+)\s*일\s*이상\s*사용하지\s*않은\s*계정"), None),
+    ("account.offboarding_business_days", re.compile(r"퇴직.*?(\d+)\s*영업일\s*이내"), None),
+]
+REVIEW_CYCLE = re.compile(r"(월|분기|반기|연)\s*1\s*회\s*이상.*접근\s*권한.*검토|접근\s*권한.*(월|분기|반기|연)\s*1\s*회\s*이상\s*검토")
+CYCLE_DAYS = {"월": 31, "분기": 92, "반기": 184, "연": 366}   # 가장 긴 달·분기 기준 (늦게 한 검토를 넉넉히 인정)
+
+
+def _account_rules(c: Clause, name: str) -> list[Found]:
+    if c.article == "부칙" or c.article.startswith("제3조(용어"):
+        return []
+    t, out = c.text, []
+    for param, rx, val in ACCOUNT_RULES:
+        if m := rx.search(t):
+            out.append(Found(param, int(m.group(1)) if val is None else val, c, t, name))
+    if m := REVIEW_CYCLE.search(t):
+        out.append(Found("access_review.cycle_days", CYCLE_DAYS[m.group(1) or m.group(2)], c, t, name))
+    return out
+
+
 class RuleExtractor:
     name = "rule"
 
     def extract(self, clauses: list[Clause]) -> list[Found]:
         out: list[Found] = []
         for c in clauses:
+            out += _account_rules(c, self.name)
             pre = _scope_prefix(c)
             if pre is None:
                 continue

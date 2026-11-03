@@ -203,6 +203,7 @@ def dashboard(target: str | None = None) -> dict:
             "owners": [{k: v for k, v in o.items() if k != "tasks"} for o in owners],
             "next_tasks": open_tasks[:4], "open_tasks": len(open_tasks), "total_tasks": len(all_tasks),
             "recent": rs[:5],
+            "criteria": r.get("criteria") or [],
             "review_progress": {"reviewed": len(reviewed), "total": len(r["decisions"])}}
 
 

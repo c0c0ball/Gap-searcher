@@ -11,10 +11,11 @@
       "alias": "a-prod",
       "status": "ok",
       "files": [
-        "iam_password_policy.json",
+        "cognito_user_pools.json",
         "credential_report.csv",
-        "login_profiles.json",
-        "cognito_user_pools.json"
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "login_profiles.json"
       ]
     },
     {
@@ -22,10 +23,11 @@
       "alias": "a-stg",
       "status": "ok",
       "files": [
-        "iam_password_policy.json",
+        "cognito_user_pools.json",
         "credential_report.csv",
-        "login_profiles.json",
-        "cognito_user_pools.json"
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "login_profiles.json"
       ]
     },
     {
@@ -33,10 +35,11 @@
       "alias": "a-shared",
       "status": "ok",
       "files": [
-        "iam_password_policy.json",
+        "cognito_user_pools.json",
         "credential_report.csv",
-        "login_profiles.json",
-        "cognito_user_pools.json"
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "login_profiles.json"
       ]
     }
   ]

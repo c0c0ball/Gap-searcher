@@ -30,6 +30,7 @@ resource "aws_iam_role_policy" "gapcheck_collector_read" {
           "iam:GenerateCredentialReport",
           "iam:GetCredentialReport",
           "iam:GetLoginProfile",
+          "iam:GetAccountAuthorizationDetails",
           "iam:ListUsers",
         ]
         Resource = "*"

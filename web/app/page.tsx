@@ -13,7 +13,8 @@ type RunRow = { run_id: string; target: string; organization: string; generated_
 type Counts = Record<Tone, number>;
 type Dash = { latest: (RunRow & { snapshot: { source: string }; headline: string }) | null; strip: Strip[]; counts: Counts;
   trend: { before: Counts; after: Counts; generated_at: string } | null; owners: Owner[]; next_tasks: Task[];
-  open_tasks: number; total_tasks: number; recent: RunRow[]; review_progress: { reviewed: number; total: number } };
+  open_tasks: number; total_tasks: number; recent: RunRow[]; review_progress: { reviewed: number; total: number };
+  criteria: { id: string; name: string; ars: string[] }[] };
 
 function Trend({ t }: { t: Dash["trend"] }) {
   if (!t) return <span className="small muted">이 대상의 첫 진단이에요</span>;
@@ -71,6 +72,7 @@ export default function Dashboard() {
   );
 
   const L = d.latest;
+  const groups = d.criteria.length ? d.criteria : [{ id: "", name: "", ars: d.strip.map((s) => s.ar_id) }];
   const org = splitOrg(L.organization);
   const rid = L.run_id;
 
@@ -78,7 +80,7 @@ export default function Dashboard() {
     <div className="stack" style={{ gap: 24 }}>
       <div className="page-head">
         <div>
-          <h1>{org.name} 비밀번호 관리 현황</h1>
+          <h1>{org.name} 계정·인증 관리 현황</h1>
           <p className="muted small">{org.note ? `${org.note}. ` : ""}마지막 진단 {fmtTime(L.generated_at)}{L.snapshot.source === "fixture" ? ", 예제 AWS 데이터 사용" : ""}</p>
         </div>
         <div className="row">
@@ -117,14 +119,30 @@ export default function Dashboard() {
           ))}
           <span className="chip" style={{ cursor: "default" }}>담당자 확인 <span className="n">{d.review_progress.reviewed}/{d.review_progress.total}</span></span>
         </div>
-        <div className="strip">
-          {d.strip.map((s) => (
-            <a key={s.ar_id} className={s.tone} href={`/runs/${rid}#${s.ar_id}`}>
-              <div className="q">{s.question}</div>
-              <div style={{ marginTop: 10 }}><StatusBadge tone={s.tone}>{s.status}</StatusBadge></div>
-              <div className="small muted" style={{ marginTop: 6 }}>{s.findings ? `${s.findings}건 발견, ` : ""}{s.reviewed ? "담당자 확인함" : "담당자 확인 전"}</div>
-            </a>
-          ))}
+        <div className="strip-groups">
+          {groups.map((g) => {
+            const items = d.strip.filter((s) => g.ars.includes(s.ar_id));
+            const nfix = items.filter((s) => s.tone === "fix").length;
+            return (
+              <div key={g.id} className="strip-row">
+                <a className="strip-label" href={`/checklist#${g.id}`}>
+                  <b>{g.id}</b> <span>{g.name}</span>
+                  <span className="small" style={{ color: nfix ? "var(--fix)" : "var(--ok)", fontWeight: 600 }}>
+                    {nfix ? `고칠 것 ${nfix}` : "고칠 것 없음"}
+                  </span>
+                </a>
+                <div className="strip">
+                  {items.map((s) => (
+                    <a key={s.ar_id} className={s.tone} href={`/runs/${rid}#${s.ar_id}`}>
+                      <div className="q">{s.question}</div>
+                      <div style={{ marginTop: 10 }}><StatusBadge tone={s.tone}>{s.status}</StatusBadge></div>
+                      <div className="small muted" style={{ marginTop: 6 }}>{s.findings ? `${s.findings}건 발견, ` : ""}{s.reviewed ? "담당자 확인함" : "담당자 확인 전"}</div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 

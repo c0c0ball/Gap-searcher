@@ -1,0 +1,121 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "admin",
+      "UserId": "AIDA2222ADMIN",
+      "Arn": "arn:aws:iam::222222222222:user/admin",
+      "Path": "/",
+      "CreateDate": "2026-05-11T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "qa-seo",
+      "UserId": "AIDA2222QASEO",
+      "Arn": "arn:aws:iam::222222222222:user/qa-seo",
+      "Path": "/",
+      "CreateDate": "2026-03-03T01:00:00+00:00",
+      "GroupList": [
+        "QA"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "qa-yoon",
+      "UserId": "AIDA2222QAYOON",
+      "Arn": "arn:aws:iam::222222222222:user/qa-yoon",
+      "Path": "/",
+      "CreateDate": "2026-04-02T01:00:00+00:00",
+      "GroupList": [
+        "QA"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-legacy-etl",
+      "UserId": "AIDA2222SVCLEGACYETL",
+      "Arn": "arn:aws:iam::222222222222:user/svc-legacy-etl",
+      "Path": "/",
+      "CreateDate": "2025-09-01T00:00:00+00:00",
+      "GroupList": [
+        "BatchJobs"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "BatchJobs",
+      "Arn": "arn:aws:iam::222222222222:group/BatchJobs",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "BatchJobRunner",
+          "PolicyArn": "arn:aws:iam::222222222222:policy/BatchJobRunner"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Developers",
+      "Arn": "arn:aws:iam::222222222222:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "QA",
+      "Arn": "arn:aws:iam::222222222222:group/QA",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "BatchJobRunner",
+      "Arn": "arn:aws:iam::222222222222:policy/BatchJobRunner",
+      "DefaultVersionId": "v1",
+      "PolicyVersionList": [
+        {
+          "VersionId": "v1",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "Resource": "arn:aws:s3:::a-batch-*/*"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

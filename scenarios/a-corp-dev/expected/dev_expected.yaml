@@ -19,13 +19,63 @@ seeded_defects:
   - id: D5
     ar: AR-2.5.4-05
     what: Cognito 회원 비밀번호 최소 길이 6 (지침 제7조① 8자). 화면 안내 문구는 8자라서 화면만 보면 놓친다.
+  # ── 2단계: IAM 수집기 (2.2.5, 2.5.1~2.5.6) ──
+  - id: D6
+    ar: AR-2.5.1-02
+    what: ops-kim 에게 ReadOnlyAccess 가 그룹이 아니라 사용자에게 직접 붙어 있음 (지침 제9조②)
+  - id: D7
+    ar: AR-2.5.2-01
+    what: a-stg 에 추측하기 쉬운 이름 'admin' 의 콘솔 계정 (지침 제4조③)
+  - id: D8
+    ar: AR-2.5.2-02
+    what: a-stg 'admin' 은 사번 없이 콘솔을 쓰는 공용 계정인데 관리대장에 승인자 없음 (지침 제4조④)
+  - id: D9
+    ar: AR-2.5.5-01
+    what: dev-choi 가 Admins 그룹(AdministratorAccess)에 있지만 특수권한자 목록에 없음 (지침 제11조①)
+    trap: 직접 붙은 정책이 아니라 그룹으로 받은 관리자 권한이라, 사용자 정책만 보면 놓친다.
+  - id: D10
+    ar: AR-2.5.5-02
+    what: 외부 유지보수 계정 vendor-maint 가 사용기한 없이 활성 (지침 제11조②)
+  - id: D11
+    ar: AR-2.5.3-01
+    what: dev-park 가 콘솔 비밀번호를 쓰지만 MFA 미등록 (지침 제8조)
+  - id: D12
+    ar: AR-2.5.3-02
+    what: a-stg 루트 사용자에 MFA 없음
+  - id: D13
+    ar: AR-2.2.5-01
+    what: intern-jung(사번 A1031) 10월 15일 퇴직, 기준일까지 12영업일인데 계정 활성 (절차서 제4조 1영업일)
+    trap: 인사 명부에는 IAM 이름이 없다. 계정 관리대장의 사번으로 이어야 찾을 수 있다.
+  - id: D14
+    ar: AR-2.5.6-02
+    what: svc-legacy-etl 액세스 키가 206일 미사용인데 활성 (지침 제12조 90일)
+  - id: D15
+    ar: AR-2.5.6-01
+    what: 마지막 접근권한 검토 2026-06-30, 3분기 검토 기록 없음 (지침 제10조 분기 1회 → 92일)
 non_defects:
   - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
   - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
-  - <root_account> 행은 IAM 사용자 모집단이 아님
+  - <root_account> 행은 IAM 사용자 모집단이 아님 (루트는 AR-2.5.3-02에서 따로 봄)
+  - svc-batch·svc-legacy-etl 은 콘솔 비밀번호가 없어 MFA 검사 대상이 아님
+  - qa-seo 는 10월 30일(금) 퇴직, 기준일 11월 2일(월)까지 1영업일 — 회수 기한 안이라 아직 결함 아님
+  - 한○○(A1009) 은 퇴직자지만 계정이 이미 회수되어 관리대장에도 없음 — 결함 아님
+  - vendor-net 은 유지보수 계정이지만 사용기한 2026-12-31 이 기록됨 — 결함 아님
+  - admin-park 는 두 계정 모두 관리자 권한이지만 특수권한자 목록에 있음 — 결함 아님
+  - BatchJobRunner 사용자 정의 정책은 s3 일부 작업만 허용 — 관리자 권한 아님
 expected:
   AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
   AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
   AR-2.5.4-03: {state: CANDIDATE_NONCONFORMITY, defects: [D3], subjects: ["111111111111/ops-kim"]}
   AR-2.5.4-04: {state: CANDIDATE_NONCONFORMITY, defects: [D4], subjects: ["111111111111/dev-lee"]}
   AR-2.5.4-05: {state: CANDIDATE_NONCONFORMITY, defects: [D5], subjects: ["111111111111/ap-northeast-2_AShop001"]}
+  AR-2.2.5-01: {state: CANDIDATE_NONCONFORMITY, defects: [D13], subjects: ["111111111111/intern-jung"]}
+  AR-2.5.1-01: {state: CANDIDATE_CONFORMING}
+  AR-2.5.1-02: {state: CANDIDATE_NONCONFORMITY, defects: [D6], subjects: ["111111111111/ops-kim"]}
+  AR-2.5.2-01: {state: CANDIDATE_NONCONFORMITY, defects: [D7], subjects: ["222222222222/admin"]}
+  AR-2.5.2-02: {state: CANDIDATE_NONCONFORMITY, defects: [D8], subjects: ["222222222222/admin"]}
+  AR-2.5.3-01: {state: CANDIDATE_NONCONFORMITY, defects: [D11], subjects: ["111111111111/dev-park"]}
+  AR-2.5.3-02: {state: CANDIDATE_NONCONFORMITY, defects: [D12], subjects: ["222222222222/root"]}
+  AR-2.5.5-01: {state: CANDIDATE_NONCONFORMITY, defects: [D9], subjects: ["111111111111/dev-choi"]}
+  AR-2.5.5-02: {state: CANDIDATE_NONCONFORMITY, defects: [D10], subjects: ["111111111111/vendor-maint"]}
+  AR-2.5.6-01: {state: CANDIDATE_NONCONFORMITY, defects: [D15], subjects: ["접근권한 검토 기록"]}
+  AR-2.5.6-02: {state: CANDIDATE_NONCONFORMITY, defects: [D14], subjects: ["222222222222/svc-legacy-etl"]}

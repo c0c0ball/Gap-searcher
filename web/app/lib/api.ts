@@ -35,4 +35,15 @@ export const PARAM_LABEL: Record<string, string> = {
   "password.max_age_days": "변경 주기(일)", "password.reuse_prevention": "재사용 금지 개수",
   "password.temp_force_change": "임시 비밀번호 첫 로그인 때 변경",
   "customer_password.min_length": "회원 비밀번호 최소 길이", "customer_password.complexity_classes": "회원 비밀번호 문자 종류 수",
+  "account.request_approval": "계정 신청·승인 절차", "access.group_based": "권한은 직무 그룹으로만 부여",
+  "account.no_shared": "공용 계정 금지", "account.no_guessable_id": "추측하기 쉬운 계정 이름 금지",
+  "account.shared_requires_approval": "공용 계정은 승인 필요", "mfa.console_required": "콘솔 접속 시 추가 인증(MFA)",
+  "privileged.approval_required": "특수권한 승인 필요", "privileged.list_required": "특수권한자 목록 관리",
+  "account.vendor_expiry_required": "유지보수 계정 사용 기간 제한", "account.inactive_days": "장기 미사용 기준(일)",
+  "account.offboarding_business_days": "퇴직자 계정 회수 기한(영업일)", "access_review.cycle_days": "접근권한 검토 주기(일)",
+};
+
+export const TABLE_LABEL: Record<string, string> = {
+  account_list: "계정 관리대장", hr_roster: "인사 명부", privileged_list: "특수권한자 목록",
+  access_review_log: "접근권한 검토 기록",
 };

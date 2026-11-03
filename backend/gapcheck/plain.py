@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-PLAIN_VERSION = "0.1.0"
+PLAIN_VERSION = "0.2.0"
 
 STATUS_PENDING = {
     "CANDIDATE_NONCONFORMITY": ("고칠 부분이 있어 보여요", "담당자가 확인하고 있어요", "🔴"),
@@ -101,9 +101,12 @@ def account_name(aid: str, accounts: dict[str, dict]) -> str:
 
 def finding_sentence(v: dict, obs: dict, accounts: dict[str, dict]) -> str:
     """결함 1건을 쉬운 문장 1~2개로."""
+    if v.get("plain"):
+        aid = str(v.get("subject", "")).split("/")[0]
+        return v["plain"].replace("{account}", account_name(aid, accounts))
     o = next((obs[i] for i in v.get("obs_ids", []) if i in obs and obs[i]["axis"] == "technical"), None)
     if v["op"] == "exists":
-        return "회사 규정 어디에도 비밀번호 규칙이 적혀 있지 않아요."
+        return "회사 규정 어디에도 이 내용이 적혀 있지 않아요."
     if o is None:
         return "회사 규칙과 다른 설정이 발견됐어요."
     vals = o["values"]
@@ -152,6 +155,8 @@ def doc_rules_sentence(params: list[str], doc_obs: dict[str, dict], doc_titles: 
         bits.append("임시 비밀번호는 첫 로그인 때 변경")
     docs = sorted({doc_titles.get(c["locator"].split(" ")[0], c["locator"].split(" ")[0])
                    for o in got.values() for c in o["citations"]})
+    if not bits:
+        return f"회사 규정({', '.join(docs)})에 이 내용이 적혀 있어요."
     return f"회사 규정({', '.join(docs)})에 {', '.join(bits)} 규칙이 적혀 있어요."
 
 
@@ -195,7 +200,7 @@ def build(result_body: dict, requirements: list, accounts: dict[str, dict]) -> d
     if n_unk:
         parts.append((f"{n_unk}가지는 아직 판단하지 못했고", f"{n_unk}가지는 아직 판단하지 못했어요"))
     tail = ", ".join([p[0] for p in parts[:-1]] + [parts[-1][1]]) if parts else ""
-    headline = f"비밀번호 관리에 대해 {len(items)}가지를 확인했어요. {tail}."
+    headline = f"계정·비밀번호 관리에 대해 {len(items)}가지를 확인했어요. {tail}."
     return {"version": PLAIN_VERSION, "headline": headline,
             "notice": "이 결과는 자동으로 계산한 것이라 담당자가 확인하기 전까지는 '확인 중'이에요.",
             "items": items}
