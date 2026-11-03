@@ -1,0 +1,77 @@
+[
+  {
+    "SubnetId": "subnet-0c2pub00000000a",
+    "VpcId": "vpc-0c2dev0000000001",
+    "CidrBlock": "10.20.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-public-a"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "SubnetId": "subnet-0c2pub00000000c",
+    "VpcId": "vpc-0c2dev0000000001",
+    "CidrBlock": "10.20.1.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-public-c"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "SubnetId": "subnet-0c2app00000000a",
+    "VpcId": "vpc-0c2dev0000000001",
+    "CidrBlock": "10.20.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-app-a"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "SubnetId": "subnet-0c2db000000000a",
+    "VpcId": "vpc-0c2dev0000000001",
+    "CidrBlock": "10.20.20.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-data-a"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "SubnetId": "subnet-0c2db000000000c",
+    "VpcId": "vpc-0c2dev0000000001",
+    "CidrBlock": "10.20.21.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-data-c"
+      }
+    ],
+    "OwnerId": "801000000002"
+  }
+]

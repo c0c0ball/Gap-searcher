@@ -1,0 +1,362 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "choi.mr",
+      "UserId": "AIDA000100CHOIMR",
+      "Arn": "arn:aws:iam::801000000001:user/choi.mr",
+      "Path": "/",
+      "CreateDate": "2026-03-09T02:00:00+00:00",
+      "GroupList": [
+        "HROps"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "jhkim",
+      "UserId": "AIDA000101JHKIM",
+      "Arn": "arn:aws:iam::801000000001:user/jhkim",
+      "Path": "/",
+      "CreateDate": "2025-05-19T01:00:00+00:00",
+      "GroupList": [
+        "HROps"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "kim.dh",
+      "UserId": "AIDA000102KIMDH",
+      "Arn": "arn:aws:iam::801000000001:user/kim.dh",
+      "Path": "/",
+      "CreateDate": "2025-01-13T00:30:00+00:00",
+      "GroupList": [
+        "PlatformAdmins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "lee.jw",
+      "UserId": "AIDA000103LEEJW",
+      "Arn": "arn:aws:iam::801000000001:user/lee.jw",
+      "Path": "/",
+      "CreateDate": "2026-09-01T00:50:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "lim.ga",
+      "UserId": "AIDA000104LIMGA",
+      "Arn": "arn:aws:iam::801000000001:user/lim.ga",
+      "Path": "/",
+      "CreateDate": "2025-08-04T01:00:00+00:00",
+      "GroupList": [
+        "HROps"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "ops-shared",
+      "UserId": "AIDA000105OPSSHARED",
+      "Arn": "arn:aws:iam::801000000001:user/ops-shared",
+      "Path": "/",
+      "CreateDate": "2025-02-03T03:00:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "park.sj",
+      "UserId": "AIDA000106PARKSJ",
+      "Arn": "arn:aws:iam::801000000001:user/park.sj",
+      "Path": "/",
+      "CreateDate": "2024-03-04T01:10:00+00:00",
+      "GroupList": [
+        "SecurityAdmins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-payroll-batch",
+      "UserId": "AIDA000107SVCPAYROLL",
+      "Arn": "arn:aws:iam::801000000001:user/svc-payroll-batch",
+      "Path": "/",
+      "CreateDate": "2024-11-01T00:00:00+00:00",
+      "GroupList": [
+        "PayrollJobs"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-report-export",
+      "UserId": "AIDA000108SVCREPORTE",
+      "Arn": "arn:aws:iam::801000000001:user/svc-report-export",
+      "Path": "/",
+      "CreateDate": "2025-04-01T00:00:00+00:00",
+      "GroupList": [
+        "ReportJobs"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "sysadmin-hong",
+      "UserId": "AIDA000109SYSADMINHO",
+      "Arn": "arn:aws:iam::801000000001:user/sysadmin-hong",
+      "Path": "/",
+      "CreateDate": "2025-09-22T01:00:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-hrcore",
+      "UserId": "AIDA000110VENDORHRCO",
+      "Arn": "arn:aws:iam::801000000001:user/vendor-hrcore",
+      "Path": "/",
+      "CreateDate": "2026-06-01T01:00:00+00:00",
+      "GroupList": [
+        "VendorSupport"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "yoon.hj",
+      "UserId": "AIDA000111YOONHJ",
+      "Arn": "arn:aws:iam::801000000001:user/yoon.hj",
+      "Path": "/",
+      "CreateDate": "2026-10-20T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Developers",
+      "GroupId": "AGPA0001DEVELOPERS",
+      "Arn": "arn:aws:iam::801000000001:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "HROps",
+      "GroupId": "AGPA0001HROPS",
+      "Arn": "arn:aws:iam::801000000001:group/HROps",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "HrOpsConsole",
+          "PolicyArn": "arn:aws:iam::801000000001:policy/HrOpsConsole"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Operators",
+      "GroupId": "AGPA0001OPERATORS",
+      "Arn": "arn:aws:iam::801000000001:group/Operators",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "PayrollJobs",
+      "GroupId": "AGPA0001PAYROLLJOBS",
+      "Arn": "arn:aws:iam::801000000001:group/PayrollJobs",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PayrollBatch",
+          "PolicyArn": "arn:aws:iam::801000000001:policy/PayrollBatch"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "PlatformAdmins",
+      "GroupId": "AGPA0001PLATFORMADMI",
+      "Arn": "arn:aws:iam::801000000001:group/PlatformAdmins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "ReportJobs",
+      "GroupId": "AGPA0001REPORTJOBS",
+      "Arn": "arn:aws:iam::801000000001:group/ReportJobs",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReportExport",
+          "PolicyArn": "arn:aws:iam::801000000001:policy/ReportExport"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "SecurityAdmins",
+      "GroupId": "AGPA0001SECURITYADMI",
+      "Arn": "arn:aws:iam::801000000001:group/SecurityAdmins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "VendorSupport",
+      "GroupId": "AGPA0001VENDORSUPPOR",
+      "Arn": "arn:aws:iam::801000000001:group/VendorSupport",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "HrOpsConsole",
+      "PolicyId": "ANPA0001HROPSCONSOLE",
+      "Arn": "arn:aws:iam::801000000001:policy/HrOpsConsole",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "rds:Describe*",
+                  "s3:GetObject",
+                  "s3:ListBucket"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "PolicyName": "PayrollBatch",
+      "PolicyId": "ANPA0001PAYROLLBATCH",
+      "Arn": "arn:aws:iam::801000000001:policy/PayrollBatch",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": "s3:*",
+                "Resource": [
+                  "arn:aws:s3:::c-prod-tenant-uploads",
+                  "arn:aws:s3:::c-prod-tenant-uploads/*"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "kms:Decrypt",
+                  "kms:GenerateDataKey"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "PolicyName": "ReportExport",
+      "PolicyId": "ANPA0001REPORTEXPORT",
+      "Arn": "arn:aws:iam::801000000001:policy/ReportExport",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:PutObject",
+                  "s3:GetObject"
+                ],
+                "Resource": "arn:aws:s3:::c-prod-payslip-pdf/*"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "c-dev-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:801000000002:trail/c-dev-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "c-dev-cloudtrail-logs",
+    "Status": {
+      "IsLogging": true,
+      "LatestDeliveryTime": "2026-11-02T02:55:00+00:00"
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "ReadOnly",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

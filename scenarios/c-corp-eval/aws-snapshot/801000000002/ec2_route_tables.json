@@ -1,0 +1,112 @@
+[
+  {
+    "RouteTableId": "rtb-0c2main0000001",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2main00000010",
+        "RouteTableId": "rtb-0c2main0000001",
+        "SubnetId": "subnet-0c2db000000000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2main00000011",
+        "RouteTableId": "rtb-0c2main0000001",
+        "SubnetId": "subnet-0c2db000000000c",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2main0000001m",
+        "RouteTableId": "rtb-0c2main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-main"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "RouteTableId": "rtb-0c2public00001",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0c2dev000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2public000010",
+        "RouteTableId": "rtb-0c2public00001",
+        "SubnetId": "subnet-0c2pub00000000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2public000011",
+        "RouteTableId": "rtb-0c2public00001",
+        "SubnetId": "subnet-0c2pub00000000c",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-public"
+      }
+    ],
+    "OwnerId": "801000000002"
+  },
+  {
+    "RouteTableId": "rtb-0c2app0000001",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0c2dev0000000001a",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0c2app00000010",
+        "RouteTableId": "rtb-0c2app0000001",
+        "SubnetId": "subnet-0c2app00000000a",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-app"
+      }
+    ],
+    "OwnerId": "801000000002"
+  }
+]

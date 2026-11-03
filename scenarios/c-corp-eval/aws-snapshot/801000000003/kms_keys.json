@@ -1,0 +1,58 @@
+[
+  {
+    "KeyId": "e27b9d04-3c6a-4f18-8d2e-0c3000000c01",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000003:key/e27b9d04-3c6a-4f18-8d2e-0c3000000c01",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/sec-siem"
+    ],
+    "Description": "SIEM 저장소 암호화",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "e27b9d04-3c6a-4f18-8d2e-0c3000000c02",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000003:key/e27b9d04-3c6a-4f18-8d2e-0c3000000c02",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/central-audit-logs"
+    ],
+    "Description": "통합 감사 로그 버킷 암호화",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "e27b9d04-3c6a-4f18-8d2e-0c3000000c03",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000003:key/e27b9d04-3c6a-4f18-8d2e-0c3000000c03",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/soc-forensics"
+    ],
+    "Description": "침해사고 포렌식 이미지 보관",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "e27b9d04-3c6a-4f18-8d2e-0c30000000e5",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000003:key/e27b9d04-3c6a-4f18-8d2e-0c30000000e5",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/aws/ebs"
+    ],
+    "Description": "Default key that protects my EBS volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  }
+]

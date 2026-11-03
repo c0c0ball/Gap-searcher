@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "c-sbx-poc-uploads",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": []
+  }
+]

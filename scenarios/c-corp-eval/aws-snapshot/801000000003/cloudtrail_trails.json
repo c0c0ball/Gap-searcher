@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "c-sec-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:801000000003:trail/c-sec-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": false,
+    "S3BucketName": "c-sec-central-audit-logs",
+    "Status": {
+      "IsLogging": true,
+      "LatestDeliveryTime": "2026-11-02T02:55:00+00:00"
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

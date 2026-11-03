@@ -1,0 +1,126 @@
+{
+  "snapshot_id": "c-corp-eval-2026-11-02",
+  "source": "fixture",
+  "collected_at": "2026-11-02T03:00:00+00:00",
+  "collector": "gapcheck-collector/fixture",
+  "region": "ap-northeast-2",
+  "note": "C사 진단용 가상 스냅샷. live 수집기와 같은 파일 형식을 쓴다.",
+  "accounts": [
+    {
+      "account_id": "801000000001",
+      "alias": "c-prod",
+      "status": "ok",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ]
+    },
+    {
+      "account_id": "801000000002",
+      "alias": "c-dev",
+      "status": "partial",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ],
+      "missing": [
+        "guardduty.json"
+      ],
+      "errors": [
+        {
+          "file": "guardduty.json",
+          "api": "guardduty:ListDetectors",
+          "error": "AccessDeniedException",
+          "message": "User: arn:aws:sts::801000000002:assumed-role/GapcheckCollector/run is not authorized to perform: guardduty:ListDetectors (SCP deny)"
+        }
+      ]
+    },
+    {
+      "account_id": "801000000003",
+      "alias": "c-sec",
+      "status": "partial",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json"
+      ],
+      "missing": [
+        "s3_buckets.json"
+      ],
+      "errors": [
+        {
+          "file": "s3_buckets.json",
+          "api": "s3:ListAllMyBuckets",
+          "error": "AccessDenied",
+          "message": "Access Denied (bucket policy / SCP on log-archive account)"
+        }
+      ]
+    },
+    {
+      "account_id": "801000000009",
+      "alias": "c-sandbox",
+      "status": "ok",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ]
+    }
+  ]
+}

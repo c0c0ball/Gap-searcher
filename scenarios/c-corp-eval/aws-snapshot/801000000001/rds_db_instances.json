@@ -1,0 +1,64 @@
+[
+  {
+    "DBInstanceIdentifier": "prod-payroll",
+    "DBInstanceClass": "db.r6g.large",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0c1db0000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "prod-payroll-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0c1db000000000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0c1db000000000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "BackupRetentionPeriod": 7,
+    "MultiAZ": true,
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a01"
+  },
+  {
+    "DBInstanceIdentifier": "prod-tenant-core",
+    "DBInstanceClass": "db.r6g.large",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0c1db0000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "prod-tenant-core-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0c1db000000000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0c1db000000000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "BackupRetentionPeriod": 35,
+    "MultiAZ": true,
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a02"
+  }
+]

@@ -1,0 +1,147 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "park.sj",
+      "UserId": "AIDA000300PARKSJ",
+      "Arn": "arn:aws:iam::801000000003:user/park.sj",
+      "Path": "/",
+      "CreateDate": "2024-03-05T01:00:00+00:00",
+      "GroupList": [
+        "SecurityAdmins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "sec.kang",
+      "UserId": "AIDA000301SECKANG",
+      "Arn": "arn:aws:iam::801000000003:user/sec.kang",
+      "Path": "/",
+      "CreateDate": "2025-07-07T01:00:00+00:00",
+      "GroupList": [
+        "SecOps"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-siem-ingest",
+      "UserId": "AIDA000302SVCSIEMING",
+      "Arn": "arn:aws:iam::801000000003:user/svc-siem-ingest",
+      "Path": "/",
+      "CreateDate": "2025-07-08T00:00:00+00:00",
+      "GroupList": [
+        "SiemIngest"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-soc",
+      "UserId": "AIDA000303VENDORSOC",
+      "Arn": "arn:aws:iam::801000000003:user/vendor-soc",
+      "Path": "/",
+      "CreateDate": "2026-10-01T01:00:00+00:00",
+      "GroupList": [
+        "VendorSupport"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "SecOps",
+      "GroupId": "AGPA0003SECOPS",
+      "Arn": "arn:aws:iam::801000000003:group/SecOps",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "IAMFullAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/IAMFullAccess"
+        },
+        {
+          "PolicyName": "SecurityAudit",
+          "PolicyArn": "arn:aws:iam::aws:policy/SecurityAudit"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "SecurityAdmins",
+      "GroupId": "AGPA0003SECURITYADMI",
+      "Arn": "arn:aws:iam::801000000003:group/SecurityAdmins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "SiemIngest",
+      "GroupId": "AGPA0003SIEMINGEST",
+      "Arn": "arn:aws:iam::801000000003:group/SiemIngest",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "SiemIngest",
+          "PolicyArn": "arn:aws:iam::801000000003:policy/SiemIngest"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "VendorSupport",
+      "GroupId": "AGPA0003VENDORSUPPOR",
+      "Arn": "arn:aws:iam::801000000003:group/VendorSupport",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "SiemIngest",
+      "PolicyId": "ANPA0003SIEMINGEST",
+      "Arn": "arn:aws:iam::801000000003:policy/SiemIngest",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:ListBucket",
+                  "sqs:ReceiveMessage",
+                  "sqs:DeleteMessage"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

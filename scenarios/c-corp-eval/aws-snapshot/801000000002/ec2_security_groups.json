@@ -1,0 +1,220 @@
+[
+  {
+    "GroupId": "sg-0c2default000001",
+    "GroupName": "default",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "default VPC security group",
+    "OwnerId": "801000000002",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c2alb000000001",
+    "GroupName": "dev-alb",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "dev-alb",
+    "OwnerId": "801000000002",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c2app000000001",
+    "GroupName": "dev-default-app",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "dev-default-app",
+    "OwnerId": "801000000002",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8080,
+        "ToPort": 8080,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c2alb000000001"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "admin vpn"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c2legacy000001",
+    "GroupName": "dev-legacy-batch",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "dev-legacy-batch",
+    "OwnerId": "801000000002",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 23,
+        "ToPort": 23,
+        "IpRanges": [
+          {
+            "CidrIp": "10.20.0.0/16",
+            "Description": "legacy payroll converter console"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c2stgdb0000001",
+    "GroupName": "stg-db",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "stg-db",
+    "OwnerId": "801000000002",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c2app000000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c2clonedb00001",
+    "GroupName": "dev-clone-db",
+    "VpcId": "vpc-0c2dev0000000001",
+    "Description": "dev-clone-db",
+    "OwnerId": "801000000002",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c2app000000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "DBInstanceIdentifier": "poc-ai-resume",
+    "DBInstanceClass": "db.t4g.micro",
+    "Engine": "mysql",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": true,
+    "StorageEncrypted": false,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0c9open00000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "poc-ai-resume-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0c9pub00000000a",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "BackupRetentionPeriod": 0,
+    "MultiAZ": false
+  }
+]

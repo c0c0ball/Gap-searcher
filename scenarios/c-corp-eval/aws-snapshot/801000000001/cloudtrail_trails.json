@@ -1,0 +1,44 @@
+[
+  {
+    "Name": "c-prod-audit",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:801000000001:trail/c-prod-audit",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "c-sec-central-audit-logs",
+    "Status": {
+      "IsLogging": true,
+      "LatestDeliveryTime": "2026-11-02T02:55:00+00:00"
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-legacy-trail",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:801000000001:trail/c-prod-legacy-trail",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": false,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": false,
+    "S3BucketName": "c-prod-legacy-trail-logs",
+    "Status": {
+      "IsLogging": false,
+      "StopLoggingTime": "2025-11-20T02:00:00+00:00"
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "DBInstanceIdentifier": "stg-payroll",
+    "DBInstanceClass": "db.t4g.medium",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": true,
+    "StorageEncrypted": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0c2stgdb0000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "stg-payroll-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0c2pub00000000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0c2pub00000000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "BackupRetentionPeriod": 1,
+    "MultiAZ": false,
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a01"
+  },
+  {
+    "DBInstanceIdentifier": "dev-payroll-clone",
+    "DBInstanceClass": "db.t4g.medium",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": false,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0c2clonedb00001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "dev-payroll-clone-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0c2db000000000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0c2db000000000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "BackupRetentionPeriod": 0,
+    "MultiAZ": false
+  }
+]

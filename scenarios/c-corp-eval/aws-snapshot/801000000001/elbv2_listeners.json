@@ -1,0 +1,113 @@
+[
+  {
+    "LoadBalancerName": "prod-hr-web",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "State": {
+      "Code": "active"
+    },
+    "DNSName": "prod-hr-web-1234567890.ap-northeast-2.elb.amazonaws.com",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:loadbalancer/app/prod-hr-web/0c15f2e9a7d1b3c",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:targetgroup/tg-443/1"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-TLS13-1-2-2021-06",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-northeast-2:801000000001:certificate/peoplecloud"
+          }
+        ]
+      },
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "redirect",
+            "RedirectConfig": {
+              "Protocol": "HTTPS",
+              "Port": "443",
+              "Host": "#{host}",
+              "Path": "/#{path}",
+              "Query": "#{query}",
+              "StatusCode": "HTTP_301"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "LoadBalancerName": "prod-api",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "State": {
+      "Code": "active"
+    },
+    "DNSName": "prod-api-1234567890.ap-northeast-2.elb.amazonaws.com",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:loadbalancer/app/prod-api/0c15f2e9a7d1b3c",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:targetgroup/tg-443/1"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-TLS-1-1-2017-01",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-northeast-2:801000000001:certificate/peoplecloud"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "LoadBalancerName": "prod-internal-admin",
+    "Scheme": "internal",
+    "Type": "application",
+    "State": {
+      "Code": "active"
+    },
+    "DNSName": "prod-internal-admin-1234567890.ap-northeast-2.elb.amazonaws.com",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:loadbalancer/app/prod-internal-admin/0c15f2e9a7d1b3c",
+    "Listeners": [
+      {
+        "Port": 8080,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:targetgroup/tg-8080/1"
+          }
+        ]
+      },
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000001:targetgroup/tg-443/1"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-2016-08",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-northeast-2:801000000001:certificate/peoplecloud"
+          }
+        ]
+      }
+    ]
+  }
+]

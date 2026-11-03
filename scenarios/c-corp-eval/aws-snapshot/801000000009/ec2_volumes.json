@@ -1,0 +1,23 @@
+[
+  {
+    "VolumeId": "vol-0c9poc00000001",
+    "Size": 20,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": false,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "poc-root"
+      }
+    ],
+    "Attachments": [
+      {
+        "InstanceId": "i-0c9poc0000000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "dev-cho": {
+    "UserName": "dev-cho",
+    "CreateDate": "2025-03-17T01:00:04+00:00",
+    "PasswordResetRequired": false
+  },
+  "hwang.yr": {
+    "UserName": "hwang.yr",
+    "CreateDate": "2025-12-01T01:00:03+00:00",
+    "PasswordResetRequired": false
+  },
+  "jung.ws": {
+    "UserName": "jung.ws",
+    "CreateDate": "2026-02-02T01:00:02+00:00",
+    "PasswordResetRequired": false
+  },
+  "qa-shared": {
+    "UserName": "qa-shared",
+    "CreateDate": "2025-11-03T01:00:03+00:00",
+    "PasswordResetRequired": false
+  }
+}

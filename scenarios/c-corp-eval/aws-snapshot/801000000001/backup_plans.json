@@ -1,0 +1,39 @@
+[
+  {
+    "BackupPlanName": "prod-daily",
+    "BackupPlanId": "bp-prod-daily",
+    "Rules": [
+      {
+        "RuleName": "daily",
+        "TargetBackupVaultName": "c-prod-vault",
+        "ScheduleExpression": "cron(0 17 * * ? *)",
+        "Lifecycle": {
+          "DeleteAfterDays": 14
+        },
+        "CopyActions": []
+      }
+    ]
+  },
+  {
+    "BackupPlanName": "prod-weekly-dr",
+    "BackupPlanId": "bp-prod-weekly-dr",
+    "Rules": [
+      {
+        "RuleName": "dr",
+        "TargetBackupVaultName": "c-prod-vault",
+        "ScheduleExpression": "cron(0 18 ? * SUN *)",
+        "Lifecycle": {
+          "DeleteAfterDays": 35
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-northeast-3:801000000001:backup-vault:c-prod-dr",
+            "Lifecycle": {
+              "DeleteAfterDays": 35
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

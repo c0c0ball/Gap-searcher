@@ -1,0 +1,106 @@
+[
+  {
+    "VolumeId": "vol-0c1app0000000a1",
+    "Size": 40,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-app-a-root"
+      }
+    ],
+    "Attachments": [
+      {
+        "InstanceId": "i-0c1app00000000a1",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a02"
+  },
+  {
+    "VolumeId": "vol-0c1app0000000c1",
+    "Size": 40,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-app-c-root"
+      }
+    ],
+    "Attachments": [
+      {
+        "InstanceId": "i-0c1app00000000c1",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a02"
+  },
+  {
+    "VolumeId": "vol-0c1bastion00001",
+    "Size": 8,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-bastion-root"
+      }
+    ],
+    "Attachments": [
+      {
+        "InstanceId": "i-0c1bastion000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c10000000e5"
+  },
+  {
+    "VolumeId": "vol-0c1batch0000001",
+    "Size": 300,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-payroll-batch-data"
+      }
+    ],
+    "Attachments": [
+      {
+        "InstanceId": "i-0c1batch00000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a01"
+  },
+  {
+    "VolumeId": "vol-0c1oldpay000001",
+    "Size": 500,
+    "VolumeType": "gp3",
+    "State": "available",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "payroll-v1-data-backup"
+      }
+    ],
+    "Attachments": [],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a03"
+  }
+]

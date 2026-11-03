@@ -1,0 +1,99 @@
+[
+  {
+    "GroupId": "sg-0c3default000001",
+    "GroupName": "default",
+    "VpcId": "vpc-0c3sec0000000001",
+    "Description": "default VPC security group",
+    "OwnerId": "801000000003",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c3soctools00001",
+    "GroupName": "soc-tools",
+    "VpcId": "vpc-0c3sec0000000001",
+    "Description": "soc-tools",
+    "OwnerId": "801000000003",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "192.0.2.32/27",
+            "Description": "IT mgmt net"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3389,
+        "ToPort": 3389,
+        "IpRanges": [
+          {
+            "CidrIp": "192.0.2.0/24",
+            "Description": "HQ"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c3siem00000001",
+    "GroupName": "soc-siem",
+    "VpcId": "vpc-0c3sec0000000001",
+    "Description": "soc-siem",
+    "OwnerId": "801000000003",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "10.0.0.0/8"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  }
+]

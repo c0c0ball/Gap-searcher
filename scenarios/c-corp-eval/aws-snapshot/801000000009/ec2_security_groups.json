@@ -1,0 +1,83 @@
+[
+  {
+    "GroupId": "sg-0c9default000001",
+    "GroupName": "default",
+    "VpcId": "vpc-0c9sbx0000000001",
+    "Description": "default",
+    "OwnerId": "801000000009",
+    "IpPermissions": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c9default000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c9open00000001",
+    "GroupName": "poc-open",
+    "VpcId": "vpc-0c9sbx0000000001",
+    "Description": "poc-open",
+    "OwnerId": "801000000009",
+    "IpPermissions": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 21,
+        "ToPort": 21,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  }
+]

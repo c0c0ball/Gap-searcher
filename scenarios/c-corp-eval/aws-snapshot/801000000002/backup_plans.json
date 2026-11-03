@@ -1,0 +1,17 @@
+[
+  {
+    "BackupPlanName": "dev-weekly",
+    "BackupPlanId": "bp-dev-weekly",
+    "Rules": [
+      {
+        "RuleName": "weekly",
+        "TargetBackupVaultName": "c-dev-vault",
+        "ScheduleExpression": "cron(0 19 ? * SAT *)",
+        "Lifecycle": {
+          "DeleteAfterDays": 7
+        },
+        "CopyActions": []
+      }
+    ]
+  }
+]

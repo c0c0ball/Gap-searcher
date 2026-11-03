@@ -1,0 +1,52 @@
+{
+  "choi.mr": {
+    "UserName": "choi.mr",
+    "CreateDate": "2026-03-09T02:00:02+00:00",
+    "PasswordResetRequired": false
+  },
+  "jhkim": {
+    "UserName": "jhkim",
+    "CreateDate": "2025-05-19T01:00:03+00:00",
+    "PasswordResetRequired": false
+  },
+  "kim.dh": {
+    "UserName": "kim.dh",
+    "CreateDate": "2025-01-13T00:30:03+00:00",
+    "PasswordResetRequired": false
+  },
+  "lee.jw": {
+    "UserName": "lee.jw",
+    "CreateDate": "2026-09-01T00:50:04+00:00",
+    "PasswordResetRequired": false
+  },
+  "lim.ga": {
+    "UserName": "lim.ga",
+    "CreateDate": "2025-08-04T01:00:02+00:00",
+    "PasswordResetRequired": false
+  },
+  "ops-shared": {
+    "UserName": "ops-shared",
+    "CreateDate": "2025-02-03T03:00:05+00:00",
+    "PasswordResetRequired": false
+  },
+  "park.sj": {
+    "UserName": "park.sj",
+    "CreateDate": "2024-03-04T01:10:04+00:00",
+    "PasswordResetRequired": false
+  },
+  "sysadmin-hong": {
+    "UserName": "sysadmin-hong",
+    "CreateDate": "2025-09-22T01:00:02+00:00",
+    "PasswordResetRequired": false
+  },
+  "vendor-hrcore": {
+    "UserName": "vendor-hrcore",
+    "CreateDate": "2026-06-01T01:00:03+00:00",
+    "PasswordResetRequired": false
+  },
+  "yoon.hj": {
+    "UserName": "yoon.hj",
+    "CreateDate": "2026-10-20T01:00:02+00:00",
+    "PasswordResetRequired": false
+  }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "SubnetId": "subnet-0c1pub00000000a",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-public-a"
+      }
+    ],
+    "OwnerId": "801000000001"
+  },
+  {
+    "SubnetId": "subnet-0c1pub00000000c",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.1.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-public-c"
+      }
+    ],
+    "OwnerId": "801000000001"
+  },
+  {
+    "SubnetId": "subnet-0c1app00000000a",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-app-a"
+      }
+    ],
+    "OwnerId": "801000000001"
+  },
+  {
+    "SubnetId": "subnet-0c1app00000000c",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.11.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-app-c"
+      }
+    ],
+    "OwnerId": "801000000001"
+  },
+  {
+    "SubnetId": "subnet-0c1db000000000a",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.20.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-data-a"
+      }
+    ],
+    "OwnerId": "801000000001"
+  },
+  {
+    "SubnetId": "subnet-0c1db000000000c",
+    "VpcId": "vpc-0c1prod000000001",
+    "CidrBlock": "10.10.21.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-data-c"
+      }
+    ],
+    "OwnerId": "801000000001"
+  }
+]

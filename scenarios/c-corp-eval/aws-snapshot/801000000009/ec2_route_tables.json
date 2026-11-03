@@ -1,0 +1,35 @@
+[
+  {
+    "RouteTableId": "rtb-0c9main0000001",
+    "VpcId": "vpc-0c9sbx0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.90.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0c9sbx000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0c9main00000010",
+        "RouteTableId": "rtb-0c9main0000001",
+        "SubnetId": "subnet-0c9pub00000000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0c9main0000001m",
+        "RouteTableId": "rtb-0c9main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [],
+    "OwnerId": "801000000009"
+  }
+]

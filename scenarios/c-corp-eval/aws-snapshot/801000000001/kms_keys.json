@@ -1,0 +1,72 @@
+[
+  {
+    "KeyId": "5d0f3a1c-7b2e-4c19-9e61-0c1000000a01",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a01",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/prod-payroll"
+    ],
+    "Description": "급여 DB·명세서 암호화",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "5d0f3a1c-7b2e-4c19-9e61-0c1000000a02",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a02",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/prod-tenant"
+    ],
+    "Description": "고객사 테넌트 데이터 암호화",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "5d0f3a1c-7b2e-4c19-9e61-0c1000000a03",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a03",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Disabled",
+    "Enabled": false,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/prod-legacy-2024"
+    ],
+    "Description": "구 급여 시스템 이관용 (사용 중지)",
+    "KeyRotationEnabled": false
+  },
+  {
+    "KeyId": "5d0f3a1c-7b2e-4c19-9e61-0c10000000e5",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c10000000e5",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/aws/ebs"
+    ],
+    "Description": "Default key that protects my EBS volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "5d0f3a1c-7b2e-4c19-9e61-0c10000000d5",
+    "Arn": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c10000000d5",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "Aliases": [
+      "alias/aws/rds"
+    ],
+    "Description": "Default key that protects my RDS database volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  }
+]

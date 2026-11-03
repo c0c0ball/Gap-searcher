@@ -1,0 +1,349 @@
+[
+  {
+    "GroupId": "sg-0c1default000001",
+    "GroupName": "default",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "default VPC security group",
+    "OwnerId": "801000000001",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1hralb00000001",
+    "GroupName": "prod-hr-alb",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-hr-alb",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [
+          {
+            "CidrIpv6": "::/0"
+          }
+        ],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [
+          {
+            "CidrIpv6": "::/0"
+          }
+        ],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1apialb0000001",
+    "GroupName": "prod-api-alb",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-api-alb",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [
+          {
+            "CidrIpv6": "::/0"
+          }
+        ],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1intalb0000001",
+    "GroupName": "prod-internal-admin-alb",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-internal-admin-alb",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8080,
+        "ToPort": 8080,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "admin vpn"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "admin vpn"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1app000000001",
+    "GroupName": "prod-app",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-app",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8080,
+        "ToPort": 8080,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c1hralb00000001"
+          },
+          {
+            "GroupId": "sg-0c1apialb0000001"
+          },
+          {
+            "GroupId": "sg-0c1intalb0000001"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c1bastion000001",
+            "Description": "bastion"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1bastion000001",
+    "GroupName": "prod-bastion",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-bastion",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "192.0.2.40/32",
+            "Description": "IT ops desk"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1db0000000001",
+    "GroupName": "prod-db",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-db",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0c1app000000001",
+            "Description": "app tier"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "DBA VPN"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0c1cache00000001",
+    "GroupName": "prod-cache",
+    "VpcId": "vpc-0c1prod000000001",
+    "Description": "prod-cache",
+    "OwnerId": "801000000001",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 6379,
+        "ToPort": 6379,
+        "IpRanges": [
+          {
+            "CidrIp": "10.10.0.0/16"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Tier",
+        "Value": "data"
+      },
+      {
+        "Key": "Role",
+        "Value": "database"
+      }
+    ]
+  }
+]

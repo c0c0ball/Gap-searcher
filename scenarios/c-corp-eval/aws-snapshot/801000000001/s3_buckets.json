@@ -1,0 +1,106 @@
+[
+  {
+    "Name": "c-prod-tenant-uploads",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:801000000001:key/5d0f3a1c-7b2e-4c19-9e61-0c1000000a02"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-payslip-pdf",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-web-assets",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-alb-logs",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": [
+      {
+        "ID": "retention",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 180
+        }
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-legacy-trail-logs",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": [
+      {
+        "ID": "retention",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 400
+        }
+      }
+    ]
+  },
+  {
+    "Name": "c-prod-payroll-migration-0817",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": []
+  }
+]

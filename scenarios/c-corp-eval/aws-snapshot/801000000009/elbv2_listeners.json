@@ -1,0 +1,24 @@
+[
+  {
+    "LoadBalancerName": "poc-web",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "State": {
+      "Code": "active"
+    },
+    "DNSName": "poc-web-1234567890.ap-northeast-2.elb.amazonaws.com",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000009:loadbalancer/app/poc-web/0c95f2e9a7d1b3c",
+    "Listeners": [
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:801000000009:targetgroup/tg-80/1"
+          }
+        ]
+      }
+    ]
+  }
+]

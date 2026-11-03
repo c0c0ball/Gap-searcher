@@ -1,0 +1,208 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "batch-shared",
+      "UserId": "AIDA000200BATCHSHARE",
+      "Arn": "arn:aws:iam::801000000002:user/batch-shared",
+      "Path": "/",
+      "CreateDate": "2025-06-02T00:00:00+00:00",
+      "GroupList": [
+        "BatchJobs"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-cho",
+      "UserId": "AIDA000201DEVCHO",
+      "Arn": "arn:aws:iam::801000000002:user/dev-cho",
+      "Path": "/",
+      "CreateDate": "2025-03-17T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [
+        {
+          "PolicyName": "EmergencyFullAccess",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Sid": "Hotfix",
+                "Effect": "Allow",
+                "Action": "*",
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      ],
+      "Tags": []
+    },
+    {
+      "UserName": "hwang.yr",
+      "UserId": "AIDA000202HWANGYR",
+      "Arn": "arn:aws:iam::801000000002:user/hwang.yr",
+      "Path": "/",
+      "CreateDate": "2025-12-01T01:00:00+00:00",
+      "GroupList": [
+        "QA"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "jung.ws",
+      "UserId": "AIDA000203JUNGWS",
+      "Arn": "arn:aws:iam::801000000002:user/jung.ws",
+      "Path": "/",
+      "CreateDate": "2026-02-02T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "oh.ks",
+      "UserId": "AIDA000204OHKS",
+      "Arn": "arn:aws:iam::801000000002:user/oh.ks",
+      "Path": "/",
+      "CreateDate": "2024-10-07T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "qa-shared",
+      "UserId": "AIDA000205QASHARED",
+      "Arn": "arn:aws:iam::801000000002:user/qa-shared",
+      "Path": "/",
+      "CreateDate": "2025-11-03T01:00:00+00:00",
+      "GroupList": [
+        "QA"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "sypark",
+      "UserId": "AIDA000206SYPARK",
+      "Arn": "arn:aws:iam::801000000002:user/sypark",
+      "Path": "/",
+      "CreateDate": "2024-09-02T01:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-qa",
+      "UserId": "AIDA000207VENDORQA",
+      "Arn": "arn:aws:iam::801000000002:user/vendor-qa",
+      "Path": "/",
+      "CreateDate": "2026-07-01T01:00:00+00:00",
+      "GroupList": [
+        "VendorSupport"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "BatchJobs",
+      "GroupId": "AGPA0002BATCHJOBS",
+      "Arn": "arn:aws:iam::801000000002:group/BatchJobs",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "DevBatch",
+          "PolicyArn": "arn:aws:iam::801000000002:policy/DevBatch"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Developers",
+      "GroupId": "AGPA0002DEVELOPERS",
+      "Arn": "arn:aws:iam::801000000002:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "QA",
+      "GroupId": "AGPA0002QA",
+      "Arn": "arn:aws:iam::801000000002:group/QA",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "VendorSupport",
+      "GroupId": "AGPA0002VENDORSUPPOR",
+      "Arn": "arn:aws:iam::801000000002:group/VendorSupport",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "DevBatch",
+      "PolicyId": "ANPA0002DEVBATCH",
+      "Arn": "arn:aws:iam::801000000002:policy/DevBatch",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "Resource": "arn:aws:s3:::c-dev-test-fixtures/*"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

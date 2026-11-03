@@ -1,0 +1,32 @@
+[
+  {
+    "SubnetId": "subnet-0c3pub00000000a",
+    "VpcId": "vpc-0c3sec0000000001",
+    "CidrBlock": "10.30.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sec-public-a"
+      }
+    ],
+    "OwnerId": "801000000003"
+  },
+  {
+    "SubnetId": "subnet-0c3tools000000a",
+    "VpcId": "vpc-0c3sec0000000001",
+    "CidrBlock": "10.30.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sec-tools-a"
+      }
+    ],
+    "OwnerId": "801000000003"
+  }
+]

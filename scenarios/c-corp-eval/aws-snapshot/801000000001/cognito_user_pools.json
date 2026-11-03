@@ -1,0 +1,36 @@
+[
+  {
+    "Id": "ap-northeast-2_CpEmp0001",
+    "Name": "peoplecloud-employee-login",
+    "Status": "Enabled",
+    "Policies": {
+      "PasswordPolicy": {
+        "MinimumLength": 8,
+        "RequireUppercase": false,
+        "RequireLowercase": true,
+        "RequireNumbers": true,
+        "RequireSymbols": true,
+        "TemporaryPasswordValidityDays": 3
+      }
+    },
+    "MfaConfiguration": "OPTIONAL",
+    "EstimatedNumberOfUsers": 41230
+  },
+  {
+    "Id": "ap-northeast-2_CpAdm0001",
+    "Name": "peoplecloud-tenant-admin",
+    "Status": "Enabled",
+    "Policies": {
+      "PasswordPolicy": {
+        "MinimumLength": 12,
+        "RequireUppercase": true,
+        "RequireLowercase": true,
+        "RequireNumbers": true,
+        "RequireSymbols": true,
+        "TemporaryPasswordValidityDays": 1
+      }
+    },
+    "MfaConfiguration": "ON",
+    "EstimatedNumberOfUsers": 1184
+  }
+]

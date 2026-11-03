@@ -1,0 +1,47 @@
+[
+  {
+    "Name": "c-dev-test-fixtures",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:801000000002:key/8a41c2be-1f0d-4e7a-b3c5-0c2000000b01"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  },
+  {
+    "Name": "c-dev-cloudtrail-logs",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-01-01T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": [
+      {
+        "ID": "retention",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 1500
+        },
+        "Transitions": [
+          {
+            "Days": 90,
+            "StorageClass": "GLACIER"
+          }
+        ]
+      }
+    ]
+  }
+]

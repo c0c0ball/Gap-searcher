@@ -1,0 +1,17 @@
+[
+  {
+    "SubnetId": "subnet-0c9pub00000000a",
+    "VpcId": "vpc-0c9sbx0000000001",
+    "CidrBlock": "10.90.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sbx-public-a"
+      }
+    ],
+    "OwnerId": "801000000009"
+  }
+]

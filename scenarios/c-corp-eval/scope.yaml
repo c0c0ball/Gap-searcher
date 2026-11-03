@@ -1,0 +1,77 @@
+# C사 진단 범위 사실 (Scope facts). 사람이 확인해 입력하는 값이며, 근거(basis)를 함께 적는다.
+# 여기 없는 사실은 Scope Engine이 UNKNOWN 으로 본다.
+organization: C사 (가상 B2B SaaS — HR·급여 클라우드 '피플클라우드', 임직원 약 300명)
+as_of: '2026-11-02'
+facts:
+  scope.has_information_systems:
+    value: true
+    basis: 정보보호 정책 제2조
+  scope.has_aws_accounts:
+    value: true
+    basis: AWS 계정 3개 (운영·개발·보안), 샌드박스 1개는 범위 제외
+  scope.aws_iam_users_with_console_password:
+    value: true
+    basis: 계정관리대장 — 콘솔 사용 계정 존재
+  scope.service_has_customer_login:
+    value: true
+    basis: 고객사 관리자·직원이 피플클라우드에 로그인
+  scope.uses_cognito:
+    value: true
+    basis: 피플클라우드 로그인에 Amazon Cognito 사용 (c-prod)
+aws_accounts:
+- account_id: '801000000001'
+  alias: c-prod
+  label: 운영
+  in_scope: true
+- account_id: '801000000002'
+  alias: c-dev
+  label: 개발·스테이징
+  in_scope: true
+- account_id: '801000000003'
+  alias: c-sec
+  label: 보안·로그 보관
+  in_scope: true
+- account_id: '801000000009'
+  alias: c-sandbox
+  label: R&D 샌드박스 (개인정보 처리 없음, 인증 범위 제외)
+  in_scope: false
+policy_documents:
+- file: docs/C사_정보보호정책_v1.2.docx
+  doc_id: C-POL-01
+- file: docs/C사_통합보안관리규정_v3.0.docx
+  doc_id: C-REG-02
+- file: docs/C사_계정관리절차_v1.1.docx
+  doc_id: C-PRC-03
+- file: docs/C사_로그및백업관리지침_v1.1.docx
+  doc_id: C-GDL-07
+- file: docs/C사_개인정보내부관리계획_v2.1.docx
+  doc_id: C-PIP-01
+evidence:
+- file: evidence/직원가입_비밀번호_화면_2026-10-28.png
+  kind: screen_capture
+  relates_to: AR-2.5.4-05
+  captured_at: '2026-10-28'
+- file: evidence/AWS_계정관리대장_2026-10-31.xlsx
+  kind: account_list
+- file: evidence/인사명부_2026-11-01.xlsx
+  kind: hr_roster
+- file: evidence/특수권한자현황_2026-10.xlsx
+  kind: privileged_list
+- file: evidence/접근권한검토_결과.xlsx
+  kind: access_review_log
+- file: evidence/정보자산목록_2026-10-15.xlsx
+  kind: asset_list
+- file: evidence/암호키관리대장.xlsx
+  kind: key_ledger
+- file: evidence/접속기록점검_2026.xlsx
+  kind: access_log_review
+- file: evidence/백업복구시험_2026.xlsx
+  kind: restore_test_log
+- file: evidence/재해복구훈련_결과.xlsx
+  kind: dr_drill_log
+- file: evidence/정보보호위원회_회의록목록.xlsx
+  kind: committee_log
+- file: evidence/내부감사_이력.xlsx
+  kind: internal_audit_log
+- file: evidence/개선조치관리대장_2026.xlsx
+  kind: improvement_tracker
