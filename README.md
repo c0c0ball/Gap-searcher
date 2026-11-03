@@ -50,7 +50,7 @@ docker compose up --build
 
 - **ClamAV**는 첫 기동 때 시그니처를 받느라 몇 분 동안 빨간색일 수 있습니다.
 - **worker 왕복**은 "확인" 버튼을 눌러야 검사합니다 (api → redis → worker → api).
-- **요구사항 lint**는 `오류 0건 · 경고 5건`이 정상입니다. 경고는 사람이 확인하도록 남겨 둔 확인사항(2.2.5-1, 2.5.1-3, 2.5.4-3, 2.5.6-1, 2.5.6-3)입니다.
+- **요구사항 lint**는 `오류 0건 · 경고 14건`이 정상입니다. 경고는 자동 점검 없이 사람이 확인하도록 남겨 둔 확인사항입니다 (YAML의 note에 이유).
 
 ## 명령줄
 
@@ -60,7 +60,7 @@ gapcheck run ../scenarios/a-corp-dev            # 실행 → runs/<id>/result.js
 gapcheck check ../scenarios/a-corp-dev          # 개발용 정답지와 비교
 gapcheck run ../scenarios/a-corp-dev --llm      # Ollama 문서 추출 함께 사용
 gapcheck collect --targets targets.yaml --out ../scenarios/my-live/aws-snapshot   # live AWS 수집
-pytest                                          # 테스트 111개
+pytest                                          # 테스트 121개
 ```
 
 `targets.yaml` 예시 (커밋하지 말 것):
@@ -118,6 +118,11 @@ db/init.sql        pgvector 활성화
 | 2.5.4 비밀번호 | 작성규칙·임시 비밀번호·변경 주기·회원 비밀번호 | 지침, IAM·Cognito |
 | 2.5.5 특수 계정·권한 | 관리자 권한 ↔ 특수권한자 목록, 유지보수 계정 기한 | 지침, IAM 권한 상세, 목록·관리대장 |
 | 2.5.6 접근권한 검토 | 검토 주기 이행, 장기 미사용 계정 | 지침, 검토 기록, credential report |
+| 2.6.1 네트워크 접근 | DB 공인 접근 차단, 기본 보안그룹 규칙 없음 | 지침, RDS, 보안그룹 |
+| 2.6.2 정보시스템 접근 | telnet·FTP 등 평문 프로토콜 포트 차단 | 지침, 보안그룹 |
+| 2.6.4 데이터베이스 접근 | DB 보안그룹은 애플리케이션 보안그룹에서만 | 지침, 보안그룹, RDS |
+| 2.6.6 원격접근 통제 | SSH·RDP는 지정 관리망에서만 | 지침(관리망 대역), 보안그룹 |
+| 2.6.7 인터넷 접속 통제 | DB 서브넷에 인터넷 기본 경로 없음 | 지침, 서브넷·라우팅, RDS |
 
 증적 엑셀은 파일 이름이 아니라 첫 줄 제목 칸으로 종류를 알아냅니다 (계정 관리대장, 인사 명부, 특수권한자 목록, 접근권한 검토 기록).
 규칙은 YAML만으로 씁니다. 대상별 검사(`SUBJECT_CHECK`)로 모집단 거르기, 다른 자료와 대조, 영업일 유예를 표현합니다.

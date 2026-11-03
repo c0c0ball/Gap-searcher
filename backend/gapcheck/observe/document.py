@@ -51,6 +51,16 @@ ACCOUNT_RULES: list[tuple[str, re.Pattern, Any]] = [
     ("account.inactive_days", re.compile(r"(\d+)\s*일\s*이상\s*사용하지\s*않은\s*계정"), None),
     ("account.offboarding_business_days", re.compile(r"퇴직.*?(\d+)\s*영업일\s*이내"), None),
 ]
+# 네트워크 규칙 (2.6)
+NETWORK_RULES: list[tuple[str, re.Pattern]] = [
+    ("network.db_private", re.compile(r"데이터베이스.*공인\s*IP를?\s*부여하지\s*않")),
+    ("network.db_from_app_only", re.compile(r"데이터베이스\s*영역.*애플리케이션\s*영역의?\s*(?:보안\s*그룹|서버)만")),
+    ("network.db_no_internet", re.compile(r"데이터베이스\s*영역의?\s*서버는\s*인터넷")),
+    ("network.default_sg_unused", re.compile(r"기본\s*보안\s*그룹.*규칙을\s*두지\s*않")),
+    ("network.insecure_protocols_banned", re.compile(r"(?:telnet|텔넷|FTP).*(?:사용하지|허용하지)\s*않", re.I)),
+]
+ADMIN_CIDR_CLAUSE = re.compile(r"(?:SSH|원격\s*데스크톱|원격\s*관리).*에서만\s*허용")
+CIDR = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}/\d{1,2}\b")
 REVIEW_CYCLE = re.compile(r"(월|분기|반기|연)\s*1\s*회\s*이상.*접근\s*권한.*검토|접근\s*권한.*(월|분기|반기|연)\s*1\s*회\s*이상\s*검토")
 CYCLE_DAYS = {"월": 31, "분기": 92, "반기": 184, "연": 366}   # 가장 긴 달·분기 기준 (늦게 한 검토를 넉넉히 인정)
 
@@ -62,6 +72,11 @@ def _account_rules(c: Clause, name: str) -> list[Found]:
     for param, rx, val in ACCOUNT_RULES:
         if m := rx.search(t):
             out.append(Found(param, int(m.group(1)) if val is None else val, c, t, name))
+    for param, rx in NETWORK_RULES:
+        if rx.search(t):
+            out.append(Found(param, True, c, t, name))
+    if ADMIN_CIDR_CLAUSE.search(t) and (cidrs := CIDR.findall(t)):
+        out.append(Found("network.admin_source_cidrs", sorted(set(cidrs)), c, t, name))
     if m := REVIEW_CYCLE.search(t):
         out.append(Found("access_review.cycle_days", CYCLE_DAYS[m.group(1) or m.group(2)], c, t, name))
     return out

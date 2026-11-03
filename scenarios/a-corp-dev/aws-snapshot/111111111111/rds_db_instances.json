@@ -1,0 +1,26 @@
+[
+  {
+    "DBInstanceIdentifier": "prod-orders",
+    "Engine": "mysql",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0a1db00000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "prod-orders-subnets",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0a1db0000000a"
+        },
+        {
+          "SubnetIdentifier": "subnet-0a1db0000000c"
+        }
+      ]
+    }
+  }
+]

@@ -15,7 +15,7 @@ from ..observe.aws import parse_ts
 from ..observe.evidence import KIND_OBS
 from ..scope import evaluate_scope, test_enabled
 
-EVALUATOR_VERSION = "0.2.0"
+EVALUATOR_VERSION = "0.3.0"
 
 API_KIND = {
     "iam:GetAccountPasswordPolicy": "aws_password_policy",
@@ -29,6 +29,10 @@ API_FILE = {
     "iam:GetCredentialReport": "credential_report.csv",
     "iam:GetLoginProfile": "login_profiles.json",
     "iam:GetAccountAuthorizationDetails": "iam_authorization.json",
+    "ec2:DescribeSecurityGroups": "ec2_security_groups.json",
+    "ec2:DescribeSubnets": "ec2_subnets.json",
+    "ec2:DescribeRouteTables": "ec2_route_tables.json",
+    "rds:DescribeDBInstances": "rds_db_instances.json",
 }
 
 
@@ -48,6 +52,8 @@ class Context:
 def _kind_for(t: Test) -> str | None:
     if t.type == "EVIDENCE_REVIEW":
         return KIND_OBS.get(t.evidence_kind or "")
+    if t.collect and t.collect.kind:
+        return t.collect.kind
     if t.collect and t.collect.per == "root":
         return "aws_root"
     for api in (t.collect.apis if t.collect else []):
@@ -105,7 +111,8 @@ class _Run:
         per = t.collect.per if t.collect else "account"
         need = sorted({API_FILE[a] for a in (t.collect.apis if t.collect else []) if a in API_FILE})
         # 범위: 범위 내 계정마다 수집 성공했는가
-        if per in ("account", "user", "root"):
+        # 계정 단위로 받는 자료(필수 파일이 정해진 API)는 리소스 단위 관측이어도 계정마다 수집됐는지 본다
+        if per in ("account", "user", "root") or (per == "resource" and need):
             gaps = []
             for a in self.ctx.accounts_in_scope:
                 m = self.ctx.manifest_accounts.get(a, {})
@@ -119,7 +126,7 @@ class _Run:
                     gaps.append(f"{a}(수집 {m.get('status', '없음')})")
                 elif bad:
                     gaps.append(f"{a}(품질 미달: {bad[0].quality_reasons[0] if bad[0].quality_reasons else 'fail'})")
-                elif not mine and not (kind in ("aws_user", "aws_root") and self._report_present(a)):
+                elif not mine and per != "resource" and not (kind in ("aws_user", "aws_root") and self._report_present(a)):
                     gaps.append(f"{a}(결과 없음)")
             if gaps:
                 self.coverage_issues.append(f"{t.id}: 범위 내 계정 미충족 {gaps}")
@@ -129,6 +136,8 @@ class _Run:
             self.coverage_issues.append(f"{t.id}: 리소스 관측 품질 미달 ({obs[0].quality_reasons[0] if obs[0].quality_reasons else 'fail'})")
             return TestResult(t.id, "gap", "리소스 관측이 품질 검사를 통과하지 못함", [o.obs_id for o in obs])
         if per == "resource" and not usable:
+            if need and not self.coverage_issues:
+                return TestResult(t.id, "pass", "범위 내 계정을 모두 수집했고 해당 리소스는 0건")
             return TestResult(t.id, "gap", "대상 리소스를 찾지 못함")
         return TestResult(t.id, "pass", f"{len(usable)}건 수집", sorted(o.obs_id for o in usable))
 
@@ -339,6 +348,16 @@ class _Run:
         if op == "age_days_le":
             ts = parse_ts(observed) if isinstance(observed, str) else None
             return None if ts is None else (self.ctx.as_of - ts.date()).days <= value
+        if op == "cidr_within":
+            import ipaddress
+            if observed is None:
+                return None
+            try:
+                net = ipaddress.ip_network(str(observed), strict=False)
+                allowed = [ipaddress.ip_network(str(a), strict=False) for a in (value or [])]
+            except ValueError:
+                return None
+            return any(net.version == a.version and net.subnet_of(a) for a in allowed)
         if op == "date_after_asof":
             if observed is None:
                 return False   # 기한이 정해져 있지 않음
@@ -349,7 +368,7 @@ class _Run:
     def _violate(self, t: Test, c: Check, o: Observation, vals: dict, observed: Any, ids: list[str]) -> None:
         fmt = {k: _show(v) for k, v in vals.items()}
         fmt["subject"] = o.subject
-        fmt["limit"] = getattr(self, "_limit", None)
+        fmt["limit"] = _show(getattr(self, "_limit", None))
         if c.op == "age_days_le" and isinstance(observed, str) and (ts := parse_ts(observed)):
             fmt["days"] = (self.ctx.as_of - ts.date()).days
         self.violations.append(Violation(

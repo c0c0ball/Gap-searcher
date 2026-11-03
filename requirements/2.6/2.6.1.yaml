@@ -1,0 +1,123 @@
+# 2.6.1 네트워크 접근 — 네트워크 단계 (2단계 자동화)
+# 원칙: 기준(영역 분리 방식)은 조직 자체 지침에서 뽑는다 (D08). KISA 원문은 이 파일에 복제하지 않는다.
+criterion: "2.6.1"
+name: 네트워크 접근
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 100~102쪽(PDF 105~107) — 주요 확인사항 1~4, 결함사례 1~5"
+
+checkpoints:
+  - index: 1   # 모든 접근 경로 식별, 내부망 인가자만 접근
+    covered_by: []
+    note: 네트워크 구성도·접근 경로 목록은 사람이 확인
+  - index: 2   # 업무·중요도에 따른 영역 분리와 영역 간 접근통제
+    covered_by: [AR-2.6.1-02]
+  - index: 3   # IP 부여 기준, DB 등 사설 IP
+    covered_by: [AR-2.6.1-01]
+  - index: 4   # 원격지 연결 시 전송구간 보호
+    covered_by: []
+    note: IDC·지사 간 VPN·전용선 구성은 사람이 확인
+
+requirements:
+  - id: AR-2.6.1-01
+    title: 데이터베이스에 공인 접근이 허용되어 있지 않다
+    summary: >-
+      지침이 데이터베이스에 공인 IP를 주지 않도록 정했다면, 범위 내 모든 AWS 계정의 RDS 인스턴스는
+      공인 접근 허용(PubliclyAccessible)이 꺼져 있어야 한다.
+    plain:
+      question: 데이터베이스 서버 등 외부 연결이 필요하지 않은 정보시스템에 공인 IP를 부여하지 않고 내부 영역에 두고 있는가?
+      why: >-
+        데이터베이스에 인터넷에서 닿을 수 있는 주소가 생기면, 비밀번호를 알아낸 사람이 회사 밖에서도 바로 데이터에 접근할 수 있어요.
+      fix:
+        - RDS 콘솔 → 해당 DB → 수정 → 연결 → '퍼블릭 액세스 가능'을 '아니요'로 바꿔요.
+        - 외부에서 꼭 접속해야 하면 공인 주소 대신 관리망을 거치는 경로(배스천·VPN)를 써요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "100쪽 주요 확인사항 3, 102쪽 결함사례 2"}
+    checkpoints: [3]
+    case_refs: ["KISA:2.6.1-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 RDS 인스턴스
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 데이터베이스 공인 IP 금지 조항
+        params: [network.db_private]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: RDS 인스턴스의 공인 접근 허용 여부
+        collect:
+          apis: ["rds:DescribeDBInstances"]
+          per: resource
+          kind: aws_db
+          fields: [key, db, engine, publicly_accessible]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 공인 접근 허용이 꺼져 있어야 함
+        check:
+          population: T2
+          gate: T1.network.db_private
+          field: publicly_accessible
+          op: falsy
+          message: "{key}: RDS({engine}) 공인 접근 허용(PubliclyAccessible) 켜짐"
+          plain: "{account}의 데이터베이스 '{db}'에 인터넷에서 접근할 수 있는 주소가 열려 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 공인 접근이 허용된 RDS 인스턴스가 1개 이상
+
+  - id: AR-2.6.1-02
+    title: 기본 보안그룹에 허용 규칙이 없다
+    summary: >-
+      지침이 기본 보안그룹을 쓰지 않도록 정했다면, 범위 내 모든 VPC의 기본(default) 보안그룹에
+      인바운드·아웃바운드 규칙이 하나도 없어야 한다. 기본 보안그룹은 영역 구분 없이 자원이 묶이는 통로가 된다.
+    plain:
+      question: 네트워크 영역 간 접근통제를 적용하기 위해 영역 구분 없이 통신을 허용하는 기본 설정을 제거하고 있는가?
+      why: >-
+        기본 보안그룹은 서버를 만들 때 따로 고르지 않으면 자동으로 붙어요. 여기에 '서로 다 통신 허용' 규칙이 남아 있으면
+        영역을 나눈 의미가 없어져요.
+      fix:
+        - VPC 콘솔 → 보안 그룹 → default → 인바운드·아웃바운드 규칙을 모두 지워요.
+        - 기본 보안그룹이 붙은 서버가 있으면 용도에 맞는 보안그룹으로 바꾼 뒤 지워요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "100쪽 주요 확인사항 2, 102쪽 결함사례 3"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.6.1-3"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 VPC의 기본 보안그룹
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 기본 보안그룹 사용 금지 조항
+        params: [network.default_sg_unused]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 보안그룹 목록과 규칙 수
+        collect:
+          apis: ["ec2:DescribeSecurityGroups"]
+          per: resource
+          kind: aws_sg
+          fields: [key, group_id, group_name, vpc_id, is_default, rule_count]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 기본 보안그룹의 규칙 수가 0이어야 함
+        check:
+          population: T2
+          where: {is_default: true}
+          gate: T1.network.default_sg_unused
+          field: rule_count
+          op: "=="
+          value: "const:0"
+          message: "{key}: 기본 보안그룹({vpc_id})에 규칙 {rule_count}개 (인바운드 {ingress_count}, 아웃바운드 {egress_count})"
+          plain: "{account}의 기본 보안그룹에 통신을 허용하는 규칙이 {rule_count}개 남아 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 규칙이 남은 기본 보안그룹이 1개 이상

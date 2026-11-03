@@ -35,7 +35,7 @@ export default function Dashboard() {
   const [health, setHealth] = useState<number | null>(null);
   const [err, setErr] = useState("");
   const [running, setRunning] = useState(false);
-  const [cl, setCl] = useState<{ checkpoints: number; fix: number; ok: number; na: number; unknown: number; criteria: number; criteria_decided: number; criteria_fix: number; automated_criteria: number } | null>(null);
+  const [cl, setCl] = useState<{ checkpoints: number; fix: number; ok: number; na: number; unknown: number; criteria: number; criteria_decided: number; criteria_fix: number; automated_criteria: number; automated_checkpoints: number } | null>(null);
 
   const load = useCallback(() => {
     if (!ready || !target) return;
@@ -80,7 +80,7 @@ export default function Dashboard() {
     <div className="stack" style={{ gap: 24 }}>
       <div className="page-head">
         <div>
-          <h1>{org.name} 계정·인증 관리 현황</h1>
+          <h1>{org.name} ISMS-P 갭분석 현황</h1>
           <p className="muted small">{org.note ? `${org.note}. ` : ""}마지막 진단 {fmtTime(L.generated_at)}{L.snapshot.source === "fixture" ? ", 예제 AWS 데이터 사용" : ""}</p>
         </div>
         <div className="row">
@@ -93,21 +93,28 @@ export default function Dashboard() {
         <a className="panel cl-card" href="/checklist" aria-label="전체 점검표 열기">
           <div>
             <h2 style={{ margin: 0 }}>ISMS-P 전체 점검표</h2>
-            <p className="small muted" style={{ margin: "2px 0 0" }}>인증기준 {cl.criteria}개 중 {cl.criteria_decided}개 판단 완료, 자동 점검 {cl.automated_criteria}개</p>
+            <p className="small muted" style={{ margin: "2px 0 0" }}>
+              인증기준 {cl.criteria}개, 확인사항 {cl.checkpoints}개. 그중 확인사항 {cl.automated_checkpoints}개({cl.automated_criteria}개 기준)는 자동 점검 결과로 채워지고, 나머지는 담당자가 판단해요.
+              모든 확인사항을 판단한 기준은 {cl.criteria_decided}개예요.
+            </p>
           </div>
           <div className="cl-card-bar" aria-hidden>
             {(["fix", "ok", "na", "unknown"] as const).map((k) => cl[k] > 0 && <i key={k} className={`b-${k}`} style={{ flexGrow: cl[k] }} />)}
           </div>
           <div className="row small" style={{ gap: 12 }}>
+            <span className="muted" style={{ order: -1 }}>확인사항 기준</span>
             <span><b style={{ color: "var(--fix)" }}>{cl.fix}</b> 고칠 것</span><span><b style={{ color: "var(--ok)" }}>{cl.ok}</b> 규칙대로</span>
-            <span><b>{cl.na}</b> 해당 없음</span><span><b>{cl.unknown}</b> 미확인</span><span className="muted">확인사항 {cl.checkpoints}개 기준</span>
+            <span><b>{cl.na}</b> 해당 없음</span><span><b>{cl.unknown}</b> 미확인</span>
           </div>
         </a>
       )}
 
       <section aria-labelledby="sum-h" className="stack" style={{ gap: 10 }}>
         <div className="row" style={{ justifyContent: "space-between" }}>
-          <h2 id="sum-h" style={{ margin: 0 }}>확인한 {d.strip.length}가지</h2>
+          <div>
+            <h2 id="sum-h" style={{ margin: 0 }}>자동 점검 규칙 {d.strip.length}개</h2>
+            <p className="small muted" style={{ margin: "2px 0 0" }}>규칙 하나가 확인사항 하나의 일부를 봐요. 한 확인사항에 규칙이 여러 개면, 하나라도 고칠 것이 있으면 점검표에서는 그 확인사항이 '고칠 것'이 돼요.</p>
+          </div>
           <Trend t={d.trend} />
         </div>
         <div className="filters" aria-label="상태별로 결과 보기">

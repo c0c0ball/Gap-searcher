@@ -13,9 +13,13 @@
       "files": [
         "cognito_user_pools.json",
         "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
         "iam_authorization.json",
         "iam_password_policy.json",
-        "login_profiles.json"
+        "login_profiles.json",
+        "rds_db_instances.json"
       ]
     },
     {
@@ -25,9 +29,13 @@
       "files": [
         "cognito_user_pools.json",
         "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
         "iam_authorization.json",
         "iam_password_policy.json",
-        "login_profiles.json"
+        "login_profiles.json",
+        "rds_db_instances.json"
       ]
     },
     {
@@ -37,9 +45,13 @@
       "files": [
         "cognito_user_pools.json",
         "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
         "iam_authorization.json",
         "iam_password_policy.json",
-        "login_profiles.json"
+        "login_profiles.json",
+        "rds_db_instances.json"
       ]
     }
   ]

@@ -77,6 +77,26 @@ def collect_authorization(iam) -> dict:
         return _err(e)
 
 
+def _pages(client, op: str, key: str, **kw) -> list | dict:
+    try:
+        out: list = []
+        for page in client.get_paginator(op).paginate(**kw):
+            out += page.get(key, [])
+        return out
+    except ClientError as e:
+        return _err(e)
+
+
+def collect_network(ec2, rds) -> dict[str, list | dict]:
+    """2.6 네트워크: 보안그룹·서브넷·라우팅 테이블·RDS. 파일 이름 → 내용"""
+    return {
+        "ec2_security_groups.json": _pages(ec2, "describe_security_groups", "SecurityGroups"),
+        "ec2_subnets.json": _pages(ec2, "describe_subnets", "Subnets"),
+        "ec2_route_tables.json": _pages(ec2, "describe_route_tables", "RouteTables"),
+        "rds_db_instances.json": _pages(rds, "describe_db_instances", "DBInstances"),
+    }
+
+
 def collect_cognito(cog) -> list | dict:
     try:
         pools = []
@@ -116,6 +136,13 @@ def collect_account(session: boto3.Session, expected_account: str, out_dir: Path
         errors.append(f"authorization: {az['Error']['Code']}")
     else:
         (d / "iam_authorization.json").write_text(json.dumps(az, indent=2, default=str))
+
+    net = collect_network(session.client("ec2", region_name=region), session.client("rds", region_name=region))
+    for name, body in net.items():
+        if isinstance(body, dict):   # 오류는 파일을 만들지 않는다 (없는 파일 = 범위 미충족)
+            errors.append(f"{name.split('.')[0]}: {body['Error']['Code']}")
+        else:
+            (d / name).write_text(json.dumps(body, indent=2, default=str))
 
     cog = collect_cognito(session.client("cognito-idp", region_name=region))
     (d / "cognito_user_pools.json").write_text(json.dumps(cog, indent=2, default=str))

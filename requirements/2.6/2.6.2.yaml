@@ -1,0 +1,70 @@
+# 2.6.2 정보시스템 접근 — 네트워크 단계 (2단계 자동화)
+criterion: "2.6.2"
+name: 정보시스템 접근
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 103~104쪽(PDF 108~109) — 주요 확인사항 1~4, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 정보시스템별 접근 사용자·위치·수단 정의와 통제
+    covered_by: [AR-2.6.2-01]
+  - index: 2   # 일정시간 미사용 시 세션 차단
+    covered_by: []
+    note: 서버·접근제어 솔루션의 세션 타임아웃 설정은 사람이 확인
+  - index: 3   # 사용목적과 관계 없는 서비스 제거
+    covered_by: [AR-2.6.2-01]
+  - index: 4   # 주요 서비스는 독립 서버로 운영
+    covered_by: []
+    note: 서버 구성(용도별 분리)은 사람이 확인
+
+requirements:
+  - id: AR-2.6.2-01
+    title: 암호화되지 않은 접속 프로토콜 포트가 열려 있지 않다
+    summary: >-
+      지침이 telnet·FTP 등 평문 프로토콜을 금지했다면, 범위 내 보안그룹의 인바운드 규칙 중
+      IP 대역에서 FTP(20·21), Telnet(23), TFTP(69), r-명령(512~514) 포트를 지정해 허용한 규칙이 없어야 한다.
+    plain:
+      question: 정보시스템에 안전하지 않은 접속 수단(telnet, FTP 등)을 허용하지 않고, 사용목적과 관계 없는 서비스를 제거하고 있는가?
+      why: >-
+        telnet·FTP는 아이디와 비밀번호가 암호화되지 않은 채로 오가서, 중간에서 누군가 그대로 볼 수 있어요.
+      fix:
+        - 해당 보안그룹 규칙을 지우고, 파일 전송은 SFTP나 S3처럼 암호화되는 방법으로 바꿔요.
+        - 외부 업체 연동 때문에 꼭 필요하면 이유와 기간, 보완 대책을 적어 정보보호팀 승인을 받아요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "103쪽 주요 확인사항 1·3, 104쪽 결함사례 3"}
+    checkpoints: [1, 3]
+    case_refs: ["KISA:2.6.2-3"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 보안그룹 인바운드 규칙 (IP 대역 출발지)
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 평문 프로토콜 금지 조항
+        params: [network.insecure_protocols_banned]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 보안그룹 인바운드 규칙 (포트·출발지)
+        collect:
+          apis: ["ec2:DescribeSecurityGroups"]
+          per: resource
+          kind: aws_sg_rule
+          fields: [key, group_name, ports, source, source_type, insecure, insecure_service]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 평문 프로토콜 포트를 연 규칙이 없어야 함
+        check:
+          population: T2
+          where: {insecure: true, source_type: cidr}
+          gate: T1.network.insecure_protocols_banned
+          field: insecure
+          op: falsy
+          message: "{key}({group_name}): {insecure_service} 포트 허용 {ports} ← {source}"
+          plain: "{account}의 '{group_name}' 보안그룹이 암호화되지 않는 {insecure_service} 접속을 열어 두고 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 평문 프로토콜 포트를 연 인바운드 규칙이 1개 이상

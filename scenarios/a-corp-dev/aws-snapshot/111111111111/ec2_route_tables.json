@@ -1,0 +1,98 @@
+[
+  {
+    "RouteTableId": "rtb-0a1main00000001",
+    "VpcId": "vpc-0a1prod0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.10.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0a1main00000001m",
+        "RouteTableId": "rtb-0a1main00000001",
+        "Main": true
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0a1public000001",
+    "VpcId": "vpc-0a1prod0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.10.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0a1prod00000001",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0a1public0000010",
+        "RouteTableId": "rtb-0a1public000001",
+        "SubnetId": "subnet-0a1pub000000a",
+        "Main": false
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0a1app00000001",
+    "VpcId": "vpc-0a1prod0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.10.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0a1prod0000000001",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0a1app000000010",
+        "RouteTableId": "rtb-0a1app00000001",
+        "SubnetId": "subnet-0a1app000000a",
+        "Main": false
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0a1db000000001",
+    "VpcId": "vpc-0a1prod0000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.10.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0a1prod0000000001",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0a1db0000000010",
+        "RouteTableId": "rtb-0a1db000000001",
+        "SubnetId": "subnet-0a1db0000000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0a1db0000000011",
+        "RouteTableId": "rtb-0a1db000000001",
+        "SubnetId": "subnet-0a1db0000000c",
+        "Main": false
+      }
+    ]
+  }
+]

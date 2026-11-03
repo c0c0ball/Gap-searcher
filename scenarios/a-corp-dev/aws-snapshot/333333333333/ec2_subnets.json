@@ -1,0 +1,28 @@
+[
+  {
+    "SubnetId": "subnet-0c3pub000000a",
+    "VpcId": "vpc-0c3shared0000001",
+    "CidrBlock": "10.30.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "shared-public-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0c3tools0000a",
+    "VpcId": "vpc-0c3shared0000001",
+    "CidrBlock": "10.30.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "shared-tools-a"
+      }
+    ]
+  }
+]

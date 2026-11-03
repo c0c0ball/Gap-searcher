@@ -17,13 +17,13 @@ resource "aws_iam_role" "gapcheck_collector" {
 
 # 2.5.4 수집에 필요한 API만 허용한다. 항목이 늘면 여기에 추가하고 승인 기록을 남긴다.
 resource "aws_iam_role_policy" "gapcheck_collector_read" {
-  name = "gapcheck-2-5-4-read"
+  name = "gapcheck-read"
   role = aws_iam_role.gapcheck_collector.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "IamPasswordReads"
+        Sid    = "IamReads"
         Effect = "Allow"
         Action = [
           "iam:GetAccountPasswordPolicy",
@@ -39,6 +39,17 @@ resource "aws_iam_role_policy" "gapcheck_collector_read" {
         Sid      = "CognitoPoolReads"
         Effect   = "Allow"
         Action   = ["cognito-idp:ListUserPools", "cognito-idp:DescribeUserPool"]
+        Resource = "*"
+      },
+      {
+        Sid    = "NetworkReads"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeSecurityGroups",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeRouteTables",
+          "rds:DescribeDBInstances",
+        ]
         Resource = "*"
       },
     ]

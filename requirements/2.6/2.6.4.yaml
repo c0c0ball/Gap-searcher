@@ -1,0 +1,67 @@
+# 2.6.4 데이터베이스 접근 — 네트워크 단계 (2단계 자동화)
+criterion: "2.6.4"
+name: 데이터베이스 접근
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 108~109쪽(PDF 113~114) — 주요 확인사항 1~2, 결함사례 1~5"
+
+checkpoints:
+  - index: 1   # DB 내 저장 정보(테이블) 식별
+    covered_by: []
+    note: 테이블 목록·개인정보 컬럼 현황은 사람이 확인 (DB 접속 수집은 다음 단계)
+  - index: 2   # DB 접근이 필요한 응용프로그램·서버·사용자 식별과 통제
+    covered_by: [AR-2.6.4-01]
+
+requirements:
+  - id: AR-2.6.4-01
+    title: 데이터베이스는 애플리케이션 보안그룹에서만 접근할 수 있다
+    summary: >-
+      지침이 DB 영역에 애플리케이션 영역의 보안그룹만 허용하도록 정했다면, RDS 인스턴스에 붙은 보안그룹의 인바운드 규칙은
+      출발지가 보안그룹이어야 하고 IP 대역(CIDR)이어서는 안 된다. IP 대역 허용은 그 대역의 모든 서버·사람이 DB에 닿게 한다.
+    plain:
+      question: 데이터베이스에 접근할 수 있는 응용프로그램과 서버를 식별하고, 그 외의 접근은 차단하고 있는가?
+      why: >-
+        데이터베이스 출입문을 '같은 건물 전체'에 열어 두면 업무와 관계없는 서버나 사람도 데이터에 닿을 수 있어요.
+        정해진 애플리케이션 서버만 들어올 수 있어야 해요.
+      fix:
+        - DB 보안그룹에서 IP 대역으로 허용한 규칙을 지우고, 애플리케이션 보안그룹을 출발지로 하는 규칙만 남겨요.
+        - 운영자가 직접 조회해야 하면 DB 접근제어 시스템이나 배스천 보안그룹을 거치도록 해요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "108쪽 주요 확인사항 2, 109쪽 결함사례 4"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.6.4-4"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: RDS에 붙은 보안그룹의 인바운드 규칙
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: DB 영역 접근 허용 방식 조항
+        params: [network.db_from_app_only]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 보안그룹 인바운드 규칙과 RDS 연결 관계
+        collect:
+          apis: ["ec2:DescribeSecurityGroups", "rds:DescribeDBInstances"]
+          per: resource
+          kind: aws_sg_rule
+          fields: [key, group_name, ports, source, source_type, db_target, db_instances]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: DB 보안그룹 규칙의 출발지는 보안그룹이어야 함
+        check:
+          population: T2
+          where: {db_target: true}
+          gate: T1.network.db_from_app_only
+          field: source_type
+          op: "=="
+          value: "const:sg"
+          message: "{key}({group_name}, DB {db_instances}): {ports} 을 IP 대역 {source} 에서 허용"
+          plain: "{account}의 데이터베이스({db_instances})가 '{source}' 대역 전체에서 접속을 받고 있어요. 애플리케이션 서버만 들어올 수 있어야 해요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: DB 보안그룹에 IP 대역 출발지 규칙이 1개 이상

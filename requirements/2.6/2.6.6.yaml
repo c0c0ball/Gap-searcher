@@ -1,0 +1,72 @@
+# 2.6.6 원격접근 통제 — 네트워크 단계 (2단계 자동화)
+criterion: "2.6.6"
+name: 원격접근 통제
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 112~114쪽(PDF 117~119) — 주요 확인사항 1~4, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 외부망 원격운영 원칙적 금지, 부득이한 경우 보완대책
+    covered_by: [AR-2.6.6-01]
+  - index: 2   # 내부망 원격운영은 특정 단말만
+    covered_by: [AR-2.6.6-01]
+  - index: 3   # 재택·원격협업 보호대책
+    covered_by: []
+    note: VPN 사용 승인·기간, 원격 단말 보안은 사람이 확인
+  - index: 4   # 원격 접속 단말을 관리용 단말기로 지정
+    covered_by: []
+    note: 관리용 단말기 지정 대장은 사람이 확인
+
+requirements:
+  - id: AR-2.6.6-01
+    title: 서버 원격 관리 포트는 지정 관리망에서만 열려 있다
+    summary: >-
+      지침이 원격 관리(SSH·원격 데스크톱)를 허용할 관리망 대역을 정했다면, 범위 내 보안그룹에서 22·3389 포트(또는 전체 포트)를
+      IP 대역으로 허용한 규칙의 출발지는 그 관리망 안이어야 한다. 출발지가 다른 보안그룹(배스천 등)인 규칙은 대상이 아니다.
+    plain:
+      question: 정보시스템의 원격 접속(SSH, 원격 데스크톱)을 지정한 관리망·단말에서만 허용하고 있는가?
+      why: >-
+        서버 관리 포트가 인터넷 전체에 열려 있으면 전 세계에서 비밀번호를 대입해 보는 공격이 바로 들어와요.
+        회사 관리망에서만 열어 두면 공격할 수 있는 곳이 크게 줄어요.
+      fix:
+        - 해당 보안그룹 규칙의 출발지를 회사 관리망 대역으로 바꿔요.
+        - 가능하면 SSH 포트를 아예 닫고 AWS Systems Manager 세션 관리자로 접속하도록 바꿔요.
+        - 임시로 열었던 규칙이면 지우고, 앞으로는 기간을 정해 승인받도록 해요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "112쪽 주요 확인사항 1·2, 114쪽 결함사례 1"}
+    checkpoints: [1, 2]
+    case_refs: ["KISA:2.6.6-1"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 원격 관리 포트를 IP 대역으로 허용한 인바운드 규칙
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 원격 관리 허용 관리망 대역
+        params: [network.admin_source_cidrs]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 보안그룹 인바운드 규칙 (포트·출발지)
+        collect:
+          apis: ["ec2:DescribeSecurityGroups"]
+          per: resource
+          kind: aws_sg_rule
+          fields: [key, group_name, ports, source, source_type, remote_admin, remote_admin_service]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 원격 관리 포트 규칙의 출발지가 관리망 안이어야 함
+        check:
+          population: T2
+          where: {remote_admin: true, source_type: cidr}
+          field: source
+          op: cidr_within
+          value: T1.network.admin_source_cidrs
+          message: "{key}({group_name}): {remote_admin_service} {ports} 을 {source} 에서 허용 (관리망 {limit})"
+          plain: "{account}의 '{group_name}' 보안그룹이 서버 관리 접속({remote_admin_service})을 {source_label}에서 받고 있어요. 회사 관리망에서만 열어야 해요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 관리망 밖에서 원격 관리 포트를 허용한 규칙이 1개 이상

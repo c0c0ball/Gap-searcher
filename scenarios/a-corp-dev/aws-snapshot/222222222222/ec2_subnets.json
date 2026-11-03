@@ -1,0 +1,41 @@
+[
+  {
+    "SubnetId": "subnet-0b2pub000000a",
+    "VpcId": "vpc-0b2stg00000000001",
+    "CidrBlock": "10.20.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "stg-public-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0b2app000000a",
+    "VpcId": "vpc-0b2stg00000000001",
+    "CidrBlock": "10.20.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "stg-app-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0b2db0000000a",
+    "VpcId": "vpc-0b2stg00000000001",
+    "CidrBlock": "10.20.20.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "stg-db-a"
+      }
+    ]
+  }
+]

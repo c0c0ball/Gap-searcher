@@ -1,0 +1,23 @@
+[
+  {
+    "DBInstanceIdentifier": "stg-orders",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": true,
+    "StorageEncrypted": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0b2db00000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "stg-orders-subnets",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0b2db0000000a"
+        }
+      ]
+    }
+  }
+]

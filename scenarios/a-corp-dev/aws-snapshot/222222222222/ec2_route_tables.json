@@ -1,0 +1,87 @@
+[
+  {
+    "RouteTableId": "rtb-0b2main00000001",
+    "VpcId": "vpc-0b2stg00000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0b2main00000001m",
+        "RouteTableId": "rtb-0b2main00000001",
+        "Main": true
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0b2public000001",
+    "VpcId": "vpc-0b2stg00000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0b2stg000000001",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0b2public0000010",
+        "RouteTableId": "rtb-0b2public000001",
+        "SubnetId": "subnet-0b2pub000000a",
+        "Main": false
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0b2app00000001",
+    "VpcId": "vpc-0b2stg00000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0b2stg00000000001",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0b2app000000010",
+        "RouteTableId": "rtb-0b2app00000001",
+        "SubnetId": "subnet-0b2app000000a",
+        "Main": false
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0b2db000000001",
+    "VpcId": "vpc-0b2stg00000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.20.0.0/16",
+        "GatewayId": "local",
+        "State": "active"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0b2db0000000010",
+        "RouteTableId": "rtb-0b2db000000001",
+        "SubnetId": "subnet-0b2db0000000a",
+        "Main": false
+      }
+    ]
+  }
+]

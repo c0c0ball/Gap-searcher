@@ -27,7 +27,8 @@ def subjects(r, ar):
 def test_all_iam_rules_conforming_after_fix(scenario):
     fix_iam(scenario)
     r = run_scenario(scenario, REPO)
-    iam = [d for d in r["decisions"] if not d["ar_id"].startswith("AR-2.5.4")]
+    iam = [d for d in r["decisions"] if d["ar_id"].startswith(("AR-2.2.5", "AR-2.5.")) and
+           not d["ar_id"].startswith("AR-2.5.4")]
     assert len(iam) == 11
     assert {d["ar_id"]: d["verdict"] for d in iam if d["verdict"] != "CANDIDATE_CONFORMING"} == {}
 

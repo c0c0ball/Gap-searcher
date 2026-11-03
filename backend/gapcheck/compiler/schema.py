@@ -46,6 +46,7 @@ class Collect(_Strict):
     apis: list[str]               # 예: iam:GetAccountPasswordPolicy
     fields: list[str]
     per: Literal["account", "user", "resource", "root"] = "account"   # root: 계정별 루트 사용자
+    kind: str | None = None       # 관측 종류를 직접 지정 (한 API에서 여러 종류가 나올 때. 예: aws_sg_rule, aws_sg)
     derive: dict[str, str] = Field(default_factory=dict)   # 파생 필드 이름 → 설명식
 
 
@@ -83,7 +84,7 @@ class Check(_Strict):
     where: dict[str, str | int | bool] = Field(default_factory=dict)  # 모집단 거르기 (값이 같은 것만)
     gate: str | None = None       # 이 정책 값이 참일 때만 검사 (예: T1.mfa.console_required)
     field: str | None = None      # 확인할 필드 (대상 → 대조 대상 순으로 찾음)
-    op: Literal["==", "!=", "truthy", "falsy", "empty", "age_days_le", "date_after_asof"] | None = None
+    op: Literal["==", "!=", "truthy", "falsy", "empty", "age_days_le", "date_after_asof", "cidr_within"] | None = None
     value: str | None = None      # "const:…" 또는 "T1.param"
     join: Join | None = None
     grace: Grace | None = None

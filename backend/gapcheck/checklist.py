@@ -130,7 +130,8 @@ def build(target: str) -> dict:
                        "criteria": len(criteria),
                        "criteria_decided": sum(1 for c in criteria if c["counts"]["unknown"] == 0),
                        "criteria_fix": sum(1 for c in criteria if c["state"] == "fix"),
-                       "automated_criteria": sum(1 for c in criteria if c["automated"])}}
+                       "automated_criteria": sum(1 for c in criteria if c["automated"]),
+                       "automated_checkpoints": sum(1 for c in criteria for x in c["checkpoints"] if x["covered_by_ar"])}}
 
 
 def record(target: str, cid: str, idx: int, state: str, by: str, comment: str = "") -> dict:

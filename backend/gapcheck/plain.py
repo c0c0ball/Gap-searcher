@@ -200,7 +200,7 @@ def build(result_body: dict, requirements: list, accounts: dict[str, dict]) -> d
     if n_unk:
         parts.append((f"{n_unk}가지는 아직 판단하지 못했고", f"{n_unk}가지는 아직 판단하지 못했어요"))
     tail = ", ".join([p[0] for p in parts[:-1]] + [parts[-1][1]]) if parts else ""
-    headline = f"계정·비밀번호 관리에 대해 {len(items)}가지를 확인했어요. {tail}."
+    headline = f"자동 점검 규칙 {len(items)}개로 확인했어요. {tail}."
     return {"version": PLAIN_VERSION, "headline": headline,
             "notice": "이 결과는 자동으로 계산한 것이라 담당자가 확인하기 전까지는 '확인 중'이에요.",
             "items": items}

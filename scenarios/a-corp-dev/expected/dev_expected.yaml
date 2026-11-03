@@ -52,6 +52,27 @@ seeded_defects:
   - id: D15
     ar: AR-2.5.6-01
     what: 마지막 접근권한 검토 2026-06-30, 3분기 검토 기록 없음 (지침 제10조 분기 1회 → 92일)
+  # ── 2단계: 네트워크 (2.6) ──
+  - id: D16
+    ar: AR-2.6.1-01
+    what: a-stg RDS stg-orders 공인 접근 허용 (지침 제13조②)
+  - id: D17
+    ar: AR-2.6.1-02
+    what: a-stg 기본 보안그룹에 AWS 기본 규칙(같은 그룹 전체 허용, 나가는 전체 허용)이 남아 있음 (지침 제13조⑤)
+  - id: D18
+    ar: AR-2.6.2-01
+    what: a-stg stg-legacy-ftp 보안그룹이 FTP(21) 허용 (지침 제14조②)
+  - id: D19
+    ar: AR-2.6.4-01
+    what: a-prod DB 보안그룹이 앱 보안그룹 외에 VPC 전체 대역(10.10.0.0/16)에서 3306 허용 (지침 제13조③)
+    trap: 앱 보안그룹에서 오는 정상 규칙이 같은 보안그룹에 함께 있어, 보안그룹 단위로만 보면 놓친다.
+  - id: D20
+    ar: AR-2.6.6-01
+    what: a-prod 배스천 보안그룹 SSH 0.0.0.0/0 허용 (지침 제14조① 관리망 203.0.113.0/28)
+  - id: D21
+    ar: AR-2.6.7-01
+    what: a-prod DB 서브넷 2개가 쓰는 라우팅 테이블에 NAT 기본 경로 (지침 제13조④)
+    trap: 같은 NAT 경로가 앱 서브넷에도 있지만 앱 영역은 결함이 아니다.
 non_defects:
   - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
   - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
@@ -62,6 +83,11 @@ non_defects:
   - vendor-net 은 유지보수 계정이지만 사용기한 2026-12-31 이 기록됨 — 결함 아님
   - admin-park 는 두 계정 모두 관리자 권한이지만 특수권한자 목록에 있음 — 결함 아님
   - BatchJobRunner 사용자 정의 정책은 s3 일부 작업만 허용 — 관리자 권한 아님
+  - a-prod ALB 443 을 0.0.0.0/0 에서 허용 — 웹 서비스 공개 포트라 결함 아님
+  - a-prod 앱 보안그룹 SSH 는 배스천 보안그룹에서만 — 출발지가 보안그룹이라 원격 관리 규칙 대상 아님
+  - a-stg 기본 보안그룹의 전체 포트 규칙은 FTP·Telnet 포트 허용(2.6.2)으로 세지 않음 — 기본 보안그룹 규칙(2.6.1-02)에서만
+  - a-shared RDP 를 203.0.113.5/32 에서 허용 — 관리망(203.0.113.0/28) 안이라 결함 아님
+  - a-shared 에는 RDS 가 없음 — DB 규칙은 대상 0건으로 통과
 expected:
   AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
   AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
@@ -79,3 +105,9 @@ expected:
   AR-2.5.5-02: {state: CANDIDATE_NONCONFORMITY, defects: [D10], subjects: ["111111111111/vendor-maint"]}
   AR-2.5.6-01: {state: CANDIDATE_NONCONFORMITY, defects: [D15], subjects: ["접근권한 검토 기록"]}
   AR-2.5.6-02: {state: CANDIDATE_NONCONFORMITY, defects: [D14], subjects: ["222222222222/svc-legacy-etl"]}
+  AR-2.6.1-01: {state: CANDIDATE_NONCONFORMITY, defects: [D16], subjects: ["222222222222/stg-orders"]}
+  AR-2.6.1-02: {state: CANDIDATE_NONCONFORMITY, defects: [D17], subjects: ["222222222222/sg-0b2default000001"]}
+  AR-2.6.2-01: {state: CANDIDATE_NONCONFORMITY, defects: [D18], subjects: ["222222222222/sg-0b2legacy000001"]}
+  AR-2.6.4-01: {state: CANDIDATE_NONCONFORMITY, defects: [D19], subjects: ["111111111111/sg-0a1db00000000001"]}
+  AR-2.6.6-01: {state: CANDIDATE_NONCONFORMITY, defects: [D20], subjects: ["111111111111/sg-0a1bastion000001"]}
+  AR-2.6.7-01: {state: CANDIDATE_NONCONFORMITY, defects: [D21], subjects: ["111111111111/subnet-0a1db0000000a", "111111111111/subnet-0a1db0000000c"]}

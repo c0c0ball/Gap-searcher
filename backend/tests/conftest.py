@@ -101,3 +101,30 @@ def fix_iam(sc: Path):
          "승인자": "정보보호팀장", "승인일": "2026-10-31", "비고": "배포 담당"}))
     edit_xlsx(ev / "접근권한검토기록_2026.xlsx", lambda recs: recs.append(    # D15 3분기 검토
         {"검토일": "2026-09-30", "검토자": "정보보호팀 박○○", "범위": "AWS 3개 계정", "결과": "이상 없음"}))
+
+
+def fix_network(sc: Path):
+    """네트워크(2.6) 결함 D16~D21을 모두 고친 상태로 만든다."""
+    prod, stg = sc / "aws-snapshot/111111111111", sc / "aws-snapshot/222222222222"
+    edit_json(stg / "rds_db_instances.json", lambda d: d[0].update(PubliclyAccessible=False))   # D16
+
+    def stg_sg(groups):
+        groups[:] = [g for g in groups if g["GroupName"] != "stg-legacy-ftp"]                    # D18
+        for g in groups:
+            if g["GroupName"] == "default":                                                      # D17
+                g["IpPermissions"], g["IpPermissionsEgress"] = [], []
+    edit_json(stg / "ec2_security_groups.json", stg_sg)
+
+    def prod_sg(groups):
+        for g in groups:
+            if g["GroupName"] == "prod-db":                                                      # D19
+                g["IpPermissions"] = [p for p in g["IpPermissions"] if not p["IpRanges"]]
+            if g["GroupName"] == "prod-bastion":                                                 # D20
+                g["IpPermissions"][0]["IpRanges"] = [{"CidrIp": "203.0.113.0/28"}]
+    edit_json(prod / "ec2_security_groups.json", prod_sg)
+
+    def prod_rt(tables):                                                                         # D21
+        for t in tables:
+            if t["RouteTableId"] == "rtb-0a1db000000001":
+                t["Routes"] = [r for r in t["Routes"] if r.get("DestinationCidrBlock") != "0.0.0.0/0"]
+    edit_json(prod / "ec2_route_tables.json", prod_rt)

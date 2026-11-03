@@ -231,4 +231,7 @@ def snapshot_observations(manifest: dict, files: dict[str, dict[str, bytes]], sh
                             authz, sha.get(f"{aid}/iam_authorization.json", ""))
         if "cognito_user_pools.json" in f:
             obs += cognito_obs(aid, f["cognito_user_pools.json"], sha[f"{aid}/cognito_user_pools.json"], src)
+        from .network import FILES as NET_FILES, network_observations
+        if any(n in f for n in NET_FILES.values()):
+            obs += network_observations(aid, f, sha, src)
     return obs

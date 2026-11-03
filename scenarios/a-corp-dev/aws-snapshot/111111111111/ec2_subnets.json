@@ -1,0 +1,54 @@
+[
+  {
+    "SubnetId": "subnet-0a1pub000000a",
+    "VpcId": "vpc-0a1prod0000000001",
+    "CidrBlock": "10.10.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-public-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0a1app000000a",
+    "VpcId": "vpc-0a1prod0000000001",
+    "CidrBlock": "10.10.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-app-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0a1db0000000a",
+    "VpcId": "vpc-0a1prod0000000001",
+    "CidrBlock": "10.10.20.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-db-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0a1db0000000c",
+    "VpcId": "vpc-0a1prod0000000001",
+    "CidrBlock": "10.10.21.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "prod-db-c"
+      }
+    ]
+  }
+]
