@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "a-shared-tool-logs",
+    "Region": "ap-northeast-2",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  }
+]

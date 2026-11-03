@@ -103,7 +103,9 @@ def test_tasks_split_by_owner_and_toggle(client):
     aws = sorted(t["ar_id"] for t in owners["클라우드(AWS) 관리자"]["tasks"])
     assert aws == ["AR-2.2.5-01", "AR-2.5.1-02", "AR-2.5.2-01", "AR-2.5.3-01", "AR-2.5.3-02",
                    "AR-2.5.4-02", "AR-2.5.4-03", "AR-2.5.4-04", "AR-2.5.5-01", "AR-2.5.5-02", "AR-2.5.6-02",
-                   "AR-2.6.1-01", "AR-2.6.1-02", "AR-2.6.2-01", "AR-2.6.4-01", "AR-2.6.6-01", "AR-2.6.7-01"]
+                   "AR-2.6.1-01", "AR-2.6.1-02", "AR-2.6.2-01", "AR-2.6.4-01", "AR-2.6.6-01", "AR-2.6.7-01",
+                   "AR-2.7.1-01", "AR-2.7.1-02", "AR-2.7.1-03", "AR-2.7.1-04", "AR-2.7.1-05",
+                   "AR-2.7.2-01", "AR-2.7.2-02", "AR-2.7.2-03"]
     tid = "AR-2.5.4-03:해당 직원"
     assert client.post(f"/runs/{rid}/tasks/{tid}", json={"done": True, "by": ""}).status_code == 422
     assert client.post(f"/runs/{rid}/tasks/{tid}", json={"done": True, "by": "김○○"}).status_code == 200
@@ -115,8 +117,8 @@ def test_rejected_review_removes_task(client):
     rid = _run("a-corp-dev")
     client.post(f"/runs/{rid}/reviews", json={"ar_id": "AR-2.5.4-05", "decision": "reject",
                                                 "reviewer": "한동훈", "comment": "Cognito 풀이 운영 대상인지 재확인"})
-    owners = {o["owner"] for o in client.get("/tasks").json()["owners"]}
-    assert "개발팀(회원 서비스)" not in owners
+    dev = next(o for o in client.get("/tasks").json()["owners"] if o["owner"] == "개발팀(회원 서비스)")
+    assert [t["ar_id"] for t in dev["tasks"]] == ["AR-2.7.1-04"]   # 반려한 2.5.4-05 는 빠지고 다른 일만 남음
 
 
 def test_dashboard(client):
@@ -126,11 +128,11 @@ def test_dashboard(client):
     d = client.get("/dashboard").json()
     assert d["latest"]["run_id"] == rid
     tones = {s["ar_id"]: s["tone"] for s in d["strip"]}
-    assert len(tones) == 22
+    assert len(tones) == 30
     assert [a for a, t in tones.items() if t == "ok"] == ["AR-2.5.1-01", "AR-2.5.4-01"]
     s02 = next(s for s in d["strip"] if s["ar_id"] == "AR-2.5.4-02")
     assert s02["status"] == "고쳐야 해요" and s02["reviewed"]
-    assert d["review_progress"] == {"reviewed": 1, "total": 22}
+    assert d["review_progress"] == {"reviewed": 1, "total": 30}
 
 
 def test_dashboard_scoped_by_target_and_trend(client):
@@ -142,14 +144,14 @@ def test_dashboard_scoped_by_target_and_trend(client):
     rid_ex = _run("a-corp-dev")
     workspaces.create_workspace("개선", "a-corp-dev")
     ws = resolve_target("ws:개선")
-    _run("ws:개선")                       # 첫 실행: 고칠 것 20
+    _run("ws:개선")                       # 첫 실행: 고칠 것 28
     p = ws / "aws-snapshot/111111111111/cognito_user_pools.json"
     d = json.loads(p.read_text()); d[0]["Policies"]["PasswordPolicy"]["MinimumLength"] = 8
     p.write_text(json.dumps(d))
     import time; time.sleep(1.1)          # generated_at 정렬용
-    _run("ws:개선")                       # 두 번째: Cognito 고침 → 고칠 것 19
+    _run("ws:개선")                       # 두 번째: Cognito 고침 → 고칠 것 27
     dd = client.get("/dashboard", params={"target": "ws:개선"}).json()
     assert dd["latest"]["target"] == "ws:개선"
-    assert dd["trend"]["before"]["fix"] == 20 and dd["trend"]["after"]["fix"] == 19
+    assert dd["trend"]["before"]["fix"] == 28 and dd["trend"]["after"]["fix"] == 27
     assert client.get("/dashboard", params={"target": "a-corp-dev"}).json()["latest"]["run_id"] == rid_ex
     assert client.get("/tasks", params={"target": "ws:개선"}).json()["run_id"] != rid_ex

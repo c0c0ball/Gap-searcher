@@ -16,10 +16,15 @@
         "ec2_route_tables.json",
         "ec2_security_groups.json",
         "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
         "iam_authorization.json",
         "iam_password_policy.json",
+        "kms_keys.json",
         "login_profiles.json",
-        "rds_db_instances.json"
+        "rds_db_instances.json",
+        "s3_buckets.json"
       ]
     },
     {
@@ -32,10 +37,15 @@
         "ec2_route_tables.json",
         "ec2_security_groups.json",
         "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
         "iam_authorization.json",
         "iam_password_policy.json",
+        "kms_keys.json",
         "login_profiles.json",
-        "rds_db_instances.json"
+        "rds_db_instances.json",
+        "s3_buckets.json"
       ]
     },
     {
@@ -48,10 +58,15 @@
         "ec2_route_tables.json",
         "ec2_security_groups.json",
         "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
         "iam_authorization.json",
         "iam_password_policy.json",
+        "kms_keys.json",
         "login_profiles.json",
-        "rds_db_instances.json"
+        "rds_db_instances.json",
+        "s3_buckets.json"
       ]
     }
   ]

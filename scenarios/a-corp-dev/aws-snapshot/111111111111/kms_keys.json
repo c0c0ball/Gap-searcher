@@ -1,0 +1,26 @@
+[
+  {
+    "KeyId": "1a1a1a1a-0000-4000-8000-000000000001",
+    "Arn": "arn:aws:kms:ap-northeast-2:111111111111:key/1a1a1a1a-0000-4000-8000-000000000001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "Aliases": [
+      "alias/prod-data"
+    ],
+    "Description": "\uc6b4\uc601 \ub370\uc774\ud130 \uc554\ud638\ud654",
+    "KeyRotationEnabled": false
+  },
+  {
+    "KeyId": "1a1a1a1a-0000-4000-8000-0000000000e5",
+    "Arn": "arn:aws:kms:ap-northeast-2:111111111111:key/1a1a1a1a-0000-4000-8000-0000000000e5",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "Aliases": [
+      "alias/aws/ebs"
+    ],
+    "Description": "Default key for EBS",
+    "KeyRotationEnabled": true
+  }
+]

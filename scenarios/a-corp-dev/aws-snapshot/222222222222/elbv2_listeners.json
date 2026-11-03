@@ -1,0 +1,35 @@
+[
+  {
+    "LoadBalancerName": "stg-web",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:222222222222:loadbalancer/app/stg-web/0123456789abcdef",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:tg"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-2016-08"
+      },
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "redirect",
+            "RedirectConfig": {
+              "Protocol": "HTTPS",
+              "Port": "443",
+              "StatusCode": "HTTP_301"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

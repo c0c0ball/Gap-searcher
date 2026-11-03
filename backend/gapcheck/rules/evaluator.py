@@ -33,6 +33,11 @@ API_FILE = {
     "ec2:DescribeSubnets": "ec2_subnets.json",
     "ec2:DescribeRouteTables": "ec2_route_tables.json",
     "rds:DescribeDBInstances": "rds_db_instances.json",
+    "ec2:DescribeVolumes": "ec2_volumes.json",
+    "s3:GetBucketEncryption": "s3_buckets.json",
+    "kms:ListKeys": "kms_keys.json",
+    "elasticloadbalancing:DescribeListeners": "elbv2_listeners.json",
+    "elasticloadbalancing:DescribeSSLPolicies": "elbv2_ssl_policies.json",
 }
 
 
@@ -343,6 +348,10 @@ class _Run:
             return None if observed is None else len(observed) == 0
         if op == "==":
             return None if observed is None else observed == value
+        if op in (">=", "<="):
+            if observed is None or value is None:
+                return None
+            return observed >= value if op == ">=" else observed <= value
         if op == "!=":
             return None if observed is None else observed != value
         if op == "age_days_le":

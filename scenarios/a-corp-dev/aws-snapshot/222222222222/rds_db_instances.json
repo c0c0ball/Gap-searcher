@@ -4,7 +4,7 @@
     "Engine": "postgres",
     "DBInstanceStatus": "available",
     "PubliclyAccessible": true,
-    "StorageEncrypted": true,
+    "StorageEncrypted": false,
     "VpcSecurityGroups": [
       {
         "VpcSecurityGroupId": "sg-0b2db00000000001",

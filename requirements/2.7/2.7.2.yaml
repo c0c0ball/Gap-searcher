@@ -1,0 +1,168 @@
+# 2.7.2 암호키 관리 — 암호화 단계 (2단계 자동화)
+# 법령: 고시 제2026-9호 제7조⑥ (일정 규모 이상 처리자의 암호키 관리 절차)
+criterion: "2.7.2"
+name: 암호키 관리
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 120~121쪽(PDF 125~126) — 주요 확인사항 1~2, 결함사례 1~3"
+
+checkpoints:
+  - index: 1   # 암호키 생성·이용·보관·배포·변경·복구·파기 절차
+    covered_by: [AR-2.7.2-01, AR-2.7.2-03]
+  - index: 2   # 복구 가능한 보관, 사용 권한 최소화
+    covered_by: [AR-2.7.2-02]
+
+requirements:
+  - id: AR-2.7.2-01
+    title: 고객 관리형 KMS 키는 자동 교체가 켜져 있다
+    summary: >-
+      지침이 암호키 정기 교체와 자동 교체 사용을 정했다면, 범위 내 활성 상태의 고객 관리형 KMS 키는 자동 교체(KeyRotationEnabled)가 켜져 있어야 한다.
+      AWS 관리형 키는 AWS가 교체하므로 대상이 아니다.
+    plain:
+      question: 암호키를 정한 주기에 따라 변경(교체)하는 절차를 수립·이행하고 있는가?
+      why: >-
+        같은 키를 오래 쓰면 키가 새어 나갔을 때 그동안 암호화한 모든 자료가 위험해져요. 자동 교체를 켜면 매년 새 키로 바뀌고, 예전 자료도 그대로 읽혀요.
+      fix:
+        - KMS 콘솔 → 고객 관리형 키 → 해당 키 → 키 교체 → '자동 교체'를 켜요.
+        - 키 관리대장에 교체 주기와 마지막 교체일을 함께 적어요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "120쪽 주요 확인사항 1"}
+    checkpoints: [1]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 활성 고객 관리형 KMS 키
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 암호키 교체 조항
+        params: [key.rotation_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: KMS 키 관리 주체·상태·자동 교체
+        collect:
+          apis: ["kms:ListKeys", "kms:DescribeKey", "kms:GetKeyRotationStatus"]
+          per: resource
+          kind: aws_kms_key
+          fields: [key, alias, customer_managed, enabled, rotation_enabled]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 자동 교체가 켜져 있어야 함
+        check:
+          population: T2
+          where: {customer_managed: true, enabled: true}
+          gate: T1.key.rotation_required
+          field: rotation_enabled
+          op: truthy
+          message: "{key}({alias}): 고객 관리형 키 자동 교체 꺼짐"
+          plain: "{account}의 암호키 '{alias}'는 자동 교체가 꺼져 있어 같은 키를 계속 쓰고 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 자동 교체가 꺼진 활성 고객 관리형 키가 1개 이상
+
+  - id: AR-2.7.2-02
+    title: 다른 AWS 계정(환경)의 암호키로 암호화한 자원이 없다
+    summary: >-
+      지침이 운영 키를 개발·테스트 환경에서 쓰지 않도록 정했다면, 범위 내 암호화된 RDS·EBS·S3가 쓰는 KMS 키는 그 자원과 같은 AWS 계정의 키여야 한다.
+      계정을 환경별로 나눈 구조에서 다른 계정의 키를 쓰면 그 환경에서 상대 환경의 암호문을 풀 수 있다.
+    plain:
+      question: 운영 환경의 암호키를 개발·테스트 환경과 분리하여 사용하고, 암호키 사용 권한을 최소화하고 있는가?
+      why: >-
+        스테이징 서버가 운영 키를 쓸 수 있으면, 운영 데이터 사본을 스테이징에서 그대로 풀어 볼 수 있어요. 개발·테스트 쪽은 통제가 느슨해서 더 위험해요.
+      fix:
+        - 해당 자원을 그 계정의 키로 다시 암호화해요 (스냅샷 → 다른 키로 암호화하여 복사 → 교체).
+        - 운영 키의 키 정책에서 다른 계정에 준 사용 권한을 지워요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "120쪽 주요 확인사항 2, 121쪽 결함사례 3"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.7.2-3"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: KMS 키로 암호화된 RDS·EBS·S3
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 환경별 암호키 분리 조항
+        params: [key.env_separation]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 암호화된 자원이 쓰는 키와 키가 있는 계정
+        collect:
+          apis: ["rds:DescribeDBInstances", "ec2:DescribeVolumes", "s3:GetBucketEncryption"]
+          per: resource
+          kind: aws_key_use
+          fields: [key, resource_kind, resource, kms_key, key_account, cross_account]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 자원과 키가 같은 계정이어야 함
+        check:
+          population: T2
+          gate: T1.key.env_separation
+          field: cross_account
+          op: falsy
+          message: "{key}({resource_kind} {resource}): 계정 {account_id} 의 자원이 계정 {key_account} 의 키({kms_key})로 암호화됨"
+          plain: "{account}의 '{resource}'가 [[계정 {key_account}]]의 암호키로 암호화되어 있어요. 이 환경에서 그쪽 데이터를 풀 수 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 다른 계정의 키를 쓰는 암호화 자원이 1개 이상
+
+  - id: AR-2.7.2-03
+    title: 고객 관리형 키가 모두 암호키 관리대장에 등록되어 있다
+    summary: >-
+      지침이 암호키를 관리대장에 등록하도록 정했다면, 범위 내 고객 관리형 KMS 키는 모두 암호키 관리대장(계정·키 ID)에 있어야 한다.
+    plain:
+      question: 암호키 생성 시 승인을 받고 암호키 관리대장에 등록하여 현행화하고 있는가?
+      why: >-
+        대장에 없는 키는 누가 왜 만들었는지, 언제 지워야 하는지 아무도 몰라요. 그런 키로 암호화한 자료는 관리 밖에 놓이게 돼요.
+      fix:
+        - 대장에 없는 키의 용도와 만든 사람을 확인해 승인을 받고 대장에 올려요.
+        - 쓰지 않는 키라면 사용 중지 후 삭제 예약(최소 7일 대기)을 해요.
+      owner: 정보보호팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "120쪽 주요 확인사항 1, 121쪽 결함사례 2"}
+    checkpoints: [1]
+    case_refs: ["KISA:2.7.2-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 고객 관리형 KMS 키
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 암호키 관리대장 등록 조항
+        params: [key.ledger_required]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: KMS 키 목록
+        collect:
+          apis: ["kms:ListKeys", "kms:DescribeKey"]
+          per: resource
+          kind: aws_kms_key
+          fields: [key, alias, customer_managed, description]
+      - id: T3
+        type: EVIDENCE_REVIEW
+        description: 암호키 관리대장 (계정·키 ID·승인자)
+        evidence_kind: key_ledger
+        params: [key, alias, purpose, approver]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 고객 관리형 키가 대장에 있어야 함
+        check:
+          population: T2
+          where: {customer_managed: true}
+          gate: T1.key.ledger_required
+          join: {test: T3, match: [key, key], missing: violation}
+          message: "{key}({alias}, '{description}'): 암호키 관리대장에 없음"
+          plain: "{account}의 암호키 '{alias}'가 암호키 관리대장에 등록되어 있지 않아요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: 관리대장에 없는 고객 관리형 키가 1개 이상

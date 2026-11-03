@@ -3,7 +3,7 @@ import csv
 import io
 import json
 
-from conftest import REPO, SCENARIO, edit_json, edit_yaml, fix_iam, fix_network
+from conftest import REPO, SCENARIO, edit_json, edit_yaml, fix_crypto, fix_iam, fix_network
 
 from gapcheck.cli import compare_expected
 from gapcheck.pipeline import run_scenario
@@ -82,6 +82,7 @@ def _fix_all(sc):
               lambda d: d[0]["Policies"]["PasswordPolicy"].update(MinimumLength=8))
     fix_iam(sc)
     fix_network(sc)
+    fix_crypto(sc)
 
 
 def test_fixed_scenario_is_conforming(scenario):

@@ -1,0 +1,49 @@
+[
+  {
+    "LoadBalancerName": "prod-web",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:111111111111:loadbalancer/app/prod-web/0123456789abcdef",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:tg"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-TLS13-1-2-2021-06"
+      },
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:tg"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "LoadBalancerName": "prod-internal-admin",
+    "Scheme": "internal",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:111111111111:loadbalancer/app/prod-internal-admin/0123456789abcdef",
+    "Listeners": [
+      {
+        "Port": 8080,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:tg"
+          }
+        ]
+      }
+    ]
+  }
+]

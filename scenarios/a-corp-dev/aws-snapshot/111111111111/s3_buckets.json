@@ -1,0 +1,39 @@
+[
+  {
+    "Name": "a-prod-member-exports",
+    "Region": "ap-northeast-2",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "a-prod-orders-archive",
+    "Region": "ap-northeast-2",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:111111111111:key/1a1a1a1a-0000-4000-8000-000000000001"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  },
+  {
+    "Name": "a-prod-static-assets",
+    "Region": "ap-northeast-2",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  }
+]

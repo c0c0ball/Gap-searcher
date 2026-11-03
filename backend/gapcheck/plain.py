@@ -102,8 +102,11 @@ def account_name(aid: str, accounts: dict[str, dict]) -> str:
 def finding_sentence(v: dict, obs: dict, accounts: dict[str, dict]) -> str:
     """결함 1건을 쉬운 문장 1~2개로."""
     if v.get("plain"):
+        import re
         aid = str(v.get("subject", "")).split("/")[0]
-        return v["plain"].replace("{account}", account_name(aid, accounts))
+        text = v["plain"].replace("{account}", account_name(aid, accounts))
+        # [[계정 111111111111]] → 운영 계정(a-prod): 다른 계정을 문장에 넣을 때
+        return re.sub(r"\[\[계정 (\d{12})\]\]", lambda m: account_name(m.group(1), accounts), text)
     o = next((obs[i] for i in v.get("obs_ids", []) if i in obs and obs[i]["axis"] == "technical"), None)
     if v["op"] == "exists":
         return "회사 규정 어디에도 이 내용이 적혀 있지 않아요."

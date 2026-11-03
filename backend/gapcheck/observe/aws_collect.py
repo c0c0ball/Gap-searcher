@@ -97,6 +97,89 @@ def collect_network(ec2, rds) -> dict[str, list | dict]:
     }
 
 
+def collect_s3(s3) -> list | dict:
+    """버킷마다 기본 암호화. 기본 암호화가 없으면 Encryption = [] (2023년 이후 버킷은 SSE-S3가 기본)"""
+    try:
+        names = [b["Name"] for b in s3.list_buckets().get("Buckets", [])]
+    except ClientError as e:
+        return _err(e)
+    out = []
+    for n in names:
+        item: dict = {"Name": n}
+        try:
+            item["Region"] = s3.get_bucket_location(Bucket=n).get("LocationConstraint") or "us-east-1"
+        except ClientError as e:
+            item["Region"] = None
+            item["LocationError"] = e.response["Error"]["Code"]
+        try:
+            item["Encryption"] = s3.get_bucket_encryption(Bucket=n)["ServerSideEncryptionConfiguration"]["Rules"]
+        except ClientError as e:
+            code = e.response["Error"]["Code"]
+            item["Encryption"] = [] if code == "ServerSideEncryptionConfigurationNotFoundError" else _err(e)
+        out.append(item)
+    return out
+
+
+def collect_kms(kms) -> list | dict:
+    keys = _pages(kms, "list_keys", "Keys")
+    if isinstance(keys, dict):
+        return keys
+    aliases = _pages(kms, "list_aliases", "Aliases")
+    by_key: dict[str, list[str]] = {}
+    for a in aliases if isinstance(aliases, list) else []:
+        if a.get("TargetKeyId"):
+            by_key.setdefault(a["TargetKeyId"], []).append(a["AliasName"])
+    out = []
+    for k in keys:
+        try:
+            meta = kms.describe_key(KeyId=k["KeyId"])["KeyMetadata"]
+        except ClientError as e:
+            out.append({"KeyId": k["KeyId"], **_err(e)})
+            continue
+        item = {"KeyId": meta["KeyId"], "Arn": meta["Arn"], "KeyManager": meta.get("KeyManager"),
+                "KeyState": meta.get("KeyState"), "KeySpec": meta.get("KeySpec"),
+                "Description": meta.get("Description", ""), "Aliases": sorted(by_key.get(meta["KeyId"], []))}
+        if meta.get("KeyManager") == "CUSTOMER" and meta.get("KeySpec") == "SYMMETRIC_DEFAULT" \
+                and meta.get("KeyState") == "Enabled":
+            try:
+                item["KeyRotationEnabled"] = kms.get_key_rotation_status(KeyId=meta["KeyId"])["KeyRotationEnabled"]
+            except ClientError as e:
+                item["RotationError"] = e.response["Error"]["Code"]
+        out.append(item)
+    return out
+
+
+def collect_listeners(elb) -> tuple[list | dict, list | dict]:
+    lbs = _pages(elb, "describe_load_balancers", "LoadBalancers")
+    if isinstance(lbs, dict):
+        return lbs, lbs
+    out, used = [], set()
+    for lb in lbs:
+        ls = _pages(elb, "describe_listeners", "Listeners", LoadBalancerArn=lb["LoadBalancerArn"])
+        if isinstance(ls, dict):
+            return ls, ls
+        used |= {x["SslPolicy"] for x in ls if x.get("SslPolicy")}
+        out.append({"LoadBalancerName": lb["LoadBalancerName"], "LoadBalancerArn": lb["LoadBalancerArn"],
+                    "Scheme": lb.get("Scheme"), "Type": lb.get("Type"), "Listeners": ls})
+    try:
+        pol = elb.describe_ssl_policies(Names=sorted(used))["SslPolicies"] if used else []
+    except ClientError as e:
+        pol = _err(e)
+    return out, pol
+
+
+def collect_crypto(ec2, s3, kms, elb) -> dict[str, list | dict]:
+    """2.7 암호화: EBS·S3·KMS·로드밸런서 리스너. 파일 이름 → 내용"""
+    listeners, policies = collect_listeners(elb)
+    return {
+        "ec2_volumes.json": _pages(ec2, "describe_volumes", "Volumes"),
+        "s3_buckets.json": collect_s3(s3),
+        "kms_keys.json": collect_kms(kms),
+        "elbv2_listeners.json": listeners,
+        "elbv2_ssl_policies.json": policies,
+    }
+
+
 def collect_cognito(cog) -> list | dict:
     try:
         pools = []
@@ -140,6 +223,14 @@ def collect_account(session: boto3.Session, expected_account: str, out_dir: Path
     net = collect_network(session.client("ec2", region_name=region), session.client("rds", region_name=region))
     for name, body in net.items():
         if isinstance(body, dict):   # 오류는 파일을 만들지 않는다 (없는 파일 = 범위 미충족)
+            errors.append(f"{name.split('.')[0]}: {body['Error']['Code']}")
+        else:
+            (d / name).write_text(json.dumps(body, indent=2, default=str))
+
+    cr = collect_crypto(session.client("ec2", region_name=region), session.client("s3", region_name=region),
+                        session.client("kms", region_name=region), session.client("elbv2", region_name=region))
+    for name, body in cr.items():
+        if isinstance(body, dict):
             errors.append(f"{name.split('.')[0]}: {body['Error']['Code']}")
         else:
             (d / name).write_text(json.dumps(body, indent=2, default=str))

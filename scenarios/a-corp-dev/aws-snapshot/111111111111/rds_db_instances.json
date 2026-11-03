@@ -21,6 +21,7 @@
           "SubnetIdentifier": "subnet-0a1db0000000c"
         }
       ]
-    }
+    },
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:111111111111:key/1a1a1a1a-0000-4000-8000-000000000001"
   }
 ]

@@ -234,4 +234,7 @@ def snapshot_observations(manifest: dict, files: dict[str, dict[str, bytes]], sh
         from .network import FILES as NET_FILES, network_observations
         if any(n in f for n in NET_FILES.values()):
             obs += network_observations(aid, f, sha, src)
+        from .crypto import FILES as CRYPTO_FILES, crypto_observations
+        if any(n in f for n in CRYPTO_FILES.values()) or "rds_db_instances.json" in f:
+            obs += crypto_observations(aid, f, sha, src)
     return obs

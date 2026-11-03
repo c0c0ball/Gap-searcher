@@ -59,6 +59,17 @@ NETWORK_RULES: list[tuple[str, re.Pattern]] = [
     ("network.default_sg_unused", re.compile(r"기본\s*보안\s*그룹.*규칙을\s*두지\s*않")),
     ("network.insecure_protocols_banned", re.compile(r"(?:telnet|텔넷|FTP).*(?:사용하지|허용하지)\s*않", re.I)),
 ]
+# 암호화 규칙 (2.7)
+CRYPTO_RULES: list[tuple[str, re.Pattern]] = [
+    ("crypto.db_at_rest", re.compile(r"데이터베이스는?\s*저장\s*시\s*암호화")),
+    ("crypto.disk_at_rest", re.compile(r"디스크.*암호화하여\s*사용")),
+    ("crypto.personal_object_kms", re.compile(r"개인정보를?\s*저장하는\s*객체\s*저장소.*관리하는\s*암호\s*키")),
+    ("transport.https_only", re.compile(r"암호화되지\s*않은\s*HTTP\s*접속은\s*HTTPS로")),
+    ("key.ledger_required", re.compile(r"암호\s*키\s*관리\s*대장에\s*등록")),
+    ("key.rotation_required", re.compile(r"암호\s*키는.*교체.*자동\s*교체")),
+    ("key.env_separation", re.compile(r"운영\s*환경의\s*암호\s*키를.*(?:개발|테스트).*사용하지\s*않")),
+]
+TLS_MIN = re.compile(r"TLS\s*(1\.[0-3])\s*이상")
 ADMIN_CIDR_CLAUSE = re.compile(r"(?:SSH|원격\s*데스크톱|원격\s*관리).*에서만\s*허용")
 CIDR = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}/\d{1,2}\b")
 REVIEW_CYCLE = re.compile(r"(월|분기|반기|연)\s*1\s*회\s*이상.*접근\s*권한.*검토|접근\s*권한.*(월|분기|반기|연)\s*1\s*회\s*이상\s*검토")
@@ -75,6 +86,11 @@ def _account_rules(c: Clause, name: str) -> list[Found]:
     for param, rx in NETWORK_RULES:
         if rx.search(t):
             out.append(Found(param, True, c, t, name))
+    for param, rx in CRYPTO_RULES:
+        if rx.search(t):
+            out.append(Found(param, True, c, t, name))
+    if m := TLS_MIN.search(t):
+        out.append(Found("transport.tls_min_version", float(m.group(1)), c, t, name))
     if ADMIN_CIDR_CLAUSE.search(t) and (cidrs := CIDR.findall(t)):
         out.append(Found("network.admin_source_cidrs", sorted(set(cidrs)), c, t, name))
     if m := REVIEW_CYCLE.search(t):

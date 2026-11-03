@@ -1,0 +1,26 @@
+[
+  {
+    "KeyId": "2b2b2b2b-0000-4000-8000-000000000001",
+    "Arn": "arn:aws:kms:ap-northeast-2:222222222222:key/2b2b2b2b-0000-4000-8000-000000000001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "Aliases": [
+      "alias/stg-data"
+    ],
+    "Description": "\uc2a4\ud14c\uc774\uc9d5 \ub370\uc774\ud130 \uc554\ud638\ud654",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "2b2b2b2b-0000-4000-8000-000000000002",
+    "Arn": "arn:aws:kms:ap-northeast-2:222222222222:key/2b2b2b2b-0000-4000-8000-000000000002",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "Aliases": [
+      "alias/stg-temp"
+    ],
+    "Description": "\uc131\ub2a5 \uc2dc\ud5d8\uc6a9 \uc784\uc2dc \ud0a4",
+    "KeyRotationEnabled": true
+  }
+]

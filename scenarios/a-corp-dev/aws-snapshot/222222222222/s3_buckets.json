@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "a-stg-test-data",
+    "Region": "ap-northeast-2",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:222222222222:key/2b2b2b2b-0000-4000-8000-000000000001"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  }
+]

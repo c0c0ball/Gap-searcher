@@ -20,8 +20,8 @@ def _all_text(p):
 
 
 def test_headline_counts(plain):
-    assert plain["headline"] == ("자동 점검 규칙 22개로 확인했어요. "
-                                 "20가지는 고칠 부분이 있어 보이고, 2가지는 규칙대로 되어 있어 보여요.")
+    assert plain["headline"] == ("자동 점검 규칙 30개로 확인했어요. "
+                                 "28가지는 고칠 부분이 있어 보이고, 2가지는 규칙대로 되어 있어 보여요.")
 
 
 def test_no_forbidden_or_jargon(plain):

@@ -73,6 +73,32 @@ seeded_defects:
     ar: AR-2.6.7-01
     what: a-prod DB 서브넷 2개가 쓰는 라우팅 테이블에 NAT 기본 경로 (지침 제13조④)
     trap: 같은 NAT 경로가 앱 서브넷에도 있지만 앱 영역은 결함이 아니다.
+  # ── 2단계: 암호화 (2.7) ──
+  - id: D22
+    ar: AR-2.7.1-01
+    what: a-stg RDS stg-orders 저장 암호화 꺼짐 (암호통제 지침 제3조①). 정보자산 목록상 개인정보 포함
+  - id: D23
+    ar: AR-2.7.1-02
+    what: a-prod 배치 서버 데이터 디스크 prod-batch-export(200GB) 암호화 안 됨 (제3조②)
+  - id: D24
+    ar: AR-2.7.1-03
+    what: a-prod 회원 정보 내보내기 버킷이 SSE-S3(AES256)만 적용 — 지침은 회사 관리 키(KMS) (제3조③)
+    trap: 버킷 자체는 암호화되어 있어 '암호화 여부'만 보면 놓친다. 개인정보 여부는 정보자산 목록으로 판단한다.
+  - id: D25
+    ar: AR-2.7.2-01
+    what: a-prod 고객 관리형 키 alias/prod-data 자동 교체 꺼짐 (제6조)
+  - id: D26
+    ar: AR-2.7.2-03
+    what: a-stg 고객 관리형 키 alias/stg-temp 가 암호키 관리대장에 없음 (제5조)
+  - id: D27
+    ar: AR-2.7.2-02
+    what: a-stg 서버 디스크가 a-prod 계정의 키(prod-data)로 암호화됨 (제7조)
+  - id: D28
+    ar: AR-2.7.1-04
+    what: a-prod 공개 ALB prod-web 의 HTTP:80 이 HTTPS 전환 없이 서비스 (제4조)
+  - id: D29
+    ar: AR-2.7.1-05
+    what: a-stg 공개 ALB stg-web 의 443 보안 정책 ELBSecurityPolicy-2016-08 이 TLS 1.0 부터 허용 (제4조 TLS 1.2 이상)
 non_defects:
   - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
   - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
@@ -88,6 +114,10 @@ non_defects:
   - a-stg 기본 보안그룹의 전체 포트 규칙은 FTP·Telnet 포트 허용(2.6.2)으로 세지 않음 — 기본 보안그룹 규칙(2.6.1-02)에서만
   - a-shared RDP 를 203.0.113.5/32 에서 허용 — 관리망(203.0.113.0/28) 안이라 결함 아님
   - a-shared 에는 RDS 가 없음 — DB 규칙은 대상 0건으로 통과
+  - a-prod 배스천 디스크는 AWS 관리형 기본 키(aws/ebs)로 암호화 — 저장 암호화 충족, 키 교체 대상 아님
+  - a-prod 정적 파일·a-shared 도구 로그 버킷은 SSE-S3 — 정보자산 목록상 개인정보 없음이라 결함 아님
+  - a-prod 내부 전용 ALB 의 HTTP:8080 — 인터넷 구간이 아님
+  - a-stg stg-web 의 HTTP:80 은 HTTPS 로 전환만 함 — 평문 서비스 아님
 expected:
   AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
   AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
@@ -111,3 +141,11 @@ expected:
   AR-2.6.4-01: {state: CANDIDATE_NONCONFORMITY, defects: [D19], subjects: ["111111111111/sg-0a1db00000000001"]}
   AR-2.6.6-01: {state: CANDIDATE_NONCONFORMITY, defects: [D20], subjects: ["111111111111/sg-0a1bastion000001"]}
   AR-2.6.7-01: {state: CANDIDATE_NONCONFORMITY, defects: [D21], subjects: ["111111111111/subnet-0a1db0000000a", "111111111111/subnet-0a1db0000000c"]}
+  AR-2.7.1-01: {state: CANDIDATE_NONCONFORMITY, defects: [D22], subjects: ["222222222222/stg-orders"]}
+  AR-2.7.1-02: {state: CANDIDATE_NONCONFORMITY, defects: [D23], subjects: ["111111111111/vol-0a1batch0000001"]}
+  AR-2.7.1-03: {state: CANDIDATE_NONCONFORMITY, defects: [D24], subjects: ["111111111111/a-prod-member-exports"]}
+  AR-2.7.1-04: {state: CANDIDATE_NONCONFORMITY, defects: [D28], subjects: ["111111111111/prod-web:80"]}
+  AR-2.7.1-05: {state: CANDIDATE_NONCONFORMITY, defects: [D29], subjects: ["222222222222/stg-web:443"]}
+  AR-2.7.2-01: {state: CANDIDATE_NONCONFORMITY, defects: [D25], subjects: ["111111111111/1a1a1a1a-0000-4000-8000-000000000001"]}
+  AR-2.7.2-02: {state: CANDIDATE_NONCONFORMITY, defects: [D27], subjects: ["222222222222/vol-0b2app000000001"]}
+  AR-2.7.2-03: {state: CANDIDATE_NONCONFORMITY, defects: [D26], subjects: ["222222222222/2b2b2b2b-0000-4000-8000-000000000002"]}

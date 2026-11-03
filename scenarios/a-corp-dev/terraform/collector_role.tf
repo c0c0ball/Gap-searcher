@@ -52,6 +52,24 @@ resource "aws_iam_role_policy" "gapcheck_collector_read" {
         ]
         Resource = "*"
       },
+      {
+        Sid    = "CryptoReads"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeVolumes",
+          "s3:ListAllMyBuckets",
+          "s3:GetBucketLocation",
+          "s3:GetEncryptionConfiguration",
+          "kms:ListKeys",
+          "kms:ListAliases",
+          "kms:DescribeKey",
+          "kms:GetKeyRotationStatus",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "elasticloadbalancing:DescribeListeners",
+          "elasticloadbalancing:DescribeSSLPolicies",
+        ]
+        Resource = "*"
+      },
     ]
   })
 }

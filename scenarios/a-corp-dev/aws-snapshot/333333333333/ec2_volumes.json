@@ -1,0 +1,23 @@
+[
+  {
+    "VolumeId": "vol-0c3tools0000001",
+    "Size": 30,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:333333333333:key/3c3c3c3c-0000-4000-8000-000000000001",
+    "Attachments": [
+      {
+        "InstanceId": "i-0c3tools00000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "shared-tools-root"
+      }
+    ]
+  }
+]

@@ -1,0 +1,270 @@
+# 2.7.1 암호정책 적용 — 암호화 단계 (2단계 자동화)
+# 법령: 고시 제2026-9호 제7조(개인정보의 암호화). 항목 단위 암호화(②③⑤)는 DB 안을 봐야 해서 사람이 확인한다.
+criterion: "2.7.1"
+name: 암호정책 적용
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 117~119쪽(PDF 122~124) — 주요 확인사항 1~2, 결함사례 1~5"
+
+checkpoints:
+  - index: 1   # 법적 요구사항을 반영한 암호정책 수립
+    covered_by: []
+    note: 암호화 대상(고유식별정보·계좌번호 등)이 고시 제7조와 맞는지는 사람이 확인
+  - index: 2   # 저장·전송·전달 시 암호화 수행
+    covered_by: [AR-2.7.1-01, AR-2.7.1-02, AR-2.7.1-03, AR-2.7.1-04, AR-2.7.1-05]
+
+requirements:
+  - id: AR-2.7.1-01
+    title: 데이터베이스 저장 암호화가 켜져 있다
+    summary: >-
+      지침이 데이터베이스 저장 시 암호화를 정했다면, 범위 내 모든 AWS 계정의 RDS 인스턴스는 저장 암호화(StorageEncrypted)가 켜져 있어야 한다.
+      스테이징 등 비운영 DB도 운영 데이터를 복제해 쓰면 같은 기준이 적용된다.
+    plain:
+      question: 개인정보를 저장하는 데이터베이스에 저장 시 암호화를 적용하고 있는가?
+      why: >-
+        저장 암호화가 꺼져 있으면 디스크나 백업 파일이 밖으로 나갔을 때 내용을 그대로 읽을 수 있어요.
+      fix:
+        - 저장 암호화는 이미 만든 DB에서 켤 수 없어요. 스냅샷을 만들고 '암호화하여 복사'한 뒤 그 스냅샷으로 DB를 다시 만들어요.
+        - 새 DB를 만들 때는 '암호화 활성화'를 기본으로 하고, 회사 관리 키(KMS)를 골라요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "117쪽 주요 확인사항 2"}
+    checkpoints: [2]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 RDS 인스턴스
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: DB 저장 암호화 조항
+        params: [crypto.db_at_rest]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: RDS 저장 암호화 여부
+        collect:
+          apis: ["rds:DescribeDBInstances"]
+          per: resource
+          kind: aws_db
+          fields: [key, db, engine, storage_encrypted, kms_key]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 저장 암호화가 켜져 있어야 함
+        check:
+          population: T2
+          gate: T1.crypto.db_at_rest
+          field: storage_encrypted
+          op: truthy
+          message: "{key}: RDS({engine}) 저장 암호화(StorageEncrypted) 꺼짐"
+          plain: "{account}의 데이터베이스 '{db}'는 저장 암호화가 꺼져 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 저장 암호화가 꺼진 RDS 인스턴스가 1개 이상
+
+  - id: AR-2.7.1-02
+    title: 서버 디스크(EBS)가 암호화되어 있다
+    summary: >-
+      지침이 서버 디스크 암호화를 정했다면, 범위 내 모든 EBS 볼륨은 암호화되어 있어야 한다. AWS 관리형 기본 키(aws/ebs)로 암호화한 것도 충족으로 본다.
+    plain:
+      question: 개인정보를 처리하는 서버의 저장장치(디스크)에 암호화를 적용하고 있는가?
+      why: >-
+        서버 디스크에는 작업 중인 파일이나 내려받은 자료가 남아요. 암호화되지 않으면 디스크 사본만으로 내용을 볼 수 있어요.
+      fix:
+        - 볼륨 스냅샷을 만들고 '암호화하여 복사'한 뒤 새 볼륨으로 바꿔 끼워요.
+        - EC2 설정에서 '기본적으로 EBS 암호화'를 켜 두면 앞으로 만드는 디스크는 자동으로 암호화돼요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "117쪽 주요 확인사항 2"}
+    checkpoints: [2]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 EBS 볼륨
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 서버 디스크 암호화 조항
+        params: [crypto.disk_at_rest]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: EBS 볼륨 암호화 여부
+        collect:
+          apis: ["ec2:DescribeVolumes"]
+          per: resource
+          kind: aws_volume
+          fields: [key, name, encrypted, attached_to, size_gb]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 볼륨이 암호화되어 있어야 함
+        check:
+          population: T2
+          gate: T1.crypto.disk_at_rest
+          field: encrypted
+          op: truthy
+          message: "{key}({name}, {size_gb}GB, 연결 {attached_to}): 암호화되지 않음"
+          plain: "{account}의 서버 디스크 '{name}'가 암호화되어 있지 않아요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 암호화되지 않은 EBS 볼륨이 1개 이상
+
+  - id: AR-2.7.1-03
+    title: 개인정보를 담은 S3 버킷은 회사 관리 키(KMS)로 암호화되어 있다
+    summary: >-
+      지침이 개인정보 객체 저장소를 회사 관리 키로 암호화하도록 정했다면, 정보자산 목록에서 개인정보 포함으로 표시된 S3 버킷은
+      기본 암호화 방식이 KMS(aws:kms)여야 한다. S3 기본 키(SSE-S3, AES256)는 키 사용 권한을 따로 통제할 수 없어 충족으로 보지 않는다.
+    plain:
+      question: 개인정보를 저장하는 저장소를 암호정책에 정한 방식(회사 관리 암호키)으로 암호화하고 있는가?
+      why: >-
+        S3 기본 암호화는 버킷을 볼 수 있는 사람이면 누구나 자동으로 풀려요. 회사가 관리하는 키를 쓰면 키 사용 권한까지 따로 막을 수 있어요.
+      fix:
+        - 버킷 속성 → 기본 암호화 → 'AWS KMS 키를 사용한 서버 측 암호화'를 고르고 회사 키를 지정해요.
+        - 이미 올라가 있는 파일은 다시 복사해야 새 방식으로 암호화돼요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "117쪽 주요 확인사항 2, 119쪽 결함사례 2"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.7.1-2"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 정보자산 목록에서 개인정보 포함으로 표시된 S3 버킷
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 개인정보 객체 저장소 암호화 방식 조항
+        params: [crypto.personal_object_kms]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 정보자산 목록 (유형·개인정보 포함 여부)
+        evidence_kind: asset_list
+        params: [key, asset_id, name, type, personal]
+      - id: T3
+        type: CONFIG_COLLECT
+        description: S3 버킷 기본 암호화 방식
+        collect:
+          apis: ["s3:GetBucketEncryption"]
+          per: resource
+          kind: aws_bucket
+          fields: [key, bucket, sse_algorithm, kms_encrypted, kms_key]
+      - id: T4
+        type: SUBJECT_CHECK
+        description: 개인정보 버킷의 암호화 방식이 KMS여야 함
+        check:
+          population: T2
+          where: {type: S3, personal: true}
+          gate: T1.crypto.personal_object_kms
+          join: {test: T3, match: [key, key], missing: ok}
+          field: kms_encrypted
+          op: truthy
+          message: "{key}({asset_id} {name}): 개인정보 버킷 기본 암호화가 {sse_algorithm} (지침은 KMS)"
+          plain: "{account}의 '{bucket}' 버킷에 개인정보가 있는데, 회사 관리 키가 아니라 S3 기본 암호화만 되어 있어요."
+    conforming_paths: [[T1, T2, T3, T4]]
+    violation_when:
+      - test: T4
+        condition: KMS로 암호화되지 않은 개인정보 버킷이 1개 이상
+
+  - id: AR-2.7.1-04
+    title: 인터넷 구간에 평문 HTTP 서비스가 없다
+    summary: >-
+      지침이 HTTP 접속을 HTTPS로 전환하도록 정했다면, 인터넷에 공개된 로드밸런서의 리스너는 HTTPS(TLS)이거나
+      HTTP라도 기본 동작이 HTTPS로의 전환(redirect)이어야 한다. 내부 전용 로드밸런서는 대상이 아니다.
+    plain:
+      question: 인터넷으로 개인정보를 주고받는 구간에 전송 암호화(HTTPS)를 적용하고 있는가?
+      why: >-
+        HTTP로 오가는 내용은 중간에서 누구나 볼 수 있어요. 로그인 정보나 회원 정보가 그대로 노출될 수 있어요.
+      fix:
+        - 80번 포트 리스너의 기본 동작을 'HTTPS(443)로 전환'으로 바꿔요.
+        - HTTPS가 없는 서비스라면 인증서(ACM)를 발급해 443 리스너를 먼저 만들어요.
+      owner: 클라우드(AWS) 관리자 · 개발팀(회원 서비스)
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "117쪽 주요 확인사항 2, 119쪽 결함사례 4"}
+    checkpoints: [2]
+    case_refs: ["KISA:2.7.1-4"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 인터넷에 공개된 로드밸런서 리스너
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: HTTPS 전환 조항
+        params: [transport.https_only]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 로드밸런서 리스너 (프로토콜·기본 동작)
+        collect:
+          apis: ["elasticloadbalancing:DescribeListeners"]
+          per: resource
+          kind: aws_listener
+          fields: [key, load_balancer, scheme, internet_facing, protocol, port, redirect_https, plaintext_service]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 공개 리스너가 평문 서비스가 아니어야 함
+        check:
+          population: T2
+          where: {internet_facing: true}
+          gate: T1.transport.https_only
+          field: plaintext_service
+          op: falsy
+          message: "{key}: 인터넷 공개 {protocol}:{port} 리스너가 HTTPS 전환 없이 서비스"
+          plain: "{account}의 '{load_balancer}'이 {port}번 포트로 암호화되지 않은 HTTP 접속을 그대로 받고 있어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: HTTPS 전환 없는 공개 HTTP 리스너가 1개 이상
+
+  - id: AR-2.7.1-05
+    title: 공개 HTTPS 리스너가 정한 TLS 버전 이상만 허용한다
+    summary: >-
+      지침이 전송 구간의 최소 TLS 버전을 정했다면, 인터넷에 공개된 HTTPS·TLS 리스너의 보안 정책이 허용하는
+      가장 낮은 TLS 버전이 그 이상이어야 한다.
+    plain:
+      question: 전송 구간 암호화에 안전한 암호 프로토콜(TLS 1.2 이상 등 암호정책에 정한 수준)을 적용하고 있는가?
+      why: >-
+        TLS 1.0·1.1은 알려진 약점이 있어 더 이상 안전하지 않아요. 오래된 설정이 남아 있으면 공격자가 일부러 약한 방식으로 접속을 유도할 수 있어요.
+      fix:
+        - "리스너의 보안 정책을 TLS 1.2 이상만 허용하는 정책(예: ELBSecurityPolicy-TLS13-1-2-2021-06)으로 바꿔요."
+        - 오래된 기기 지원이 필요한지 먼저 확인하고, 필요 없다면 바로 바꿔요.
+      owner: 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "117쪽 주요 확인사항 2"}
+    checkpoints: [2]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 인터넷에 공개된 HTTPS·TLS 리스너
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 최소 TLS 버전
+        params: [transport.tls_min_version]
+      - id: T2
+        type: CONFIG_COLLECT
+        description: 리스너 보안 정책과 허용 TLS 버전
+        collect:
+          apis: ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeSSLPolicies"]
+          per: resource
+          kind: aws_listener
+          fields: [key, load_balancer, internet_facing, tls, ssl_policy, tls_min]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 허용 최저 TLS 버전이 기준 이상
+        check:
+          population: T2
+          where: {internet_facing: true, tls: true}
+          field: tls_min
+          op: ">="
+          value: T1.transport.tls_min_version
+          message: "{key}: 보안 정책 {ssl_policy} 가 TLS {tls_min} 부터 허용 (기준 TLS {limit} 이상)"
+          plain: "{account}의 '{load_balancer}'이 오래된 암호 방식(TLS {tls_min})으로도 접속을 받아요. 회사 기준은 TLS {limit} 이상이에요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 기준보다 낮은 TLS를 허용하는 공개 리스너가 1개 이상

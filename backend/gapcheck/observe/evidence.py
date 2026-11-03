@@ -7,6 +7,8 @@ account_list       계정ID, IAM 사용자, 사번, 용도                  acco
 hr_roster          사번, 성명, 상태, 퇴직일                        hr_account     (인사 명부 × 계정 관리대장)
 privileged_list    AWS 계정, IAM 사용자, 권한, 승인자               privileged_entry (특수권한자 목록)
 access_review_log  검토일, 검토자, 결과                            access_review  (접근권한 검토 기록)
+asset_list         자산ID, 자산명, 유형, 개인정보                    asset_entry    (정보자산 목록)
+key_ledger         키 별칭, AWS 계정, 키 ID, 용도                    key_entry      (암호키 관리대장)
 
 - 개인 이름은 마스킹된 채로 두고 판정에는 사번·IAM 사용자 이름만 쓴다.
 - 인사 명부는 계정 관리대장과 사번으로 이어서 'IAM 사용자 ↔ 재직 상태'를 만든다.
@@ -25,9 +27,12 @@ SIGNATURES: dict[str, set[str]] = {
     "hr_roster": {"사번", "성명", "상태", "퇴직일"},
     "privileged_list": {"AWS 계정", "IAM 사용자", "권한", "승인자"},
     "access_review_log": {"검토일", "검토자", "결과"},
+    "asset_list": {"자산ID", "자산명", "유형", "개인정보"},
+    "key_ledger": {"키 별칭", "AWS 계정", "키 ID", "용도"},
 }
 KIND_OBS = {"account_list": "account_entry", "hr_roster": "hr_account",
-            "privileged_list": "privileged_entry", "access_review_log": "access_review"}
+            "privileged_list": "privileged_entry", "access_review_log": "access_review",
+            "asset_list": "asset_entry", "key_ledger": "key_entry"}
 
 
 def _cell(v: Any) -> Any:
@@ -139,6 +144,25 @@ def evidence_observations(files: list[tuple[str, bytes, str]], accounts: dict[st
                     obs_id=f"ev:priv:{key}", axis="evidence", kind="privileged_entry", subject=key,
                     values={"key": key, "permission": r.get("권한"), "approver": r.get("승인자"),
                             "approved_on": r.get("승인일")},
+                    extractor="evidence", source=src(path, sha, sheet, i)))
+            elif kind == "asset_list":
+                aid = alias.get(str(r.get("AWS 계정") or ""), str(r.get("AWS 계정") or ""))
+                rid = r.get("리소스ID")
+                key = f"{aid}/{rid}" if rid else None
+                obs.append(Observation(
+                    obs_id=f"ev:asset:{r.get('자산ID')}", axis="evidence", kind="asset_entry",
+                    subject=f"{r.get('자산ID')} {r.get('자산명')}",
+                    values={"key": key, "asset_id": r.get("자산ID"), "name": r.get("자산명"), "type": r.get("유형"),
+                            "personal": str(r.get("개인정보") or "").upper() in ("Y", "O", "예", "포함"),
+                            "importance": r.get("중요도"), "owner": r.get("관리자")},
+                    extractor="evidence", source=src(path, sha, sheet, i)))
+            elif kind == "key_ledger":
+                aid = alias.get(str(r.get("AWS 계정") or ""), str(r.get("AWS 계정") or ""))
+                key = f"{aid}/{r.get('키 ID')}"
+                obs.append(Observation(
+                    obs_id=f"ev:key:{key}", axis="evidence", kind="key_entry", subject=key,
+                    values={"key": key, "alias": r.get("키 별칭"), "purpose": r.get("용도"),
+                            "approver": r.get("생성 승인자") or "", "manager": r.get("담당자")},
                     extractor="evidence", source=src(path, sha, sheet, i)))
             elif kind == "access_review_log":
                 obs.append(Observation(

@@ -50,7 +50,7 @@ docker compose up --build
 
 - **ClamAV**는 첫 기동 때 시그니처를 받느라 몇 분 동안 빨간색일 수 있습니다.
 - **worker 왕복**은 "확인" 버튼을 눌러야 검사합니다 (api → redis → worker → api).
-- **요구사항 lint**는 `오류 0건 · 경고 14건`이 정상입니다. 경고는 자동 점검 없이 사람이 확인하도록 남겨 둔 확인사항입니다 (YAML의 note에 이유).
+- **요구사항 lint**는 `오류 0건 · 경고 15건`이 정상입니다. 경고는 자동 점검 없이 사람이 확인하도록 남겨 둔 확인사항입니다 (YAML의 note에 이유).
 
 ## 명령줄
 
@@ -60,7 +60,7 @@ gapcheck run ../scenarios/a-corp-dev            # 실행 → runs/<id>/result.js
 gapcheck check ../scenarios/a-corp-dev          # 개발용 정답지와 비교
 gapcheck run ../scenarios/a-corp-dev --llm      # Ollama 문서 추출 함께 사용
 gapcheck collect --targets targets.yaml --out ../scenarios/my-live/aws-snapshot   # live AWS 수집
-pytest                                          # 테스트 121개
+pytest                                          # 테스트 132개
 ```
 
 `targets.yaml` 예시 (커밋하지 말 것):
@@ -123,8 +123,10 @@ db/init.sql        pgvector 활성화
 | 2.6.4 데이터베이스 접근 | DB 보안그룹은 애플리케이션 보안그룹에서만 | 지침, 보안그룹, RDS |
 | 2.6.6 원격접근 통제 | SSH·RDP는 지정 관리망에서만 | 지침(관리망 대역), 보안그룹 |
 | 2.6.7 인터넷 접속 통제 | DB 서브넷에 인터넷 기본 경로 없음 | 지침, 서브넷·라우팅, RDS |
+| 2.7.1 암호정책 적용 | DB·디스크 저장 암호화, 개인정보 S3 KMS 암호화, 공개 HTTP 평문 리스너, 최소 TLS | 암호통제 지침, RDS·EBS·S3·ALB, 정보자산 목록 |
+| 2.7.2 암호키 관리 | KMS 자동 교체, 다른 계정 키 사용, 암호키 관리대장 등록 | 암호통제 지침, KMS·RDS·EBS·S3, 암호키 관리대장 |
 
-증적 엑셀은 파일 이름이 아니라 첫 줄 제목 칸으로 종류를 알아냅니다 (계정 관리대장, 인사 명부, 특수권한자 목록, 접근권한 검토 기록).
+증적 엑셀은 파일 이름이 아니라 첫 줄 제목 칸으로 종류를 알아냅니다 (계정 관리대장, 인사 명부, 특수권한자 목록, 접근권한 검토 기록, 정보자산 목록, 암호키 관리대장).
 규칙은 YAML만으로 씁니다. 대상별 검사(`SUBJECT_CHECK`)로 모집단 거르기, 다른 자료와 대조, 영업일 유예를 표현합니다.
 
 ## 안내서 정리본 (비공개 파일)

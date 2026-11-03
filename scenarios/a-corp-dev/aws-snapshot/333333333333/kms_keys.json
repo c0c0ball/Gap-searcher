@@ -1,0 +1,14 @@
+[
+  {
+    "KeyId": "3c3c3c3c-0000-4000-8000-000000000001",
+    "Arn": "arn:aws:kms:ap-northeast-2:333333333333:key/3c3c3c3c-0000-4000-8000-000000000001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "Aliases": [
+      "alias/shared-tools"
+    ],
+    "Description": "\uacf5\uc6a9 \ub3c4\uad6c \uc554\ud638\ud654",
+    "KeyRotationEnabled": true
+  }
+]

@@ -128,3 +128,29 @@ def fix_network(sc: Path):
             if t["RouteTableId"] == "rtb-0a1db000000001":
                 t["Routes"] = [r for r in t["Routes"] if r.get("DestinationCidrBlock") != "0.0.0.0/0"]
     edit_json(prod / "ec2_route_tables.json", prod_rt)
+
+
+def fix_crypto(sc: Path):
+    """암호화(2.7) 결함 D22~D29를 모두 고친 상태로 만든다."""
+    prod, stg = sc / "aws-snapshot/111111111111", sc / "aws-snapshot/222222222222"
+    stg_key = "arn:aws:kms:ap-northeast-2:222222222222:key/2b2b2b2b-0000-4000-8000-000000000001"
+    edit_json(stg / "rds_db_instances.json", lambda d: d[0].update(StorageEncrypted=True, KmsKeyId=stg_key))  # D22
+    edit_json(prod / "ec2_volumes.json", lambda vs: [v.update(                                                  # D23
+        Encrypted=True, KmsKeyId="arn:aws:kms:ap-northeast-2:111111111111:key/1a1a1a1a-0000-4000-8000-000000000001")
+        for v in vs if v["VolumeId"] == "vol-0a1batch0000001"])
+    edit_json(prod / "s3_buckets.json", lambda bs: [b.update(Encryption=[{"ApplyServerSideEncryptionByDefault": {  # D24
+        "SSEAlgorithm": "aws:kms", "KMSMasterKeyID": "alias/prod-data"}}]) for b in bs if b["Name"] == "a-prod-member-exports"])
+    edit_json(prod / "kms_keys.json", lambda ks: [k.update(KeyRotationEnabled=True)                               # D25
+                                                  for k in ks if k["KeyManager"] == "CUSTOMER"])
+    edit_json(stg / "kms_keys.json", lambda ks: ks.pop(1))                                                       # D26 (임시 키 삭제)
+    edit_json(stg / "ec2_volumes.json", lambda vs: vs[0].update(KmsKeyId=stg_key))                                # D27
+
+    def prod_lb(lbs):                                                                                           # D28
+        for li in lbs[0]["Listeners"]:
+            if li["Port"] == 80:
+                li["DefaultActions"] = [{"Type": "redirect", "RedirectConfig": {"Protocol": "HTTPS", "Port": "443"}}]
+    edit_json(prod / "elbv2_listeners.json", prod_lb)
+    edit_json(stg / "elbv2_listeners.json", lambda lbs: lbs[0]["Listeners"][0].update(                         # D29
+        SslPolicy="ELBSecurityPolicy-TLS13-1-2-2021-06"))
+    edit_json(stg / "elbv2_ssl_policies.json", lambda ps: ps.append(
+        {"Name": "ELBSecurityPolicy-TLS13-1-2-2021-06", "SslProtocols": ["TLSv1.2", "TLSv1.3"]}))
