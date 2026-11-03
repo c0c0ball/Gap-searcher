@@ -56,6 +56,7 @@ class Context:
     as_of: date
     doc_conflicts: list[str] = field(default_factory=list)
     evidence_obs: list[Observation] = field(default_factory=list)
+    overlay: dict[str, Any] = field(default_factory=dict)   # 원문 대조를 마친(active) 법정 파라미터만
 
 
 def _kind_for(t: Test) -> str | None:
@@ -88,6 +89,8 @@ class _Run:
     def doc_value(self, ref: str) -> tuple[Any, list[str]]:
         if ref.startswith("const:"):
             return _const(ref), []
+        if ref.startswith("overlay:"):
+            return self.ctx.overlay.get(ref[8:]), []
         tid, _, param = ref.partition(".")
         o = self.ctx.doc_obs.get(param)
         if o is None or not _usable(o):
@@ -352,6 +355,8 @@ class _Run:
             return None if observed is None else len(observed) == 0
         if op == "==":
             return None if observed is None else observed == value
+        if op == "in":
+            return None if observed is None else observed in (value or [])
         if op in (">=", "<="):
             if observed is None or value is None:
                 return None
@@ -484,6 +489,8 @@ class _Safe(dict):
 
 def _const(ref: str) -> Any:
     v = ref[6:]
+    if "|" in v:   # const:a|b|c → 목록
+        return v.split("|")
     return {"true": True, "false": False}.get(v.lower(), int(v) if v.isdigit() else v)
 
 

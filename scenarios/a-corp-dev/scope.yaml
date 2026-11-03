@@ -31,3 +31,7 @@ evidence:
   - {file: evidence/접속기록점검기록_2026.xlsx, kind: access_log_review}
   - {file: evidence/백업복구테스트기록_2025-2026.xlsx, kind: restore_test_log}
   # 재해 복구 훈련 기록은 제출되지 않음 (2.12.2 는 '판단 못함'이 정상)
+  - {file: evidence/정보보호위원회_회의록목록.xlsx, kind: committee_log}
+  - {file: evidence/위험평가기록.xlsx, kind: risk_assessment_log}
+  - {file: evidence/내부감사기록.xlsx, kind: internal_audit_log}
+  - {file: evidence/개선조치관리대장_2026.xlsx, kind: improvement_tracker}

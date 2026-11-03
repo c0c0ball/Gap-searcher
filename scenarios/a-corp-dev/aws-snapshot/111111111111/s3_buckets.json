@@ -59,5 +59,18 @@
         "BucketKeyEnabled": false
       }
     ]
+  },
+  {
+    "Name": "a-prod-export-tmp-0915",
+    "Region": "ap-northeast-2",
+    "Lifecycle": [],
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
   }
 ]

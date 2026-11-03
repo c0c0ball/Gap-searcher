@@ -22,7 +22,7 @@ from .ingest.scanner import Scanner
 from .model import Artifact, Observation, to_dict
 from .normalize.docx_parser import parse_docx
 from .observe.aws import load_snapshot, snapshot_observations
-from .observe.evidence import evidence_observations
+from .observe.evidence import evidence_observations, policy_doc_observations
 from .observe.document import LlmClient, LlmExtractor, RuleExtractor, to_observations
 from .quality import apply_quality, document_coverage
 from .rules.evaluator import EVALUATOR_VERSION, Context, evaluate
@@ -67,6 +67,12 @@ def load_requirements(repo_root: Path, criterion: str | None = None) -> tuple[li
     return [cf for cf, _ in files], h.hexdigest()
 
 
+def _active_overlay(repo_root: Path) -> dict:
+    from .compiler.lint import load_sources
+    _, ov = load_sources(repo_root / "sources")
+    return {p.id: p.value for p in ov.params if p.active}
+
+
 def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None) -> dict:
     opts = opts or RunOptions()
     scope = yaml.safe_load((scenario / "scope.yaml").read_text(encoding="utf-8"))
@@ -78,13 +84,14 @@ def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None
     rejected: list[dict] = []
 
     # ① ~ ④ 정책 문서: 수용 → 정규화
-    clauses, doc_meta, parsed, failed = [], {}, {}, []
+    clauses, doc_meta, parsed, failed, doc_arts = [], {}, {}, [], []
     for d in scope.get("policy_documents", []) or []:
         try:
             art, data = ingest_file(scenario, d["file"], "policy_document", opts.scanner)
             artifacts[art.sha256] = art
             meta, cs = parse_docx(data, d.get("doc_id", d["file"]), art.sha256)
             doc_meta[d["file"]] = meta
+            doc_arts.append((d["file"], meta, art.sha256))
             parsed[d["file"]] = len(cs)
             clauses += cs
         except Exception as e:
@@ -103,6 +110,7 @@ def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None
             rejected.append({"file": ev["file"], "reason": f"{type(e).__name__}: {e}"})
     ev_obs, ev_read = evidence_observations(
         ev_files, {a["account_id"]: a for a in scope.get("aws_accounts", [])})
+    ev_obs += policy_doc_observations(doc_arts, clauses)
 
     # ⑤ 관측 — 문서
     found = RuleExtractor().extract(clauses)
@@ -134,7 +142,8 @@ def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None
     ctx = Context(facts=facts, accounts_in_scope=accounts, doc_obs={o.subject: o for o in doc_obs},
                   tech_obs=tech_obs, doc_coverage=doc_cov,
                   manifest_accounts={a["account_id"]: a for a in manifest["accounts"]},
-                  as_of=as_of, doc_conflicts=doc_conflicts, evidence_obs=ev_obs)
+                  as_of=as_of, doc_conflicts=doc_conflicts, evidence_obs=ev_obs,
+                  overlay=_active_overlay(repo_root))
     evaluations, decisions, findings = [], [], []
     for ar in ars:
         ev = evaluate(ar, ctx)

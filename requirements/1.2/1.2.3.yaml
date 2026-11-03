@@ -1,0 +1,67 @@
+# 1.2.3 위험 평가 — 관리체계 단계
+criterion: "1.2.3"
+name: 위험 평가
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 32~34쪽(PDF 37~39) — 주요 확인사항 1~5, 결함사례 1~7"
+
+checkpoints:
+  - index: 1   # 위험 식별·평가 방법 정의
+    covered_by: []
+    note: 위험평가 방법론 문서는 사람이 확인
+  - index: 2   # 위험관리계획 매년 수립
+    covered_by: []
+    note: 위험관리계획서(인력·기간·대상·예산)는 사람이 확인
+  - index: 3   # 연 1회 이상 위험평가 수행
+    covered_by: [AR-1.2.3-01]
+  - index: 4   # 목표 위험수준(DoA) 설정
+    covered_by: []
+    note: DoA 설정의 타당성은 사람이 확인
+  - index: 5   # 결과를 경영진에 보고
+    covered_by: []
+    note: 보고·승인 기록은 사람이 확인
+
+requirements:
+  - id: AR-1.2.3-01
+    title: 위험평가를 정한 주기마다 한다
+    summary: >-
+      정책이 위험평가 주기를 정했다면, 위험평가 기록의 가장 최근 평가일이 기준일로부터 그 주기 안에 있어야 한다. 연은 366일로 센다.
+    plain:
+      question: 위험관리계획에 따라 연 1회 이상 정기적으로 위험평가를 수행하고 있는가?
+      why: >-
+        위험평가를 건너뛰면 새로 생긴 시스템이나 바뀐 업무의 위험을 모른 채 지나가요. '변경이 없었다'는 이유로 생략하는 것도 결함이에요.
+      fix:
+        - 올해 위험평가를 수행하고 결과를 정보보호최고책임자에게 보고해요.
+        - 위험평가 일정을 연간 계획에 넣고, 범위에 클라우드 자원과 법적 요구사항을 포함해요.
+      owner: 정보보호팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "32쪽 주요 확인사항 3, 34쪽 결함사례 2"}
+    checkpoints: [3]
+    case_refs: ["KISA:1.2.3-2"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 위험평가 기록
+      source: T2.assessed_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 위험평가 주기
+        params: [risk.assessment_cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 위험평가 기록 (평가일·범위·결과)
+        evidence_kind: risk_assessment_log
+        params: [assessed_on]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 평가일이 주기 안인지
+        cadence:
+          last_event: T2.assessed_on
+          max_interval_days: T1.risk.assessment_cycle_days
+          aggregate: latest
+          plain: "마지막 위험평가가 {last}이에요. 회사 정책대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 위험평가가 정한 주기를 넘김

@@ -1,0 +1,89 @@
+# 1.2.1 정보자산 식별 — 관리체계 단계
+criterion: "1.2.1"
+name: 정보자산 식별
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 24~25쪽(PDF 29~30) — 주요 확인사항 1~3, 결함사례 1~5"
+
+checkpoints:
+  - index: 1   # 범위 내 모든 자산 식별·목록 관리
+    covered_by: [AR-1.2.1-01]
+  - index: 2   # 중요도·보안등급 부여
+    covered_by: []
+    note: 중요도 산정 기준과 실제 등급의 합리성은 사람이 확인
+  - index: 3   # 정기 조사로 목록 최신 유지
+    covered_by: [AR-1.2.1-01]
+
+requirements:
+  - id: AR-1.2.1-01
+    title: 실제 클라우드 데이터 저장소가 모두 정보자산 목록에 있다
+    summary: >-
+      정책이 모든 정보자산의 식별과 목록 관리를 정했다면, 범위 내 AWS 계정에 실제로 있는 RDS 인스턴스와 S3 버킷은 모두
+      정보자산 목록(계정·리소스ID)에 있어야 한다. 서버·네트워크 장비 등 다른 유형은 다음 단계에서 넓힌다.
+    plain:
+      question: 관리체계 범위 내의 모든 정보자산(클라우드 자원 포함)을 식별하여 정보자산 목록으로 최신 관리하고 있는가?
+      why: >-
+        목록에 없는 저장소는 암호화·접근통제·백업 같은 보호 조치에서 빠지기 쉬워요. 특히 잠깐 쓰고 남겨 둔 임시 저장소에 개인정보가 남는 일이 많아요.
+      fix:
+        - 목록에 없는 저장소의 용도와 담당자를 확인해 정보자산 목록에 올리고 중요도를 매겨요.
+        - 더 쓰지 않는 임시 저장소라면 안의 데이터를 파기하고 저장소를 지워요.
+      owner: 정보보호팀 · 클라우드(AWS) 관리자
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "24쪽 주요 확인사항 1·3, 25쪽 결함사례 4"}
+    checkpoints: [1, 3]
+    case_refs: ["KISA:1.2.1-4"]
+    applicability:
+      when: [scope.has_aws_accounts]
+    population:
+      name: 범위 내 RDS 인스턴스와 S3 버킷
+      source: T3.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 정보자산 식별·목록 관리 조항
+        params: [asset.inventory_required]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 정보자산 목록 (계정·리소스ID)
+        evidence_kind: asset_list
+        params: [key, asset_id, name, type]
+      - id: T3
+        type: CONFIG_COLLECT
+        description: RDS 인스턴스
+        collect:
+          apis: ["rds:DescribeDBInstances"]
+          per: resource
+          kind: aws_db
+          fields: [key, db, engine]
+      - id: T4
+        type: CONFIG_COLLECT
+        description: S3 버킷
+        collect:
+          apis: ["s3:GetBucketEncryption"]
+          per: resource
+          kind: aws_bucket
+          fields: [key, bucket]
+      - id: T5
+        type: SUBJECT_CHECK
+        description: RDS가 목록에 있어야 함
+        check:
+          population: T3
+          gate: T1.asset.inventory_required
+          join: {test: T2, match: [key, key], missing: violation}
+          message: "{key}: RDS({engine}) '{db}'가 정보자산 목록에 없음"
+          plain: "{account}의 데이터베이스 '{db}'가 정보자산 목록에 없어요."
+      - id: T6
+        type: SUBJECT_CHECK
+        description: S3 버킷이 목록에 있어야 함
+        check:
+          population: T4
+          gate: T1.asset.inventory_required
+          join: {test: T2, match: [key, key], missing: violation}
+          message: "{key}: S3 버킷 '{bucket}'이 정보자산 목록에 없음"
+          plain: "{account}의 저장소(S3) '{bucket}'이 정보자산 목록에 없어요."
+    conforming_paths: [[T1, T2, T3, T4, T5, T6]]
+    violation_when:
+      - test: T5
+        condition: 목록에 없는 RDS가 1개 이상
+      - test: T6
+        condition: 목록에 없는 S3 버킷이 1개 이상

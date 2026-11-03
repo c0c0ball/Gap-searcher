@@ -1,0 +1,57 @@
+# 1.4.2 관리체계 점검 — 관리체계 단계
+criterion: "1.4.2"
+name: 관리체계 점검
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 45~46쪽(PDF 50~51) — 주요 확인사항 1~2, 결함사례 1~3"
+
+checkpoints:
+  - index: 1   # 점검 기준·범위·주기·인력 요건을 포함한 점검 계획
+    covered_by: []
+    note: 점검 계획서와 점검 인력의 독립성은 사람이 확인
+  - index: 2   # 연 1회 이상 점검, 경영진 보고
+    covered_by: [AR-1.4.2-01]
+
+requirements:
+  - id: AR-1.4.2-01
+    title: 관리체계 점검(내부 감사)을 정한 주기마다 한다
+    summary: >-
+      정책이 관리체계 점검(내부 감사) 주기를 정했다면, 내부 감사 기록의 가장 최근 감사일이 기준일로부터 그 주기 안에 있어야 한다. 연은 366일로 센다.
+    plain:
+      question: 관리체계가 효과적으로 운영되는지 연 1회 이상 점검을 수행하고 결과를 경영진에게 보고하고 있는가?
+      why: >-
+        스스로 점검하지 않으면 규정과 실제가 어긋난 곳을 인증 심사에서야 알게 돼요.
+      fix:
+        - 점검 대상 업무와 독립된 인력(외부 감사인 등)으로 관리체계 전 영역을 점검하고 결과를 보고해요.
+        - 다음 점검 시기를 연간 계획에 넣어요.
+      owner: 정보보호팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "45쪽 주요 확인사항 2"}
+    checkpoints: [2]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 내부 감사 기록
+      source: T2.audited_on
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 관리체계 점검 주기
+        params: [audit.cycle_days]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 관리체계 점검·내부 감사 기록 (감사일·감사인·범위)
+        evidence_kind: internal_audit_log
+        params: [audited_on]
+      - id: T3
+        type: CADENCE_CHECK
+        description: 가장 최근 감사일이 주기 안인지
+        cadence:
+          last_event: T2.audited_on
+          max_interval_days: T1.audit.cycle_days
+          aggregate: latest
+          plain: "마지막 관리체계 점검이 {last}이에요. 회사 정책대로라면 {max_days}일 안에 다시 했어야 하는데 {days}일이 지났어요."
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 가장 최근 점검이 정한 주기를 넘김

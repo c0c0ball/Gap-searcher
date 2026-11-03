@@ -1,0 +1,62 @@
+# 1.4.3 관리체계 개선 — 관리체계 단계
+criterion: "1.4.3"
+name: 관리체계 개선
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 47~48쪽(PDF 52~53) — 주요 확인사항 1~2, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 문제점 근본원인 분석, 재발방지·개선 대책 수립·이행
+    covered_by: [AR-1.4.3-01]
+  - index: 2   # 개선 결과의 정확성·효과성 확인 기준
+    covered_by: []
+    note: 근본원인 분석 내용과 효과성 측정은 사람이 확인
+
+requirements:
+  - id: AR-1.4.3-01
+    title: 개선 조치가 기한을 넘겨 방치되지 않는다
+    summary: >-
+      정책이 점검에서 발견된 문제를 기한을 정해 조치·관리하도록 정했다면, 개선조치 관리대장에서 완료되지 않은 항목은
+      완료예정일이 기준일 이후여야 한다. 완료예정일이 비어 있는 미완료 항목도 기한 관리가 안 된 것으로 본다.
+    plain:
+      question: 관리체계 점검 등에서 발견된 문제점에 대해 개선 대책을 수립하고 기한 내에 이행하고 있는가?
+      why: >-
+        지적만 받고 조치가 미뤄지면 같은 문제가 다음 점검과 인증 심사에서 다시 나와요. 기한이 지난 항목은 반복 결함의 신호예요.
+      fix:
+        - 기한이 지난 항목의 조치를 마무리하거나, 늦어진 이유와 새 기한을 정해 정보보호최고책임자 승인을 받아요.
+        - 매달 개선조치 관리대장을 점검해 기한이 다가오는 항목을 담당자에게 알려요.
+      owner: 정보보호팀 · 각 조치 담당 부서
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "47쪽 주요 확인사항 1, 48쪽 결함사례 4"}
+    checkpoints: [1]
+    case_refs: ["KISA:1.4.3-4"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 개선조치 관리대장의 미완료 항목
+      source: T2.key
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 개선 조치 기한 관리 조항
+        params: [improve.tracking_required]
+      - id: T2
+        type: EVIDENCE_REVIEW
+        description: 개선조치 관리대장 (조치번호·발견사항·완료예정일·상태)
+        evidence_kind: improvement_tracker
+        params: [key, item_no, finding, due, status, done]
+      - id: T3
+        type: SUBJECT_CHECK
+        description: 미완료 항목은 기한이 남아 있어야 함
+        check:
+          population: T2
+          where: {done: false}
+          gate: T1.improve.tracking_required
+          field: due
+          op: date_after_asof
+          message: "{item_no} '{finding}': 완료예정일 {due} 지남, 상태 {status} (담당 {owner})"
+          plain: "개선 조치 [{item_no}] {finding} — 완료 예정일 {due}이 지났는데 아직 '{status}' 상태예요. (담당 {owner})"
+    conforming_paths: [[T1, T2, T3]]
+    violation_when:
+      - test: T3
+        condition: 기한이 지난 미완료 개선 조치가 1개 이상

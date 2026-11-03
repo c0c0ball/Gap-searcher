@@ -84,7 +84,7 @@ class Check(_Strict):
     where: dict[str, str | int | bool] = Field(default_factory=dict)  # 모집단 거르기 (값이 같은 것만)
     gate: str | None = None       # 이 정책 값이 참일 때만 검사 (예: T1.mfa.console_required)
     field: str | None = None      # 확인할 필드 (대상 → 대조 대상 순으로 찾음)
-    op: Literal["==", "!=", ">=", "<=", "truthy", "falsy", "empty", "age_days_le", "date_after_asof",
+    op: Literal["==", "!=", ">=", "<=", "in", "truthy", "falsy", "empty", "age_days_le", "date_after_asof",
                 "cidr_within"] | None = None
     value: str | None = None      # "const:…" 또는 "T1.param"
     join: Join | None = None

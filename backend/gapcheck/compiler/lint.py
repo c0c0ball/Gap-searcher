@@ -185,7 +185,7 @@ def lint_ar(ar: AR, criterion: str, reg_ids: dict, overlay: Overlay, rep: Report
                 refs += [("grace.days", c.grace.days)]
             if (c.op is None) != (c.field is None) and not c.join:
                 rep.add("RC-005", "error", f"{w}/{t.id}", "check의 field와 op는 함께 써야 함")
-            if c.op in ("==", "!=", ">=", "<=", "age_days_le", "cidr_within") and not c.value:
+            if c.op in ("==", "!=", ">=", "<=", "in", "age_days_le", "cidr_within") and not c.value:
                 rep.add("RC-005", "error", f"{w}/{t.id}", f"op '{c.op}'에는 value가 필요")
             if c.op is None and not (c.join and c.join.missing == "violation"):
                 rep.add("RC-005", "error", f"{w}/{t.id}", "check는 op 또는 join.missing=violation 중 하나가 필요")

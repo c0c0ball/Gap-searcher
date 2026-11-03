@@ -12,6 +12,10 @@ key_ledger         키 별칭, AWS 계정, 키 ID, 용도                    key
 access_log_review  점검일, 점검자, 결과                            access_log_check (접속기록 점검 기록)
 restore_test_log   시험일, 대상, 결과, 확인자                       restore_test   (백업 복구 테스트 기록)
 dr_drill_log       훈련일, 시나리오, 결과                          dr_drill       (재해 복구 훈련 기록)
+committee_log      개최일, 안건, 참석자                            committee_meeting (정보보호위원회 회의록 목록)
+risk_assessment_log 평가일, 평가 범위, 결과                         risk_assessment (위험평가 기록)
+internal_audit_log 감사일, 감사인, 범위, 결과                       internal_audit (관리체계 점검·내부감사 기록)
+improvement_tracker 조치번호, 발견사항, 완료예정일, 상태              improvement_item (개선조치 관리대장)
 
 - 개인 이름은 마스킹된 채로 두고 판정에는 사번·IAM 사용자 이름만 쓴다.
 - 인사 명부는 계정 관리대장과 사번으로 이어서 'IAM 사용자 ↔ 재직 상태'를 만든다.
@@ -35,14 +39,24 @@ SIGNATURES: dict[str, set[str]] = {
     "access_log_review": {"점검일", "점검자", "결과"},
     "restore_test_log": {"시험일", "대상", "결과", "확인자"},
     "dr_drill_log": {"훈련일", "시나리오", "결과"},
+    "committee_log": {"개최일", "안건", "참석자"},
+    "risk_assessment_log": {"평가일", "평가 범위", "결과"},
+    "internal_audit_log": {"감사일", "감사인", "범위", "결과"},
+    "improvement_tracker": {"조치번호", "발견사항", "완료예정일", "상태"},
 }
 KIND_OBS = {"account_list": "account_entry", "hr_roster": "hr_account",
             "privileged_list": "privileged_entry", "access_review_log": "access_review",
             "asset_list": "asset_entry", "key_ledger": "key_entry",
-            "access_log_review": "access_log_check", "restore_test_log": "restore_test", "dr_drill_log": "dr_drill"}
+            "access_log_review": "access_log_check", "restore_test_log": "restore_test", "dr_drill_log": "dr_drill",
+            "committee_log": "committee_meeting", "risk_assessment_log": "risk_assessment",
+            "internal_audit_log": "internal_audit", "improvement_tracker": "improvement_item",
+            # 규정 문서에서 만드는 관측 (pipeline 이 docx 를 읽어 넣는다)
+            "policy_doc_meta": "policy_doc", "law_citation": "law_citation"}
 # 날짜 한 칸이 핵심인 기록류: 종류 → (날짜 칸, 관측 필드)
 DATED = {"access_log_review": ("점검일", "checked_on"), "restore_test_log": ("시험일", "tested_on"),
-         "dr_drill_log": ("훈련일", "drilled_on")}
+         "dr_drill_log": ("훈련일", "drilled_on"), "committee_log": ("개최일", "held_on"),
+         "risk_assessment_log": ("평가일", "assessed_on"), "internal_audit_log": ("감사일", "audited_on")}
+DONE = {"완료", "종결", "조치 완료", "close", "closed", "done"}
 
 
 def _cell(v: Any) -> Any:
@@ -174,6 +188,15 @@ def evidence_observations(files: list[tuple[str, bytes, str]], accounts: dict[st
                     values={"key": key, "alias": r.get("키 별칭"), "purpose": r.get("용도"),
                             "approver": r.get("생성 승인자") or "", "manager": r.get("담당자")},
                     extractor="evidence", source=src(path, sha, sheet, i)))
+            elif kind == "improvement_tracker":
+                no = r.get("조치번호")
+                status = str(r.get("상태") or "")
+                obs.append(Observation(
+                    obs_id=f"ev:improve:{no}", axis="evidence", kind="improvement_item", subject=f"조치 {no}",
+                    values={"key": f"조치 {no}", "item_no": no, "finding": r.get("발견사항"), "due": r.get("완료예정일"),
+                            "status": status or "없음", "done": status.strip().lower() in DONE,
+                            "owner": r.get("담당") or r.get("담당자"), "source_audit": r.get("출처")},
+                    extractor="evidence", source=src(path, sha, sheet, i)))
             elif kind in DATED:
                 col, fld = DATED[kind]
                 obs.append(Observation(
@@ -189,3 +212,39 @@ def evidence_observations(files: list[tuple[str, bytes, str]], accounts: dict[st
                             "result": r.get("결과"), "action": r.get("조치")},
                     extractor="evidence", source=src(path, sha, sheet, i)))
     return obs, read
+
+
+# ── 규정 문서에서 만드는 관측 ──────────────────────────────────────────────
+
+LAW_NOTICE = __import__("re").compile(
+    r"안전성\s*확보\s*조치\s*기준[^\n]{0,40}?고시\s*제\s*(\d{4})\s*-\s*(\d+)\s*호")
+
+
+def policy_doc_observations(docs: list[tuple[str, dict, str]], clauses: list) -> list[Observation]:
+    """docs: [(파일, docx 메타, sha256)], clauses: 정규화된 Clause 목록
+
+    policy_doc   문서 1개: 문서번호·제목·버전·시행일·승인자·최종개정일 (표지 표와 개정 이력 표)
+    law_citation 「개인정보의 안전성 확보조치 기준」 고시 번호를 인용한 조항 1개
+    """
+    out: list[Observation] = []
+    titles = {(m.get("문서번호") or p): m.get("제목") for p, m, _ in docs}
+    for path, meta, sha in docs:
+        did = meta.get("문서번호") or path
+        out.append(Observation(
+            obs_id=f"doc:meta:{did}", axis="evidence", kind="policy_doc", subject=did,
+            values={"key": did, "doc_id": did, "title": meta.get("제목"), "version": meta.get("버전"),
+                    "effective": meta.get("시행일"), "approver": meta.get("승인자") or "",
+                    "last_revised": meta.get("최종개정일")},
+            extractor="docx", source={"source": "policy_document", "file": path, "sha256": sha}))
+    for c in clauses:
+        for m in LAW_NOTICE.finditer(c.text):
+            n = f"{m.group(1)}-{m.group(2)}"
+            out.append(Observation(
+                obs_id=f"doc:law:{c.clause_id}:{n}", axis="evidence", kind="law_citation",
+                subject=f"{c.doc_id} {c.article}", values={
+                    "key": f"{c.doc_id} {c.article.split('(')[0]}", "doc_id": c.doc_id, "article": c.article,
+                    "title": titles.get(c.doc_id) or c.doc_id,
+                    "notice": n, "quote": m.group(0)},
+                extractor="docx", source={"source": "policy_document", "sha256": c.artifact_sha256,
+                                          "clause_id": c.clause_id}))
+    return out

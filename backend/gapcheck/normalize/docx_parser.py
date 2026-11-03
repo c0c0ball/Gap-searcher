@@ -34,6 +34,15 @@ def parse_docx(data: bytes, doc_id_hint: str, artifact_sha256: str) -> tuple[dic
             cells = [norm(c.text) for c in row.cells]
             if len(cells) == 2 and cells[0] in {"문서번호", "버전", "시행일", "승인자", "소관부서", "보안등급"}:
                 meta[cells[0]] = cells[1]
+    # 개정 이력 표(버전·일자 칸이 있는 표)의 가장 늦은 날짜 → 마지막 제·개정(검토)일
+    dates = []
+    for table in doc.tables:
+        rows = [[norm(c.text) for c in r.cells] for r in table.rows]
+        if rows and "일자" in rows[0] and any("버전" in h for h in rows[0]):
+            i = rows[0].index("일자")
+            dates += [r[i] for r in rows[1:] if len(r) > i and re.fullmatch(r"\d{4}-\d{2}-\d{2}", r[i])]
+    if dates:
+        meta["최종개정일"] = max(dates)
     doc_id = meta.get("문서번호", doc_id_hint)
     title = next((norm(p.text) for p in doc.paragraphs if p.style.name == "Title"), "")
     meta["제목"] = title

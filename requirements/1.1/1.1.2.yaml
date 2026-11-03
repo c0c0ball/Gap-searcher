@@ -1,0 +1,44 @@
+# 1.1.2 최고책임자의 지정 — 관리체계 단계
+criterion: "1.1.2"
+name: 최고책임자의 지정
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 12~14쪽(PDF 17~19) — 주요 확인사항 1~2, 결함사례 1~4"
+
+checkpoints:
+  - index: 1   # 최고책임자 공식 지정
+    covered_by: [AR-1.1.2-01]
+  - index: 2   # 임원급 지정, 법령 자격요건
+    covered_by: []
+    note: 임원 여부·겸직 제한·신고 의무는 인사발령·신고 기록으로 사람이 확인
+
+requirements:
+  - id: AR-1.1.2-01
+    title: 최상위 정책에 정보보호 최고책임자 지정이 정해져 있다
+    summary: >-
+      최상위 정보보호 정책에 정보보호 최고책임자(CISO)를 지정한다는 조항이 있어야 한다. 실제 인사발령·신고 여부는 사람이 확인한다.
+    plain:
+      question: 정보보호 업무를 총괄하여 책임질 최고책임자를 공식적으로 지정하고 있는가?
+      why: >-
+        정보보호를 끝까지 책임지는 사람이 정해져 있어야 예산·인력 결정과 사고 대응이 늦어지지 않아요.
+      fix:
+        - 정보보호 정책서에 정보보호 최고책임자를 두고 그 역할을 적어요.
+        - 인사발령으로 공식 지정하고, 의무 대상이면 과학기술정보통신부에 신고해요.
+      owner: 정보보호팀 · 경영진
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "12쪽 주요 확인사항 1, 14쪽 결함사례 3"}
+    checkpoints: [1]
+    case_refs: ["KISA:1.1.2-3"]
+    applicability:
+      when: [scope.has_information_systems]
+    tests:
+      - id: T1
+        type: DOCUMENT_EXTRACT
+        description: 정보보호 최고책임자 지정 조항
+        params: [policy.ciso_designated]
+    conforming_paths: [[T1]]
+    single_axis_justification: >-
+      '지정 근거가 정책에 있는가'는 정책 문서 자체가 1차 증거다. 인사발령·신고 기록은 확인사항 2와 함께 사람이 확인한다.
+    violation_when:
+      - test: T1
+        condition: 제출 문서 범위가 충족된 상태에서 최고책임자 지정 조항이 없음

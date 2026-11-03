@@ -1,0 +1,60 @@
+# 1.4.1 법적 요구사항 준수 검토 — 관리체계 단계
+# 법정 값: 「개인정보의 안전성 확보조치 기준」 현행 고시 번호 — sources/legal_overlay.yaml (원문 대조 후 active)
+criterion: "1.4.1"
+name: 법적 요구사항 준수 검토
+source:
+  ref: SRC-KISA-GUIDE-2023-11
+  locator: "안내서(2023.11) 42~44쪽(PDF 47~49) — 주요 확인사항 1~2, 결함사례 1~7"
+
+checkpoints:
+  - index: 1   # 법적 요구사항 파악·최신성 유지
+    covered_by: [AR-1.4.1-01]
+  - index: 2   # 연 1회 이상 준수 여부 검토
+    covered_by: []
+    note: 법적 준거성 검토 보고서는 사람이 확인
+
+requirements:
+  - id: AR-1.4.1-01
+    title: 규정이 인용한 안전성 확보조치 기준이 현행 고시다
+    summary: >-
+      정책·지침이 「개인정보의 안전성 확보조치 기준」을 고시 번호와 함께 인용했다면, 그 번호가 현행 고시(Source Registry에서 원문 대조한 번호)여야 한다.
+      종전 고시를 인용하면 개정 사항(조문 이동·삭제, 새 의무)이 규정에 반영되지 않았을 가능성이 크다.
+    plain:
+      question: 준수해야 하는 법적 요구사항의 개정 내용을 파악하여 정책·지침에 최신으로 반영하고 있는가?
+      why: >-
+        고시가 바뀌면 조문 번호나 의무 내용이 달라져요. 규정이 옛 고시를 따르고 있으면, 새로 생긴 의무를 놓치거나 없어진 조항을 근거로 삼게 돼요.
+      fix:
+        - 규정이 인용한 고시를 현행 번호로 고치고, 바뀐 조문(예 — 인터넷망 차단 조치는 제6조의2로 이동)을 반영했는지 함께 검토해요.
+        - 법령 개정을 정기적으로 확인하는 담당자와 주기를 정해요.
+      owner: 정보보호팀
+    status: active
+    source: {ref: SRC-KISA-GUIDE-2023-11, locator: "42쪽 주요 확인사항 1, 44쪽 결함사례 1"}
+    checkpoints: [1]
+    case_refs: ["KISA:1.4.1-1"]
+    applicability:
+      when: [scope.has_information_systems]
+    population:
+      name: 규정 속 「개인정보의 안전성 확보조치 기준」 인용
+      source: T1.key
+    tests:
+      - id: T1
+        type: EVIDENCE_REVIEW
+        description: 정책·지침 조항에서 찾은 고시 인용 (문서·조·고시 번호)
+        evidence_kind: law_citation
+        params: [key, doc_id, title, article, notice]
+      - id: T2
+        type: SUBJECT_CHECK
+        description: 인용한 고시 번호가 현행이어야 함
+        check:
+          population: T1
+          field: notice
+          op: "=="
+          value: overlay:law.safeguard_notice_current
+          message: "{doc_id} {article}: 고시 제{notice}호 인용 (현행 제{limit}호)"
+          plain: "'{title}' {article}이(가) 예전 고시(제{notice}호)를 따르고 있어요. 현행은 제{limit}호예요."
+    conforming_paths: [[T1, T2]]
+    single_axis_justification: >-
+      비교 기준값은 Source Registry에서 원문 대조한 현행 고시 번호(overlay)이고, 관측은 규정 문서의 인용 문장이다. 개정 영향 검토 여부는 확인사항 2로 사람이 확인한다.
+    violation_when:
+      - test: T2
+        condition: 종전 고시를 인용한 조항이 1개 이상

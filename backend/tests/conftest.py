@@ -182,3 +182,45 @@ def fix_logging(sc: Path):
     wb.save(ev / "재해복구훈련기록_2026.xlsx")
     edit_yaml(sc / "scope.yaml", lambda s: s["evidence"].append(
         {"file": "evidence/재해복구훈련기록_2026.xlsx", "kind": "dr_drill_log"}))
+
+
+def _docx_edit(path: Path, fn):
+    import docx
+    d = docx.Document(path)
+    fn(d)
+    d.save(path)
+
+
+def fix_mgmt(sc: Path):
+    """관리체계 결함 D39~D45를 모두 고친 상태로 만든다."""
+    docs, ev = sc / "docs", sc / "evidence"
+
+    def approver(d):                                                                                     # D39
+        for row in d.tables[0].rows:
+            if row.cells[0].text == "승인자":
+                row.cells[1].paragraphs[0].runs[0].text = "정보보호최고책임자"
+    _docx_edit(docs / "A사_계정관리절차서_v1.3.docx", approver)
+
+    def reviewed(d):                                                                                     # D41
+        t = d.tables[1]
+        row = t.add_row()
+        for cell, text in zip(row.cells, ["v1.0", "2026-02-20", "정기 검토 — 하위 지침 목록 반영", "정보보호팀장"]):
+            cell.text = text
+    _docx_edit(docs / "A사_정보보호정책서_v1.0.docx", reviewed)
+
+    def cite(d):                                                                                         # D44
+        for p in d.paragraphs:
+            if "제2023-6호" in p.text:
+                p.runs[0].text = p.text.replace("제2023-6호", "제2026-9호")
+                for r in p.runs[1:]:
+                    r.text = ""
+    _docx_edit(docs / "A사_암호통제지침_v1.0.docx", cite)
+    edit_xlsx(ev / "정보보호위원회_회의록목록.xlsx", lambda rs: rs.append(                                # D40
+        {"개최일": "2026-09-15", "안건": "2027년 정보보호 계획·예산", "참석자": "대표이사, CISO", "의결": "원안 의결"}))
+    edit_xlsx(ev / "위험평가기록.xlsx", lambda rs: rs.append(                                              # D43
+        {"평가일": "2026-08-25", "평가 범위": "AWS 3개 계정", "결과": "위험 17건", "보고": "CISO 보고"}))
+    edit_xlsx(ev / "정보자산목록_2026-10.xlsx", lambda rs: rs.append(                                      # D42
+        {"자산ID": "A-ST-009", "자산명": "임시 내보내기", "유형": "S3", "AWS 계정": "a-prod",
+         "리소스ID": "a-prod-export-tmp-0915", "개인정보": "N", "중요도": "중", "관리자": "운영팀"}))
+    edit_xlsx(ev / "개선조치관리대장_2026.xlsx", lambda rs: [                                              # D45
+        r.update({"상태": "완료"}) for r in rs if r["조치번호"] in ("IA-2026-03", "IA-2026-04")])

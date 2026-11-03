@@ -63,7 +63,7 @@ def test_auto_results_fill_2_5_4(client):
     assert s[2] == ("fix", "auto")      # AR-05
     assert s[3] == ("unknown", "none")  # 아직 AR 없음
     assert c["state"] == "fix" and c["automated"]
-    assert cl["totals"]["automated_criteria"] == 18   # + 2.9.3·2.9.4·2.9.5·2.12.2
+    assert cl["totals"]["automated_criteria"] == 26   # + 1.1.2·1.1.3·1.1.5·1.2.1·1.2.3·1.4.1·1.4.2·1.4.3
 
 
 def test_manual_judgement_overrides_and_validates(client):

@@ -9,3 +9,10 @@ params:
     locator: "제2026-9호 제5조 제5항 (2026-11-03 대조)"
     active: true
     # 고시 본문에 비밀번호 길이·주기 같은 숫자는 없다. 비교 기준값은 계속 조직 정책 문서에서 뽑는다 (D08).
+
+  - id: law.safeguard_notice_current
+    description: 「개인정보의 안전성 확보조치 기준」 현행 고시 번호 (규정 문서의 법령 인용이 최신인지 비교)
+    value: "2026-9"
+    source_ref: SRC-LAW-SAFEGUARD-STD
+    locator: "개인정보보호위원회 고시 제2026-9호 (registry sha256 대조, 2026-11-03)"
+    active: true

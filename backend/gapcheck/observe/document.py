@@ -79,10 +79,22 @@ LOG_RULES: list[tuple[str, re.Pattern]] = [
 LOG_RETENTION = re.compile(r"(?:접속\s*기록|로그).*?(\d+)\s*년\s*이상\s*보관")
 BACKUP_RETENTION = re.compile(r"백업.*?(\d+)\s*일\s*이상\s*보관")
 # 주기: (param, 같은 문장에 있어야 하는 말)
-CYCLE_RULES = [("log.review_cycle_days", re.compile(r"접속\s*기록.*점검")),
+CYCLE_RULES = [("risk.assessment_cycle_days", re.compile(r"위험\s*평가")),
+               ("audit.cycle_days", re.compile(r"관리\s*체계\s*점검|내부\s*감사")),
+               ("committee.cycle_days", re.compile(r"정보보호\s*위원회")),
+               ("policy.review_cycle_days", re.compile(r"(?:정책|하위\s*지침).*검토")),
+               ("log.review_cycle_days", re.compile(r"접속\s*기록.*점검")),
                ("backup.restore_test_cycle_days", re.compile(r"복구\s*테스트")),
                ("dr.drill_cycle_days", re.compile(r"재해\s*복구\s*훈련"))]
 ANY_CYCLE = re.compile(r"(월|분기|반기|연)\s*1\s*회\s*이상")
+# 관리체계 규칙 (1.x)
+MGMT_RULES: list[tuple[str, re.Pattern]] = [
+    ("policy.ciso_designated", re.compile(r"정보보호\s*최고\s*책임자(?:\(CISO\))?를?\s*지정")),
+    ("asset.inventory_required", re.compile(r"정보\s*자산을?\s*식별하여.*목록")),
+    ("improve.tracking_required", re.compile(r"(?:발견된|문제).*기한을\s*정하여\s*조치")),
+]
+APPROVAL = re.compile(r"(?:정책|지침).*승인을\s*받아\s*시행")
+APPROVERS = ["대표이사", "최고경영자", "정보보호최고책임자", "개인정보 보호책임자", "정보보호위원회"]
 TLS_MIN = re.compile(r"TLS\s*(1\.[0-3])\s*이상")
 ADMIN_CIDR_CLAUSE = re.compile(r"(?:SSH|원격\s*데스크톱|원격\s*관리).*에서만\s*허용")
 CIDR = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}/\d{1,2}\b")
@@ -111,9 +123,15 @@ def _account_rules(c: Clause, name: str) -> list[Found]:
     if m := BACKUP_RETENTION.search(t):
         out.append(Found("backup.retention_days", int(m.group(1)), c, t, name))
     if m := ANY_CYCLE.search(t):
-        for param, rx in CYCLE_RULES:
+        for param, rx in CYCLE_RULES:   # 앞에 둔 것이 우선 (한 문장에 위험평가와 위원회가 함께 나와도 하나로)
             if rx.search(t):
                 out.append(Found(param, CYCLE_DAYS[m.group(1)], c, t, name))
+                break
+    for param, rx in MGMT_RULES:
+        if rx.search(t):
+            out.append(Found(param, True, c, t, name))
+    if APPROVAL.search(t) and (who := [x for x in APPROVERS if x in t]):
+        out.append(Found("policy.approvers", who, c, t, name))
     if m := TLS_MIN.search(t):
         out.append(Found("transport.tls_min_version", float(m.group(1)), c, t, name))
     if ADMIN_CIDR_CLAUSE.search(t) and (cidrs := CIDR.findall(t)):

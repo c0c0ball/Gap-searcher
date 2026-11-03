@@ -131,6 +131,29 @@ seeded_defects:
   - id: G1
     ar: AR-2.12.2-01
     what: 재해 복구 훈련 기록이 제출되지 않음 — 결함이 아니라 '판단 못함'이 정답
+  # ── 관리체계 (1.1.2, 1.1.3, 1.1.5, 1.2.1, 1.2.3, 1.4.1~1.4.3) ──
+  - id: D39
+    ar: AR-1.1.5-01
+    what: 계정관리 절차서(A-ISP-004-01) 승인자가 정보보호팀장 — 정책서 제6조는 정보보호최고책임자 또는 대표이사
+  - id: D40
+    ar: AR-1.1.3-01
+    what: 정보보호위원회가 2025-09-10 뒤로 열리지 않음 — 정책서 제7조 연 1회
+  - id: D41
+    ar: AR-1.1.5-02
+    what: 정보보호 정책서가 2025-02-20 제정 뒤 검토·개정 기록 없음 (620일) — 정책서 제5조 연 1회. 그사이 하위 지침 2개가 새로 생김
+  - id: D42
+    ar: AR-1.2.1-01
+    what: a-prod 임시 내보내기 버킷 a-prod-export-tmp-0915 가 정보자산 목록에 없음 — 정책서 제8조
+    trap: 목록에 없으니 개인정보 버킷 암호화(2.7.1-03) 같은 다른 규칙에서도 보이지 않는다. 자산 식별이 먼저인 이유.
+  - id: D43
+    ar: AR-1.2.3-01
+    what: 위험평가가 2025-08-20 뒤로 없음 — 정책서 제9조 연 1회
+  - id: D44
+    ar: AR-1.4.1-01
+    what: 암호통제 지침 제1조가 「안전성 확보조치 기준」 제2023-6호 인용 — 현행 제2026-9호
+  - id: D45
+    ar: AR-1.4.3-01
+    what: 개선조치 IA-2026-03(기한 2026-09-30, 진행중), IA-2026-04(기한 2026-08-31, 미착수) 기한 경과 — 정책서 제10조②
 non_defects:
   - a-shared 계정 정책은 지침보다 엄격(12자, 60일, 5회) — 결함 아님
   - svc-batch 는 콘솔 비밀번호가 없어 모집단에서 제외
@@ -154,6 +177,9 @@ non_defects:
   - a-stg 감사 로그 버킷은 800일 보관이지만 기록이 멈춘 trail 이라 보관기간 규칙의 대상이 아님 (기록 중지는 2.9.4-01)
   - a-stg DB 백업 보관 1일 — 중요도 '중' 이라 지침(중요도 '상') 대상 아님
   - a-stg·a-shared 에는 다른 리전 복사가 없지만 중요도 '상' 자원이 없어 대상 아님
+  - 운영보안 지침은 현행 고시(제2026-9호)를 인용 — 결함 아님
+  - 내부 감사 2026-05-15 — 연 1회 충족
+  - 개선조치 IA-2026-02 는 기한이 지났지만 완료, IA-2026-01 은 진행중이지만 기한 전 — 결함 아님
 expected:
   AR-2.5.4-01: {state: CANDIDATE_CONFORMING}
   AR-2.5.4-02: {state: CANDIDATE_NONCONFORMITY, defects: [D1, D2], subjects: ["111111111111", "222222222222"]}
@@ -195,3 +221,12 @@ expected:
   AR-2.9.5-01: {state: CANDIDATE_NONCONFORMITY, defects: [D34], subjects: ["333333333333/guardduty"]}
   AR-2.9.5-02: {state: CANDIDATE_NONCONFORMITY, defects: [D37], subjects: ["접속기록 점검 기록"]}
   AR-2.12.2-01: {state: INSUFFICIENT_EVIDENCE}
+  AR-1.1.2-01: {state: CANDIDATE_CONFORMING}
+  AR-1.1.3-01: {state: CANDIDATE_NONCONFORMITY, defects: [D40], subjects: ["정보보호위원회 회의록"]}
+  AR-1.1.5-01: {state: CANDIDATE_NONCONFORMITY, defects: [D39], subjects: ["A-ISP-004-01"]}
+  AR-1.1.5-02: {state: CANDIDATE_NONCONFORMITY, defects: [D41], subjects: ["A-ISP-001"]}
+  AR-1.2.1-01: {state: CANDIDATE_NONCONFORMITY, defects: [D42], subjects: ["111111111111/a-prod-export-tmp-0915"]}
+  AR-1.2.3-01: {state: CANDIDATE_NONCONFORMITY, defects: [D43], subjects: ["위험평가 기록"]}
+  AR-1.4.1-01: {state: CANDIDATE_NONCONFORMITY, defects: [D44], subjects: ["A-ISG-006 제1조"]}
+  AR-1.4.2-01: {state: CANDIDATE_CONFORMING}
+  AR-1.4.3-01: {state: CANDIDATE_NONCONFORMITY, defects: [D45], subjects: ["조치 IA-2026-03", "조치 IA-2026-04"]}
