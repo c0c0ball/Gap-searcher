@@ -7,10 +7,12 @@ sources:
     publisher: 한국인터넷진흥원(KISA)
     url: https://pims.kisa.or.kr/board/file/bbs_0000000000000014/21/FILE_000000000001002/202311231554317701147901071.pdf
     license: 공공누리 제4유형 (출처표시·상업적 이용금지·변경금지)
-    sha256: null
-    status: unverified
+    sha256: 6df06f8ddf007094952ec714341bc466266a4fc5459470b1744495725049e599
+    status: verified
     allowed_use: [rule_basis, locator, internal_reference]
-    note: 원문 텍스트는 저장소에 복제하지 않는다 (변경금지 조건). AR에는 위치와 자체 요약만 둔다.
+    note: >-
+      2026-11-03 사용자 제공 원본(PDF 264쪽)으로 대조. 인증기준 101개·주요 확인사항 328개·결함사례 381건 확인.
+      인쇄 쪽 = PDF 쪽 - 5. 원문 텍스트는 저장소에 복제하지 않고 비공개 data/sources/ 사본에서 읽는다 (변경금지 조건).
 
   - id: SRC-KISA-CHECKLIST-2023-10
     tier: S1
@@ -24,14 +26,17 @@ sources:
 
   - id: SRC-LAW-SAFEGUARD-STD
     tier: S1
-    title: 개인정보의 안전성 확보조치 기준 (개인정보보호위원회 고시)
+    title: 개인정보의 안전성 확보조치 기준 (개인정보보호위원회고시 제2026-9호, 2026.7.1. 시행)
     publisher: 개인정보보호위원회 / 국가법령정보센터
-    url: https://www.law.go.kr/LSW/admRulSideInfoP.do?admRulSeq=2100000265956&chrClsCd=010201&dashNo=&docCls=jo&joBrNo=00&joNo=0008&urlMode=admRulScJoRltInfoR
+    url: https://www.law.go.kr
     license: 법령 (저작권법상 보호 대상 아님)
-    sha256: null
-    status: unverified
+    sha256: a7a758df50a39c2172ea599c7685385077821857b88ed73ffeebe9096330ab1a
+    status: verified
     allowed_use: [rule_basis, legal_overlay]
-    note: 현행 시행일·조문 번호를 Gate 0에서 확인. 링크는 v1.2 부록 C 기준.
+    note: >-
+      2026-11-03 국가법령정보센터 HWP(현행)로 대조. 비밀번호·인증수단 관련은 제5조 제5항
+      ("개인정보취급자 또는 정보주체의 인증수단을 안전하게 적용하고 관리") — 길이 등 숫자 기준 없음.
+      인터넷망 차단은 제6조의2(제6조 제6항 삭제).
 
   - id: SRC-PIPC-SAFEGUARD-GUIDE-2024-10
     tier: S2

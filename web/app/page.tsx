@@ -34,10 +34,12 @@ export default function Dashboard() {
   const [health, setHealth] = useState<number | null>(null);
   const [err, setErr] = useState("");
   const [running, setRunning] = useState(false);
+  const [cl, setCl] = useState<{ checkpoints: number; fix: number; ok: number; na: number; unknown: number; criteria: number; criteria_decided: number; criteria_fix: number; automated_criteria: number } | null>(null);
 
   const load = useCallback(() => {
     if (!ready || !target) return;
     api<Dash>(`/dashboard?target=${encodeURIComponent(target)}`).then(setD).catch((e) => setErr(e.message));
+    api<{ totals: NonNullable<typeof cl> }>(`/checklist?target=${encodeURIComponent(target)}`).then((x) => setCl(x.totals)).catch(() => setCl(null));
   }, [ready, target]);
   useEffect(load, [load]);
   useEffect(() => {
@@ -84,6 +86,22 @@ export default function Dashboard() {
           <button className="btn btn-primary" onClick={runNow} disabled={running}>{running ? "진단하는 중…" : "다시 진단하기"}</button>
         </div>
       </div>
+
+      {cl && (
+        <a className="panel cl-card" href="/checklist" aria-label="전체 점검표 열기">
+          <div>
+            <h2 style={{ margin: 0 }}>ISMS-P 전체 점검표</h2>
+            <p className="small muted" style={{ margin: "2px 0 0" }}>인증기준 {cl.criteria}개 중 {cl.criteria_decided}개 판단 완료, 자동 점검 {cl.automated_criteria}개</p>
+          </div>
+          <div className="cl-card-bar" aria-hidden>
+            {(["fix", "ok", "na", "unknown"] as const).map((k) => cl[k] > 0 && <i key={k} className={`b-${k}`} style={{ flexGrow: cl[k] }} />)}
+          </div>
+          <div className="row small" style={{ gap: 12 }}>
+            <span><b style={{ color: "var(--fix)" }}>{cl.fix}</b> 고칠 것</span><span><b style={{ color: "var(--ok)" }}>{cl.ok}</b> 규칙대로</span>
+            <span><b>{cl.na}</b> 해당 없음</span><span><b>{cl.unknown}</b> 미확인</span><span className="muted">확인사항 {cl.checkpoints}개 기준</span>
+          </div>
+        </a>
+      )}
 
       <section aria-labelledby="sum-h" className="stack" style={{ gap: 10 }}>
         <div className="row" style={{ justifyContent: "space-between" }}>

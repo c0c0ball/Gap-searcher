@@ -8,6 +8,7 @@ x-backend: &backend
     GAPCHECK_ROOT: /app
     GAPCHECK_RUNS: /app/runs
     GAPCHECK_WORKSPACES: /app/workspaces
+    GAPCHECK_ASSESS: /app/assessments
   extra_hosts:
     - "host.docker.internal:host-gateway"   # Linux에서도 호스트의 Ollama에 접근
   depends_on:
@@ -77,6 +78,8 @@ services:
       - ./scenarios:/app/scenarios:ro
       - ./runs:/app/runs
       - ./workspaces:/app/workspaces
+      - ./assessments:/app/assessments
+      - ./data:/app/data:ro   # 비공개 원문(안내서 정리본) — 없으면 골격만 표시
     ports: ["8000:8000"]
 
   worker:
@@ -89,6 +92,8 @@ services:
       - ./scenarios:/app/scenarios:ro
       - ./runs:/app/runs
       - ./workspaces:/app/workspaces
+      - ./assessments:/app/assessments
+      - ./data:/app/data:ro   # 비공개 원문(안내서 정리본) — 없으면 골격만 표시
 
   web:
     build: ./web

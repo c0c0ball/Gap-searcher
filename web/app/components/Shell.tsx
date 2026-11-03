@@ -8,6 +8,7 @@ import { ToastProvider } from "./Toast";
 
 const NAV = [
   { href: "/", label: "대시보드", d: "M3 12h7V3H3v9Zm0 9h7v-6H3v6Zm11 0h7v-9h-7v9Zm0-18v6h7V3h-7Z" },
+  { href: "/checklist", label: "전체 점검표", d: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" },
   { href: "/tasks", label: "할 일", d: "M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" },
   { href: "/upload", label: "자료 올리기", d: "M12 16V4m0 0-4 4m4-4 4 4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" },
   { href: "/runs", label: "진단 기록", d: "M12 8v4l3 2M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0" },

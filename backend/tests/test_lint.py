@@ -16,16 +16,16 @@ def base_doc() -> dict:
     return yaml.safe_load((REAL_REQ / "2.5" / "2.5.4.yaml").read_text(encoding="utf-8"))
 
 
-def run(tmp_path: Path, doc: dict, overlay: dict | None = None, verified: bool = False):
+def run(tmp_path: Path, doc: dict, overlay: dict | None = None, verified: bool | None = None):
     req = tmp_path / "req"
     src = tmp_path / "src"
     req.mkdir()
     src.mkdir()
     (req / "x.yaml").write_text(yaml.safe_dump(doc, allow_unicode=True), encoding="utf-8")
     reg = yaml.safe_load((REAL_SRC / "registry.yaml").read_text(encoding="utf-8"))
-    if verified:
+    if verified is not None:   # None이면 저장소의 실제 상태 그대로
         for s in reg["sources"]:
-            s["status"] = "verified"
+            s["status"] = "verified" if verified else "unverified"
     (src / "registry.yaml").write_text(yaml.safe_dump(reg, allow_unicode=True), encoding="utf-8")
     ov = overlay if overlay is not None else yaml.safe_load(
         (REAL_SRC / "legal_overlay.yaml").read_text(encoding="utf-8"))
@@ -48,7 +48,10 @@ def test_real_requirements_have_no_errors():
 
 
 def test_draft_with_unverified_source_is_warning(tmp_path):
-    rep = run(tmp_path, base_doc())
+    doc = base_doc()
+    for a in doc["requirements"]:
+        a["status"] = "draft"
+    rep = run(tmp_path, doc, verified=False)
     assert "RC-002" in rules(rep, "warning")
     assert "RC-002" not in rules(rep)
 
@@ -56,7 +59,7 @@ def test_draft_with_unverified_source_is_warning(tmp_path):
 def test_active_with_unverified_source_is_error(tmp_path):
     doc = base_doc()
     ar(doc, 1)["status"] = "active"
-    assert "RC-002" in rules(run(tmp_path, doc))
+    assert "RC-002" in rules(run(tmp_path, doc, verified=False))
 
 
 def test_active_with_verified_source_passes(tmp_path):
@@ -85,15 +88,16 @@ def test_rc003_document_plus_technical_is_two_axes(tmp_path):
 
 def test_rc004_inactive_overlay_cannot_be_expected(tmp_path):
     doc = base_doc()
-    ar(doc, 1)["tests"][2]["compare"][0]["expected"] = "overlay:law.password_rule_required"
-    rep = run(tmp_path, doc)
+    ar(doc, 1)["tests"][2]["compare"][0]["expected"] = "overlay:law.x"
+    ov = {"params": [{"id": "law.x", "description": "x", "value": 8, "source_ref": "SRC-LAW-SAFEGUARD-STD", "active": False}]}
+    rep = run(tmp_path, doc, overlay=ov)
     assert "RC-004" in rules(rep)
 
 
 def test_rc004_active_overlay_is_allowed(tmp_path):
     doc = base_doc()
-    ar(doc, 1)["tests"][2]["compare"][0]["expected"] = "overlay:law.password_rule_required"
-    ov = {"params": [{"id": "law.password_rule_required", "description": "x",
+    ar(doc, 1)["tests"][2]["compare"][0]["expected"] = "overlay:law.x"
+    ov = {"params": [{"id": "law.x", "description": "x",
                       "value": True, "source_ref": "SRC-LAW-SAFEGUARD-STD", "active": True}]}
     assert "RC-004" not in rules(run(tmp_path, doc, overlay=ov))
 
@@ -185,3 +189,8 @@ def test_rc011_question_must_use_ismsp_tone(tmp_path):
     doc = base_doc()
     ar(doc, 1)["plain"]["question"] = "회사 규칙이 AWS에도 들어가 있나요?"
     assert "RC-011" in rules(run(tmp_path, doc))
+
+
+def test_real_requirements_are_active_and_verified():
+    rep = lint_paths(REAL_REQ, REAL_SRC)
+    assert not [f for f in rep.findings if f.rule == "RC-002"]

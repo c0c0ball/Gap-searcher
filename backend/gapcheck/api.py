@@ -262,3 +262,88 @@ def remove_file(name: str, req: FileRemove) -> dict:
         return {"ok": True}
     except FileNotFoundError:
         raise HTTPException(404, "파일 없음")
+
+
+# ── 기준 카탈로그 · 전체 점검표 ─────────────────────────────────────────────
+
+from fastapi.responses import FileResponse as _FileResponse  # noqa: E402
+
+from . import catalog as _catalog, checklist as _checklist  # noqa: E402
+
+
+@app.get("/catalog")
+def get_catalog() -> dict:
+    c = _catalog.load()
+    keep = ("id", "name", "area", "field_id", "field", "scope", "print_page", "print_end_page", "pdf_page")
+    return {"has_text": c["has_text"], "items": [{k: c["items"][i][k] for k in keep} for i in c["order"]]}
+
+
+@app.get("/catalog/{cid}")
+def get_criterion(cid: str) -> dict:
+    c = _catalog.criterion(cid)
+    if c is None:
+        raise HTTPException(404, "인증기준 없음")
+    return c
+
+
+@app.get("/checklist")
+def get_checklist(target: str) -> dict:
+    return _checklist.build(target)
+
+
+class Judgement(BaseModel):
+    target: str
+    state: str
+    by: str
+    comment: str = ""
+
+
+@app.post("/checklist/{cid}/{idx}")
+def post_judgement(cid: str, idx: int, req: Judgement) -> dict:
+    try:
+        return _checklist.record(req.target, cid, idx, req.state, req.by, req.comment)
+    except KeyError:
+        raise HTTPException(404, "확인사항 없음")
+    except ValueError as e:
+        raise HTTPException(422, str(e))
+
+
+@app.post("/checklist/{cid}/{idx}/files")
+async def post_evidence(cid: str, idx: int, target: str = Form(...), by: str = Form(""),
+                        file: UploadFile = File(...)) -> dict:
+    from .workspaces import _scanner
+    data = await file.read(20 * 1024 * 1024 + 1)
+    try:
+        return _checklist.attach(target, cid, idx, file.filename or "", data, by, _scanner())
+    except KeyError:
+        raise HTTPException(404, "확인사항 없음")
+    except RejectedArtifact as e:
+        raise HTTPException(422, f"받을 수 없는 파일: {e}")
+    except ValueError as e:
+        raise HTTPException(422, str(e))
+
+
+@app.get("/checklist/history")
+def get_history(target: str, cid: str) -> list[dict]:
+    return _checklist.history(target, cid)
+
+
+@app.get("/checklist/files/{sha}")
+def get_evidence(target: str, sha: str):
+    import re as _re
+    if not _re.fullmatch(r"[0-9a-f]{64}", sha):
+        raise HTTPException(404, "파일 없음")
+    d = _checklist._tdir(target) / "files"
+    hit = next(iter(d.glob(f"{sha}*")), None)
+    ev = next((e for e in _checklist._events(target) if e.get("sha256") == sha), None)
+    if hit is None or ev is None:
+        raise HTTPException(404, "파일 없음")
+    return _FileResponse(hit, filename=ev["file"])
+
+
+@app.get("/checklist/report.xlsx")
+def checklist_report(target: str):
+    out = runs_dir() / f"checklist-{abs(hash(target)) % 10**8}.xlsx"
+    _checklist.write_xlsx(target, out)
+    return _FileResponse(out, filename="ISMS-P_전체점검표.xlsx",
+                         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
