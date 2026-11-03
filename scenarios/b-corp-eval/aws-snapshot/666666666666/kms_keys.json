@@ -1,0 +1,17 @@
+[
+  {
+    "KeyId": "6f6f6f6f-3333-4c00-9000-00000000c001",
+    "Arn": "arn:aws:kms:ap-northeast-2:666666666666:key/6f6f6f6f-3333-4c00-9000-00000000c001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-03-12T00:00:00+00:00",
+    "Aliases": [
+      "alias/seclog-archive"
+    ],
+    "Description": "감사 로그 보관 암호화",
+    "KeyRotationEnabled": true
+  }
+]

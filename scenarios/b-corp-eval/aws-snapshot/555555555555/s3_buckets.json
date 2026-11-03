@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "b-dev-sample-data",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "b-dev-build-artifacts",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:555555555555:key/5e5e5e5e-2222-4b00-9000-00000000b001"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  }
+]

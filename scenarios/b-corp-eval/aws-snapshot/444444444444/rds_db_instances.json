@@ -1,0 +1,95 @@
+[
+  {
+    "DBInstanceIdentifier": "lms-prod-db",
+    "DBInstanceClass": "db.r6g.large",
+    "Engine": "mysql",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "BackupRetentionPeriod": 7,
+    "MultiAZ": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0d4db0000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "lms-prod-db-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0d4data0000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0d4data0000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001"
+  },
+  {
+    "DBInstanceIdentifier": "pay-prod-db",
+    "DBInstanceClass": "db.r6g.large",
+    "Engine": "mysql",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "BackupRetentionPeriod": 35,
+    "MultiAZ": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0d4db0000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "pay-prod-db-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0d4data0000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0d4data0000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a002"
+  },
+  {
+    "DBInstanceIdentifier": "lms-prod-report",
+    "DBInstanceClass": "db.t4g.large",
+    "Engine": "postgres",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": true,
+    "StorageEncrypted": true,
+    "BackupRetentionPeriod": 1,
+    "MultiAZ": true,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0d4report000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "lms-prod-report-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0d4data0000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0d4data0000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    },
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001"
+  }
+]

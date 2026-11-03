@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "ELBSecurityPolicy-TLS-1-1-2017-01",
+    "SslProtocols": [
+      "TLSv1.1",
+      "TLSv1.2"
+    ]
+  },
+  {
+    "Name": "ELBSecurityPolicy-TLS13-1-2-2021-06",
+    "SslProtocols": [
+      "TLSv1.2",
+      "TLSv1.3"
+    ]
+  }
+]

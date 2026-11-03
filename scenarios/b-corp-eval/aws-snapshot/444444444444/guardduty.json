@@ -1,0 +1,7 @@
+[
+  {
+    "DetectorId": "4c8d0000000000000000000000000001",
+    "Status": "ENABLED",
+    "FindingPublishingFrequency": "FIFTEEN_MINUTES"
+  }
+]

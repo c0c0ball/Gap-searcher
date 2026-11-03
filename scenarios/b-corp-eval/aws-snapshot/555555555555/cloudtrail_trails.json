@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "b-dev-trail",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:555555555555:trail/b-dev-trail",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": false,
+    "S3BucketName": "b-seclog-ct-archive",
+    "S3KeyPrefix": "AWSLogs-555555555555",
+    "Status": {
+      "IsLogging": true
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": false,
+        "DataResources": [
+          {
+            "Type": "AWS::S3::Object",
+            "Values": [
+              "arn:aws:s3:::b-dev-build-artifacts/"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

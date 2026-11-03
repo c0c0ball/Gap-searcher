@@ -1,0 +1,33 @@
+[
+  {
+    "RouteTableId": "rtb-0a7main0000001",
+    "VpcId": "vpc-0a7sbx000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.70.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0a7sbx0000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0a7main0000001m",
+        "RouteTableId": "rtb-0a7main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sandbox-main"
+      }
+    ]
+  }
+]

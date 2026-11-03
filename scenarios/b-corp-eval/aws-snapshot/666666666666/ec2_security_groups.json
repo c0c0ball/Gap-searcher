@@ -1,0 +1,68 @@
+[
+  {
+    "GroupId": "sg-0f6default00001",
+    "GroupName": "default",
+    "VpcId": "vpc-0f6sec000000001",
+    "OwnerId": "666666666666",
+    "Description": "default VPC security group",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0f6tools000001",
+    "GroupName": "seclog-tools",
+    "VpcId": "vpc-0f6sec000000001",
+    "OwnerId": "666666666666",
+    "Description": "seclog-tools",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "SSL-VPN"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "10.0.0.0/8",
+            "Description": "internal dashboards"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "seclog-tools"
+      }
+    ]
+  }
+]

@@ -129,12 +129,16 @@ class _Run:
             for a in self.ctx.accounts_in_scope:
                 m = self.ctx.manifest_accounts.get(a, {})
                 lacking = [f for f in need if f not in m.get("files", [])]
-                if m.get("status") == "ok" and lacking:
+                status = m.get("status")
+                if status in ("ok", "partial") and lacking:
                     gaps.append(f"{a}({', '.join(lacking)} 없음)")
                     continue
+                # 일부 파일만 못 받은 계정(partial)이라도 이 테스트에 필요한 파일이 다 있으면 수집 성공으로 본다
+                if status == "partial" and need:
+                    status = "ok"
                 mine = [o for o in obs if o.values.get("account_id", o.subject) == a or o.subject == a]
                 bad = [o for o in mine if not _usable(o)]
-                if m.get("status") != "ok":
+                if status != "ok":
                     gaps.append(f"{a}(수집 {m.get('status', '없음')})")
                 elif bad:
                     gaps.append(f"{a}(품질 미달: {bad[0].quality_reasons[0] if bad[0].quality_reasons else 'fail'})")
@@ -156,7 +160,7 @@ class _Run:
     def _report_present(self, account: str) -> bool:
         # 사용자 0명인 계정도 credential report가 있으면 수집 성공으로 본다
         files = self.ctx.manifest_accounts.get(account, {}).get("files", [])
-        return "credential_report.csv" in files and self.ctx.manifest_accounts[account].get("status") == "ok"
+        return "credential_report.csv" in files and self.ctx.manifest_accounts[account].get("status") in ("ok", "partial")
 
     @staticmethod
     def _cmp(op: str, expected: Any, observed: Any) -> bool:

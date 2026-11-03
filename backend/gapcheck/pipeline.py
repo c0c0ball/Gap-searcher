@@ -131,6 +131,9 @@ def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None
             artifacts[art.sha256] = art
             sha[f"{aid}/{name}"] = art.sha256
     tech_obs = snapshot_observations(manifest, files, sha)
+    # 범위 밖 계정(in_scope: false)의 관측은 판정에 쓰지 않는다 (수집 스냅샷에 섞여 있어도)
+    tech_obs = [o for o in tech_obs
+                if str(o.values.get("account_id") or o.subject.split("/")[0]) in accounts]
 
     # ⑥ Q/C/P
     all_obs: list[Observation] = doc_obs + tech_obs + ev_obs
@@ -141,7 +144,7 @@ def run_scenario(scenario: Path, repo_root: Path, opts: RunOptions | None = None
     ars = [ar for cf in cfs for ar in cf.requirements]
     ctx = Context(facts=facts, accounts_in_scope=accounts, doc_obs={o.subject: o for o in doc_obs},
                   tech_obs=tech_obs, doc_coverage=doc_cov,
-                  manifest_accounts={a["account_id"]: a for a in manifest["accounts"]},
+                  manifest_accounts={a["account_id"]: a for a in manifest["accounts"] if a["account_id"] in accounts},
                   as_of=as_of, doc_conflicts=doc_conflicts, evidence_obs=ev_obs,
                   overlay=_active_overlay(repo_root))
     evaluations, decisions, findings = [], [], []

@@ -1,0 +1,32 @@
+[
+  {
+    "DBInstanceIdentifier": "lms-dev-db",
+    "DBInstanceClass": "db.t4g.medium",
+    "Engine": "mysql",
+    "DBInstanceStatus": "available",
+    "PubliclyAccessible": false,
+    "StorageEncrypted": false,
+    "BackupRetentionPeriod": 1,
+    "MultiAZ": false,
+    "VpcSecurityGroups": [
+      {
+        "VpcSecurityGroupId": "sg-0e5db0000000001",
+        "Status": "active"
+      }
+    ],
+    "DBSubnetGroup": {
+      "DBSubnetGroupName": "lms-dev-db-subnets",
+      "SubnetGroupStatus": "Complete",
+      "Subnets": [
+        {
+          "SubnetIdentifier": "subnet-0e5data0000a",
+          "SubnetStatus": "Active"
+        },
+        {
+          "SubnetIdentifier": "subnet-0e5data0000c",
+          "SubnetStatus": "Active"
+        }
+      ]
+    }
+  }
+]

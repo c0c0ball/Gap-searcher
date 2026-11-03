@@ -1,0 +1,25 @@
+[
+  {
+    "BackupPlanName": "seclog-weekly",
+    "BackupPlanId": "bp-666-seclog-weekly",
+    "Rules": [
+      {
+        "RuleName": "weekly",
+        "TargetBackupVaultName": "b-seclog-vault",
+        "ScheduleExpression": "cron(0 19 ? * SUN *)",
+        "StartWindowMinutes": 60,
+        "Lifecycle": {
+          "DeleteAfterDays": 90
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-northeast-1:666666666666:backup-vault:b-seclog-dr-vault",
+            "Lifecycle": {
+              "DeleteAfterDays": 90
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

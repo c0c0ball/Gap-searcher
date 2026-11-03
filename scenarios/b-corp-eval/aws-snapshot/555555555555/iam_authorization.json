@@ -1,0 +1,73 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "dev-kang",
+      "UserId": "AIDA555DEVKANGXXXXXXX",
+      "Arn": "arn:aws:iam::555555555555:user/dev-kang",
+      "Path": "/",
+      "CreateDate": "2025-05-06T02:10:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-ci",
+      "UserId": "AIDA555SVCCIXXXXXXXXX",
+      "Arn": "arn:aws:iam::555555555555:user/svc-ci",
+      "Path": "/",
+      "CreateDate": "2025-10-13T00:00:00+00:00",
+      "GroupList": [
+        "CICD-Dev"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "test",
+      "UserId": "AIDA555TESTXXXXXXXXXX",
+      "Arn": "arn:aws:iam::555555555555:user/test",
+      "Path": "/",
+      "CreateDate": "2026-03-02T00:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "CICD-Dev",
+      "GroupId": "AGPA555CICDDEVXXXXXXX",
+      "Arn": "arn:aws:iam::555555555555:group/CICD-Dev",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Developers",
+      "GroupId": "AGPA555DEVELOPERSXXXX",
+      "Arn": "arn:aws:iam::555555555555:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": []
+}

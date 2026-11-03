@@ -1,0 +1,91 @@
+[
+  {
+    "RouteTableId": "rtb-0e5main0000001",
+    "VpcId": "vpc-0e5dev000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.50.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0e5main0000001m",
+        "RouteTableId": "rtb-0e5main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-main"
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0e5public00001",
+    "VpcId": "vpc-0e5dev000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.50.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0e5dev00000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0e5public000010",
+        "RouteTableId": "rtb-0e5public00001",
+        "SubnetId": "subnet-0e5pub00000a",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-public"
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0e5app0000001",
+    "VpcId": "vpc-0e5dev000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.50.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0e5dev00000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0e5app00000010",
+        "RouteTableId": "rtb-0e5app0000001",
+        "SubnetId": "subnet-0e5app00000a",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-app"
+      }
+    ]
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "GroupId": "sg-0a7default00001",
+    "GroupName": "default",
+    "VpcId": "vpc-0a7sbx000000001",
+    "OwnerId": "777777777777",
+    "Description": "default VPC security group",
+    "IpPermissions": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0a7default00001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0a7lab00000001",
+    "GroupName": "sandbox-lab",
+    "VpcId": "vpc-0a7sbx000000001",
+    "OwnerId": "777777777777",
+    "Description": "sandbox-lab",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 21,
+        "ToPort": 21,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sandbox-lab"
+      }
+    ]
+  }
+]

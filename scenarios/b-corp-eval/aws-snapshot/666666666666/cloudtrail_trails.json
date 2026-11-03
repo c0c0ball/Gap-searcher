@@ -1,0 +1,23 @@
+[
+  {
+    "Name": "b-seclog-trail",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:666666666666:trail/b-seclog-trail",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "b-seclog-ct-archive",
+    "S3KeyPrefix": "AWSLogs-666666666666",
+    "Status": {
+      "IsLogging": true
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

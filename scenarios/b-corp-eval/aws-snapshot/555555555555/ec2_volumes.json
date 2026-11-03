@@ -1,0 +1,71 @@
+[
+  {
+    "VolumeId": "vol-0e5app00000001",
+    "Size": 40,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "CreateTime": "2026-01-05T00:00:00+00:00",
+    "Attachments": [
+      {
+        "InstanceId": "i-0e5app00000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-app-root"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001"
+  },
+  {
+    "VolumeId": "vol-0e5app00000002",
+    "Size": 100,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "CreateTime": "2026-01-05T00:00:00+00:00",
+    "Attachments": [
+      {
+        "InstanceId": "i-0e5app00000001",
+        "Device": "/dev/xvdb",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-app-data"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:555555555555:key/5e5e5e5e-2222-4b00-9000-00000000b001"
+  },
+  {
+    "VolumeId": "vol-0e5encleg00001",
+    "Size": 20,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "CreateTime": "2026-01-05T00:00:00+00:00",
+    "Attachments": [
+      {
+        "InstanceId": "i-0e5encleg00001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-encoder-legacy-root"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:555555555555:key/5e5e5e5e-2222-4b00-9000-0000000000e1"
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "VolumeId": "vol-0f6tools000001",
+    "Size": 30,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": true,
+    "AvailabilityZone": "ap-northeast-2a",
+    "CreateTime": "2026-01-05T00:00:00+00:00",
+    "Attachments": [
+      {
+        "InstanceId": "i-0f6tools000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "seclog-tools-root"
+      }
+    ],
+    "KmsKeyId": "arn:aws:kms:ap-northeast-2:666666666666:key/6f6f6f6f-3333-4c00-9000-00000000c001"
+  }
+]

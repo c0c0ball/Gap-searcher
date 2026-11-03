@@ -1,0 +1,103 @@
+[
+  {
+    "RouteTableId": "rtb-0d4main0000001",
+    "VpcId": "vpc-0d4lms000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.40.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": "nat-0d4lms00000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0d4main0000001m",
+        "RouteTableId": "rtb-0d4main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-main"
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0d4public00001",
+    "VpcId": "vpc-0d4lms000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.40.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      },
+      {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "igw-0d4lms0000000001",
+        "State": "active",
+        "Origin": "CreateRoute"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0d4public000010",
+        "RouteTableId": "rtb-0d4public00001",
+        "SubnetId": "subnet-0d4pub00000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0d4public000011",
+        "RouteTableId": "rtb-0d4public00001",
+        "SubnetId": "subnet-0d4pub00000c",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-public"
+      }
+    ]
+  },
+  {
+    "RouteTableId": "rtb-0d4data000001",
+    "VpcId": "vpc-0d4lms000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.40.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0d4data0000010",
+        "RouteTableId": "rtb-0d4data000001",
+        "SubnetId": "subnet-0d4data0000a",
+        "Main": false
+      },
+      {
+        "RouteTableAssociationId": "rtbassoc-0d4data0000011",
+        "RouteTableId": "rtb-0d4data000001",
+        "SubnetId": "subnet-0d4data0000c",
+        "Main": false
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-data"
+      }
+    ]
+  }
+]

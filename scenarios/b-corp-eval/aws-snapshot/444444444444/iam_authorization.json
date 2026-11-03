@@ -1,0 +1,326 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "cs-lim",
+      "UserId": "AIDA444CSLIMXXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/cs-lim",
+      "Path": "/",
+      "CreateDate": "2026-01-12T00:10:00+00:00",
+      "GroupList": [
+        "CSOps"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "data-oh",
+      "UserId": "AIDA444DATAOHXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/data-oh",
+      "Path": "/",
+      "CreateDate": "2025-09-01T01:00:00+00:00",
+      "GroupList": [
+        "DataAnalysts"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [
+        {
+          "PolicyName": "athena-adhoc-results",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject",
+                  "s3:ListBucket"
+                ],
+                "Resource": [
+                  "arn:aws:s3:::b-prod-athena-results",
+                  "arn:aws:s3:::b-prod-athena-results/*"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-kang",
+      "UserId": "AIDA444DEVKANGXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/dev-kang",
+      "Path": "/",
+      "CreateDate": "2025-05-06T02:00:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "dev-moon",
+      "UserId": "AIDA444DEVMOONXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/dev-moon",
+      "Path": "/",
+      "CreateDate": "2026-08-03T00:40:00+00:00",
+      "GroupList": [
+        "Developers"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "ops-shin",
+      "UserId": "AIDA444OPSSHINXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/ops-shin",
+      "Path": "/",
+      "CreateDate": "2025-07-21T00:20:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "ops-yang",
+      "UserId": "AIDA444OPSYANGXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/ops-yang",
+      "Path": "/",
+      "CreateDate": "2025-04-14T01:00:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "ops-yoo",
+      "UserId": "AIDA444OPSYOOXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/ops-yoo",
+      "Path": "/",
+      "CreateDate": "2026-10-12T00:00:00+00:00",
+      "GroupList": [
+        "Operators"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "sec-hwang",
+      "UserId": "AIDA444SECHWANGXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/sec-hwang",
+      "Path": "/",
+      "CreateDate": "2025-03-03T00:30:00+00:00",
+      "GroupList": [
+        "Admins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "svc-deploy",
+      "UserId": "AIDA444SVCDEPLOYXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/svc-deploy",
+      "Path": "/",
+      "CreateDate": "2025-06-02T00:00:00+00:00",
+      "GroupList": [
+        "CICD"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-lms",
+      "UserId": "AIDA444VENDORLMSXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/vendor-lms",
+      "Path": "/",
+      "CreateDate": "2026-09-01T00:00:00+00:00",
+      "GroupList": [
+        "Maintenance"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "vendor-old",
+      "UserId": "AIDA444VENDOROLDXXXXX",
+      "Arn": "arn:aws:iam::444444444444:user/vendor-old",
+      "Path": "/",
+      "CreateDate": "2026-01-05T00:00:00+00:00",
+      "GroupList": [
+        "Maintenance"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Admins",
+      "GroupId": "AGPA444ADMINSXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:group/Admins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "CICD",
+      "GroupId": "AGPA444CICDXXXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:group/CICD",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "DeployPipeline",
+          "PolicyArn": "arn:aws:iam::444444444444:policy/DeployPipeline"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "CSOps",
+      "GroupId": "AGPA444CSOPSXXXXXXXXX",
+      "Arn": "arn:aws:iam::444444444444:group/CSOps",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "DataAnalysts",
+      "GroupId": "AGPA444DATAANALYSTSXX",
+      "Arn": "arn:aws:iam::444444444444:group/DataAnalysts",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AmazonAthenaFullAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Developers",
+      "GroupId": "AGPA444DEVELOPERSXXXX",
+      "Arn": "arn:aws:iam::444444444444:group/Developers",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "PowerUserAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/PowerUserAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Maintenance",
+      "GroupId": "AGPA444MAINTENANCEXXX",
+      "Arn": "arn:aws:iam::444444444444:group/Maintenance",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Operators",
+      "GroupId": "AGPA444OPERATORSXXXXX",
+      "Arn": "arn:aws:iam::444444444444:group/Operators",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        },
+        {
+          "PolicyName": "OpsSupport",
+          "PolicyArn": "arn:aws:iam::444444444444:policy/OpsSupport"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": [
+    {
+      "PolicyName": "DeployPipeline",
+      "PolicyId": "ANPA444DEPLOYPIPELINE",
+      "Arn": "arn:aws:iam::444444444444:policy/DeployPipeline",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Sid": "PipelineAll",
+                "Effect": "Allow",
+                "Action": "*",
+                "Resource": "*"
+              }
+            ]
+          },
+          "CreateDate": "2026-03-10T00:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "PolicyName": "OpsSupport",
+      "PolicyId": "ANPA444OPSSUPPORTXXXX",
+      "Arn": "arn:aws:iam::444444444444:policy/OpsSupport",
+      "Path": "/",
+      "DefaultVersionId": "v2",
+      "AttachmentCount": 1,
+      "IsAttachable": true,
+      "PolicyVersionList": [
+        {
+          "VersionId": "v2",
+          "IsDefaultVersion": true,
+          "Document": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:*",
+                  "rds:Describe*",
+                  "cloudwatch:*",
+                  "logs:*"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "CreateDate": "2026-03-10T00:00:00+00:00"
+        }
+      ]
+    }
+  ]
+}

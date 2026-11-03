@@ -1,7 +1,7 @@
 """규정 문서(docx)를 조·항·호 단위 Clause로 정규화한다.
 
 인식 규칙
-- 'Heading 2' 또는 '제N조(…)'로 시작하는 문단 → 조(article)
+- 'Heading 2' 또는 '제N조(…)'로 시작하는 문단 → 조(article). 제목 뒤에 본문이 이어지면 그 본문도 조항
 - '①'~'⑳'으로 시작 → 항
 - '1.' 형식 → 호 (상위 항 문장을 parent_text로 보관)
 - '부칙' 이후 문단은 article='부칙'
@@ -62,10 +62,18 @@ def parse_docx(data: bytes, doc_id_hint: str, artifact_sha256: str) -> tuple[dic
                 article, para_label, para_text = "부칙", "", ""
             continue
         m = ARTICLE.match(text)
+        if m and style != "Heading 2" and not m.group(2):
+            m = None   # 본문 문단의 '제5조에 따라 …'는 조 제목이 아니다
         if (style == "Heading 2" or m) and not in_addenda and m:
-            article = text
+            title_end = m.end()
+            if not m.group(2):   # '제3조 목적' 처럼 괄호 없는 제목은 본문과 구분할 수 없어 줄 전체를 제목으로
+                title_end = len(text)
+            article = text[:title_end].strip()
             para_label, para_text = "", ""
-            continue
+            rest = text[title_end:].strip()
+            if not rest:
+                continue
+            text = rest   # '제3조(계정 신청) 계정이 필요한 사용자는 …' — 같은 줄의 본문도 조항으로 읽는다
         if not article:
             continue  # 표지·서문
         pm, im = PARA.match(text), ITEM.match(text)

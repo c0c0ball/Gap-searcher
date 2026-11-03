@@ -1,0 +1,50 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "admin",
+      "UserId": "AIDA777ADMINXXXXXXXXX",
+      "Arn": "arn:aws:iam::777777777777:user/admin",
+      "Path": "/",
+      "CreateDate": "2026-04-01T00:00:00+00:00",
+      "GroupList": [],
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "trainee01",
+      "UserId": "AIDA777TRAINEE01XXXXX",
+      "Arn": "arn:aws:iam::777777777777:user/trainee01",
+      "Path": "/",
+      "CreateDate": "2026-04-01T00:05:00+00:00",
+      "GroupList": [
+        "Trainees"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Trainees",
+      "GroupId": "AGPA777TRAINEESXXXXXX",
+      "Arn": "arn:aws:iam::777777777777:group/Trainees",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "ReadOnlyAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": []
+}

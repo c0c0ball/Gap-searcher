@@ -1,0 +1,60 @@
+{
+  "UserDetailList": [
+    {
+      "UserName": "log-auditor",
+      "UserId": "AIDA666LOGAUDITORXXXX",
+      "Arn": "arn:aws:iam::666666666666:user/log-auditor",
+      "Path": "/",
+      "CreateDate": "2026-02-02T00:00:00+00:00",
+      "GroupList": [
+        "Auditors"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    },
+    {
+      "UserName": "sec-hwang",
+      "UserId": "AIDA666SECHWANGXXXXXX",
+      "Arn": "arn:aws:iam::666666666666:user/sec-hwang",
+      "Path": "/",
+      "CreateDate": "2025-03-03T00:40:00+00:00",
+      "GroupList": [
+        "Admins"
+      ],
+      "AttachedManagedPolicies": [],
+      "UserPolicyList": [],
+      "Tags": []
+    }
+  ],
+  "GroupDetailList": [
+    {
+      "GroupName": "Admins",
+      "GroupId": "AGPA666ADMINSXXXXXXXX",
+      "Arn": "arn:aws:iam::666666666666:group/Admins",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "AdministratorAccess",
+          "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        }
+      ],
+      "GroupPolicyList": []
+    },
+    {
+      "GroupName": "Auditors",
+      "GroupId": "AGPA666AUDITORSXXXXXX",
+      "Arn": "arn:aws:iam::666666666666:group/Auditors",
+      "Path": "/",
+      "AttachedManagedPolicies": [
+        {
+          "PolicyName": "SecurityAudit",
+          "PolicyArn": "arn:aws:iam::aws:policy/SecurityAudit"
+        }
+      ],
+      "GroupPolicyList": []
+    }
+  ],
+  "RoleDetailList": [],
+  "Policies": []
+}

@@ -1,0 +1,93 @@
+[
+  {
+    "LoadBalancerName": "lms-web",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-web/4a0000000000a001",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:targetgroup/tg/1"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-TLS13-1-2-2021-06",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-northeast-2:444444444444:certificate/cert-443"
+          }
+        ],
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-web/4a0000000000a001",
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:listener/app/lms-web/4a0000000000a001/00000000000001bb"
+      },
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "redirect",
+            "RedirectConfig": {
+              "Protocol": "HTTPS",
+              "Port": "443",
+              "Host": "#{host}",
+              "Path": "/#{path}",
+              "Query": "#{query}",
+              "StatusCode": "HTTP_301"
+            }
+          }
+        ],
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-web/4a0000000000a001",
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:listener/app/lms-web/4a0000000000a001/0000000000000050"
+      }
+    ]
+  },
+  {
+    "LoadBalancerName": "lms-api",
+    "Scheme": "internet-facing",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-api/4a0000000000a002",
+    "Listeners": [
+      {
+        "Port": 443,
+        "Protocol": "HTTPS",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:targetgroup/tg/1"
+          }
+        ],
+        "SslPolicy": "ELBSecurityPolicy-TLS-1-1-2017-01",
+        "Certificates": [
+          {
+            "CertificateArn": "arn:aws:acm:ap-northeast-2:444444444444:certificate/cert-443"
+          }
+        ],
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-api/4a0000000000a002",
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:listener/app/lms-api/4a0000000000a002/00000000000001bb"
+      }
+    ]
+  },
+  {
+    "LoadBalancerName": "lms-admin-internal",
+    "Scheme": "internal",
+    "Type": "application",
+    "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-admin-internal/4a0000000000a003",
+    "Listeners": [
+      {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:targetgroup/tg/1"
+          }
+        ],
+        "LoadBalancerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:loadbalancer/app/lms-admin-internal/4a0000000000a003",
+        "ListenerArn": "arn:aws:elasticloadbalancing:ap-northeast-2:444444444444:listener/app/lms-admin-internal/4a0000000000a003/0000000000000050"
+      }
+    ]
+  }
+]

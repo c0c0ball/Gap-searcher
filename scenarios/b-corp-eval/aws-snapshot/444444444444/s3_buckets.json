@@ -1,0 +1,93 @@
+[
+  {
+    "Name": "b-prod-learner-uploads",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001"
+        },
+        "BucketKeyEnabled": true
+      }
+    ]
+  },
+  {
+    "Name": "b-prod-certificates",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "b-prod-course-media",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ]
+  },
+  {
+    "Name": "b-prod-athena-results",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "aws:kms",
+          "KMSMasterKeyID": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001"
+        },
+        "BucketKeyEnabled": true
+      }
+    ],
+    "Lifecycle": [
+      {
+        "ID": "expire-30d",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 30
+        }
+      }
+    ]
+  },
+  {
+    "Name": "b-prod-ct-old",
+    "Region": "ap-northeast-2",
+    "CreationDate": "2025-03-15T00:00:00+00:00",
+    "Encryption": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false
+      }
+    ],
+    "Lifecycle": [
+      {
+        "ID": "expire-90d",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Expiration": {
+          "Days": 90
+        }
+      }
+    ]
+  }
+]

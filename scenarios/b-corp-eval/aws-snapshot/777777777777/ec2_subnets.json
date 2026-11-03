@@ -1,0 +1,16 @@
+[
+  {
+    "SubnetId": "subnet-0a7pub00000a",
+    "VpcId": "vpc-0a7sbx000000001",
+    "CidrBlock": "10.70.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "State": "available",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sandbox-public-a"
+      }
+    ]
+  }
+]

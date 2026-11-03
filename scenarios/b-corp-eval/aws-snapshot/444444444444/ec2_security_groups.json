@@ -1,0 +1,351 @@
+[
+  {
+    "GroupId": "sg-0d4default00001",
+    "GroupName": "default",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "default VPC security group",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0d4alb000000001",
+    "GroupName": "lms-prod-alb",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-alb",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [
+          {
+            "CidrIpv6": "::/0"
+          }
+        ],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [
+          {
+            "CidrIpv6": "::/0"
+          }
+        ],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-alb"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0d4app000000001",
+    "GroupName": "lms-prod-app",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-app",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8080,
+        "ToPort": 8080,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0d4alb000000001"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0d4bastion00001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-app"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0d4bastion00001",
+    "GroupName": "lms-prod-bastion",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-bastion",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "192.0.2.32/28",
+            "Description": "HQ IT"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "SSL-VPN"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3389,
+        "ToPort": 3389,
+        "IpRanges": [
+          {
+            "CidrIp": "192.0.2.0/24",
+            "Description": "HQ office"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-bastion"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0d4db0000000001",
+    "GroupName": "lms-prod-db",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-db",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3306,
+        "ToPort": 3306,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0d4app000000001",
+            "Description": "app"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3306,
+        "ToPort": 3306,
+        "IpRanges": [
+          {
+            "CidrIp": "10.250.0.0/24",
+            "Description": "DBA via VPN"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-db"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0d4report000001",
+    "GroupName": "lms-prod-report-db",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-report-db",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0d4app000000001",
+            "Description": "app"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 5432,
+        "ToPort": 5432,
+        "IpRanges": [
+          {
+            "CidrIp": "203.0.113.77/32",
+            "Description": "BI SaaS"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-report-db"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0d4encoder00001",
+    "GroupName": "lms-prod-encoder",
+    "VpcId": "vpc-0d4lms000000001",
+    "OwnerId": "444444444444",
+    "Description": "lms-prod-encoder",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8000,
+        "ToPort": 8000,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0d4app000000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-prod-encoder"
+      }
+    ]
+  }
+]

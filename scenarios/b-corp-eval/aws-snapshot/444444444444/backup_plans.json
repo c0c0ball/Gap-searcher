@@ -1,0 +1,41 @@
+[
+  {
+    "BackupPlanName": "lms-prod-daily",
+    "BackupPlanId": "bp-444-lms-prod-daily",
+    "Rules": [
+      {
+        "RuleName": "daily",
+        "TargetBackupVaultName": "b-prod-vault",
+        "ScheduleExpression": "cron(0 17 * * ? *)",
+        "StartWindowMinutes": 60,
+        "Lifecycle": {
+          "DeleteAfterDays": 14
+        },
+        "CopyActions": []
+      }
+    ]
+  },
+  {
+    "BackupPlanName": "lms-prod-monthly",
+    "BackupPlanId": "bp-444-lms-prod-monthly",
+    "Rules": [
+      {
+        "RuleName": "monthly",
+        "TargetBackupVaultName": "b-prod-vault",
+        "ScheduleExpression": "cron(0 18 1 * ? *)",
+        "StartWindowMinutes": 60,
+        "Lifecycle": {
+          "DeleteAfterDays": 365
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-northeast-3:444444444444:backup-vault:b-prod-dr-vault",
+            "Lifecycle": {
+              "DeleteAfterDays": 365
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

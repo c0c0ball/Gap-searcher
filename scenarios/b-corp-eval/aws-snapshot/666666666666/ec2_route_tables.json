@@ -1,0 +1,27 @@
+[
+  {
+    "RouteTableId": "rtb-0f6main0000001",
+    "VpcId": "vpc-0f6sec000000001",
+    "Routes": [
+      {
+        "DestinationCidrBlock": "10.60.0.0/16",
+        "GatewayId": "local",
+        "State": "active",
+        "Origin": "CreateRouteTable"
+      }
+    ],
+    "Associations": [
+      {
+        "RouteTableAssociationId": "rtbassoc-0f6main0000001m",
+        "RouteTableId": "rtb-0f6main0000001",
+        "Main": true
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "seclog-main"
+      }
+    ]
+  }
+]

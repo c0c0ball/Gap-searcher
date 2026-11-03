@@ -1,0 +1,58 @@
+[
+  {
+    "SubnetId": "subnet-0e5pub00000a",
+    "VpcId": "vpc-0e5dev000000001",
+    "CidrBlock": "10.50.0.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "State": "available",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-public-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0e5app00000a",
+    "VpcId": "vpc-0e5dev000000001",
+    "CidrBlock": "10.50.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "State": "available",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-app-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0e5data0000a",
+    "VpcId": "vpc-0e5dev000000001",
+    "CidrBlock": "10.50.20.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "State": "available",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-data-a"
+      }
+    ]
+  },
+  {
+    "SubnetId": "subnet-0e5data0000c",
+    "VpcId": "vpc-0e5dev000000001",
+    "CidrBlock": "10.50.21.0/24",
+    "AvailabilityZone": "ap-northeast-2c",
+    "State": "available",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-data-c"
+      }
+    ]
+  }
+]

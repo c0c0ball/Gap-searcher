@@ -1,0 +1,77 @@
+[
+  {
+    "KeyId": "4d4d4d4d-1111-4a00-9000-00000000a001",
+    "Arn": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-03-10T00:00:00+00:00",
+    "Aliases": [
+      "alias/lms-prod"
+    ],
+    "Description": "LMS 운영 데이터 암호화",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "4d4d4d4d-1111-4a00-9000-00000000a002",
+    "Arn": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a002",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-08-18T00:00:00+00:00",
+    "Aliases": [
+      "alias/pay-prod"
+    ],
+    "Description": "결제 DB 암호화",
+    "KeyRotationEnabled": false
+  },
+  {
+    "KeyId": "4d4d4d4d-1111-4a00-9000-00000000a003",
+    "Arn": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-00000000a003",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Disabled",
+    "Enabled": false,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2024-11-04T00:00:00+00:00",
+    "Aliases": [
+      "alias/legacy-2024"
+    ],
+    "Description": "구 LMS 이관 데이터 (사용 중지)",
+    "KeyRotationEnabled": false
+  },
+  {
+    "KeyId": "4d4d4d4d-1111-4a00-9000-0000000000e1",
+    "Arn": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-0000000000e1",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-03-10T00:00:00+00:00",
+    "Aliases": [
+      "alias/aws/ebs"
+    ],
+    "Description": "Default key that protects my EBS volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "4d4d4d4d-1111-4a00-9000-0000000000e2",
+    "Arn": "arn:aws:kms:ap-northeast-2:444444444444:key/4d4d4d4d-1111-4a00-9000-0000000000e2",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-03-10T00:00:00+00:00",
+    "Aliases": [
+      "alias/aws/rds"
+    ],
+    "Description": "Default key that protects my RDS database volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  }
+]

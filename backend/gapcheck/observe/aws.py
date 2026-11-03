@@ -215,8 +215,8 @@ def snapshot_observations(manifest: dict, files: dict[str, dict[str, bytes]], sh
     obs: list[Observation] = []
     for acct in manifest["accounts"]:
         aid = acct["account_id"]
-        if acct.get("status") != "ok":
-            continue
+        if acct.get("status") not in ("ok", "partial"):
+            continue   # 수집 실패 계정. partial 은 받은 파일만 쓴다 (없는 파일은 규칙별 범위 점검이 잡는다)
         f = files.get(aid, {})
         src = {"source": manifest.get("source", "unknown"), "snapshot_id": manifest.get("snapshot_id"),
                "collected_at": manifest.get("collected_at"), "account_id": aid}

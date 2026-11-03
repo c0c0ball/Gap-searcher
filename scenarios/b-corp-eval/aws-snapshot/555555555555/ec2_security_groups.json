@@ -1,0 +1,217 @@
+[
+  {
+    "GroupId": "sg-0e5default00001",
+    "GroupName": "default",
+    "VpcId": "vpc-0e5dev000000001",
+    "OwnerId": "555555555555",
+    "Description": "default VPC security group",
+    "IpPermissions": [],
+    "IpPermissionsEgress": [],
+    "Tags": []
+  },
+  {
+    "GroupId": "sg-0e5alb000000001",
+    "GroupName": "lms-dev-alb",
+    "VpcId": "vpc-0e5dev000000001",
+    "OwnerId": "555555555555",
+    "Description": "lms-dev-alb",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-alb"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0e5app000000001",
+    "GroupName": "lms-dev-app",
+    "VpcId": "vpc-0e5dev000000001",
+    "OwnerId": "555555555555",
+    "Description": "lms-dev-app",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8080,
+        "ToPort": 8080,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0e5alb000000001"
+          }
+        ],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "temp - outsourcing dev"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-app"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0e5encleg00001",
+    "GroupName": "dev-encoder-legacy",
+    "VpcId": "vpc-0e5dev000000001",
+    "OwnerId": "555555555555",
+    "Description": "dev-encoder-legacy",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 23,
+        "ToPort": 23,
+        "IpRanges": [
+          {
+            "CidrIp": "10.50.0.0/16",
+            "Description": "encoder appliance mgmt"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 8000,
+        "ToPort": 8000,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0e5app000000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "dev-encoder-legacy"
+      }
+    ]
+  },
+  {
+    "GroupId": "sg-0e5db0000000001",
+    "GroupName": "lms-dev-db",
+    "VpcId": "vpc-0e5dev000000001",
+    "OwnerId": "555555555555",
+    "Description": "lms-dev-db",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3306,
+        "ToPort": 3306,
+        "IpRanges": [],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [
+          {
+            "GroupId": "sg-0e5app000000001"
+          }
+        ],
+        "PrefixListIds": []
+      }
+    ],
+    "IpPermissionsEgress": [
+      {
+        "IpProtocol": "-1",
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "UserIdGroupPairs": [],
+        "PrefixListIds": []
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "lms-dev-db"
+      }
+    ]
+  }
+]

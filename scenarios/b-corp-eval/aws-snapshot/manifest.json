@@ -1,0 +1,112 @@
+{
+  "snapshot_id": "b-corp-eval-2026-11-02",
+  "source": "fixture",
+  "collected_at": "2026-11-01T23:10:00+00:00",
+  "collector": "gapcheck-collector/fixture",
+  "region": "ap-northeast-2",
+  "note": "평가용 가상 스냅샷. live 수집기와 같은 파일 형식을 쓴다.",
+  "accounts": [
+    {
+      "account_id": "444444444444",
+      "alias": "b-prod",
+      "status": "ok",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ]
+    },
+    {
+      "account_id": "555555555555",
+      "alias": "b-dev",
+      "status": "ok",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ]
+    },
+    {
+      "account_id": "666666666666",
+      "alias": "b-seclog",
+      "status": "partial",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json"
+      ],
+      "errors": [
+        {
+          "file": "s3_buckets.json",
+          "api": "s3:ListBuckets",
+          "error": "AccessDenied: 버킷 정책이 수집 역할(gapcheck-collector)의 접근을 거부함"
+        }
+      ]
+    },
+    {
+      "account_id": "777777777777",
+      "alias": "b-sandbox",
+      "status": "ok",
+      "files": [
+        "backup_plans.json",
+        "cloudtrail_trails.json",
+        "cognito_user_pools.json",
+        "credential_report.csv",
+        "ec2_route_tables.json",
+        "ec2_security_groups.json",
+        "ec2_subnets.json",
+        "ec2_volumes.json",
+        "elbv2_listeners.json",
+        "elbv2_ssl_policies.json",
+        "guardduty.json",
+        "iam_authorization.json",
+        "iam_password_policy.json",
+        "kms_keys.json",
+        "login_profiles.json",
+        "rds_db_instances.json",
+        "s3_buckets.json"
+      ]
+    }
+  ]
+}

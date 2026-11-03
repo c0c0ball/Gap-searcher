@@ -1,0 +1,16 @@
+[
+  {
+    "SubnetId": "subnet-0f6priv0000a",
+    "VpcId": "vpc-0f6sec000000001",
+    "CidrBlock": "10.60.10.0/24",
+    "AvailabilityZone": "ap-northeast-2a",
+    "State": "available",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "seclog-private-a"
+      }
+    ]
+  }
+]

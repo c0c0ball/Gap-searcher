@@ -1,0 +1,24 @@
+[
+  {
+    "VolumeId": "vol-0a7lab00000001",
+    "Size": 8,
+    "VolumeType": "gp3",
+    "State": "in-use",
+    "Encrypted": false,
+    "AvailabilityZone": "ap-northeast-2a",
+    "CreateTime": "2026-01-05T00:00:00+00:00",
+    "Attachments": [
+      {
+        "InstanceId": "i-0a7lab00000001",
+        "Device": "/dev/xvda",
+        "State": "attached"
+      }
+    ],
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "sandbox-lab-root"
+      }
+    ]
+  }
+]

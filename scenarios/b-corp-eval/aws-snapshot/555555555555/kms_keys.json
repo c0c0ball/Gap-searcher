@@ -1,0 +1,32 @@
+[
+  {
+    "KeyId": "5e5e5e5e-2222-4b00-9000-00000000b001",
+    "Arn": "arn:aws:kms:ap-northeast-2:555555555555:key/5e5e5e5e-2222-4b00-9000-00000000b001",
+    "KeyManager": "CUSTOMER",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2026-06-22T00:00:00+00:00",
+    "Aliases": [
+      "alias/dev-app"
+    ],
+    "Description": "개발 환경 애플리케이션 데이터",
+    "KeyRotationEnabled": true
+  },
+  {
+    "KeyId": "5e5e5e5e-2222-4b00-9000-0000000000e1",
+    "Arn": "arn:aws:kms:ap-northeast-2:555555555555:key/5e5e5e5e-2222-4b00-9000-0000000000e1",
+    "KeyManager": "AWS",
+    "KeyState": "Enabled",
+    "Enabled": true,
+    "KeySpec": "SYMMETRIC_DEFAULT",
+    "KeyUsage": "ENCRYPT_DECRYPT",
+    "CreationDate": "2025-03-11T00:00:00+00:00",
+    "Aliases": [
+      "alias/aws/ebs"
+    ],
+    "Description": "Default key that protects my EBS volumes when no other key is defined",
+    "KeyRotationEnabled": true
+  }
+]

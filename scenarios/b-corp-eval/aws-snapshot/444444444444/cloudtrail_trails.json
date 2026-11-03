@@ -1,0 +1,44 @@
+[
+  {
+    "Name": "b-prod-trail",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:444444444444:trail/b-prod-trail",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": true,
+    "IncludeGlobalServiceEvents": true,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": true,
+    "S3BucketName": "b-seclog-ct-archive",
+    "S3KeyPrefix": "AWSLogs-444444444444",
+    "Status": {
+      "IsLogging": true
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  },
+  {
+    "Name": "b-prod-trail-old",
+    "TrailARN": "arn:aws:cloudtrail:ap-northeast-2:444444444444:trail/b-prod-trail-old",
+    "HomeRegion": "ap-northeast-2",
+    "IsMultiRegionTrail": false,
+    "IncludeGlobalServiceEvents": false,
+    "IsOrganizationTrail": false,
+    "LogFileValidationEnabled": false,
+    "S3BucketName": "b-prod-ct-old",
+    "S3KeyPrefix": "AWSLogs-444444444444",
+    "Status": {
+      "IsLogging": false
+    },
+    "EventSelectors": [
+      {
+        "ReadWriteType": "All",
+        "IncludeManagementEvents": true,
+        "DataResources": []
+      }
+    ]
+  }
+]

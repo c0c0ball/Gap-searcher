@@ -1,0 +1,32 @@
+# B사 진단 범위 사실 (Scope facts). 사람이 확인해 입력한 값이며, 근거(basis)를 함께 적는다.
+# 여기 없는 사실은 Scope Engine이 UNKNOWN 으로 본다.
+organization: B사 (가상 온라인 교육 플랫폼, 임직원 약 120명)
+as_of: "2026-11-02"
+facts:
+  scope.has_information_systems: {value: true, basis: "정보보안지침 제2조 — LMS, 결제, 관리자 화면"}
+  scope.has_aws_accounts: {value: true, basis: "정보자산목록 — AWS 운영·개발·보안로그 계정"}
+  scope.aws_iam_users_with_console_password: {value: true, basis: "AWS 계정관리대장 — 콘솔 사용자 존재"}
+  scope.service_has_customer_login: {value: true, basis: "수강생 회원가입·로그인 (LMS)"}
+  scope.uses_cognito: {value: false, basis: "회원 인증은 LMS 자체 인증 서버에서 처리 (Cognito 미사용)"}
+aws_accounts:
+  - {account_id: "444444444444", alias: b-prod, label: 운영, in_scope: true}
+  - {account_id: "555555555555", alias: b-dev, label: 개발, in_scope: true}
+  - {account_id: "666666666666", alias: b-seclog, label: 보안로그, in_scope: true}
+  - {account_id: "777777777777", alias: b-sandbox, label: "샌드박스(사내 교육 실습용)", in_scope: false}
+policy_documents:
+  # 이 목록이 문서 Coverage의 분모다.
+  - {file: docs/B사_정보보안지침_v3.0.docx, doc_id: BS-GL-001}
+  - {file: docs/B사_계정및권한관리절차_v1.1.docx, doc_id: BS-PR-003}
+  - {file: docs/B사_암호화관리지침_v1.2.docx, doc_id: BS-GL-004}
+  - {file: docs/B사_로그및백업관리지침_v2.0.docx, doc_id: BS-GL-005}
+evidence:
+  # 표 증적은 파일 이름이 아니라 첫 줄(머리글)로 종류를 알아낸다
+  - {file: evidence/AWS계정관리대장_2026-11.xlsx, kind: account_list}
+  - {file: evidence/인사명부_재직퇴직_2026-11-01.xlsx, kind: hr_roster}
+  - {file: evidence/특수권한자현황_2026-하반기.xlsx, kind: privileged_list}
+  - {file: evidence/접근권한검토결과_2025-2026.xlsx, kind: access_review_log}
+  - {file: evidence/정보자산목록_클라우드_2026-10.xlsx, kind: asset_list}
+  - {file: evidence/암호키관리대장_2026.xlsx, kind: key_ledger}
+  - {file: evidence/개인정보처리시스템_접속기록점검_2026.xlsx, kind: access_log_review}
+  - {file: evidence/백업복구테스트_결과_2025-2026.xlsx, kind: restore_test_log}
+  - {file: evidence/재해복구_모의훈련_결과.xlsx, kind: dr_drill_log}
